@@ -5,11 +5,11 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: 139 92 246;
-  --color-secondary: 124 58 237;
-  --color-accent: 167 139 250;
-  --color-background: 5 5 7;
-  --color-surface: 12 12 20;
+  --color-primary: 128 84 194;
+  --color-secondary: 106 58 168;
+  --color-accent: 154 114 212;
+  --color-background: 8 7 13;
+  --color-surface: 14 12 23;
 }
 
 * {
@@ -24,12 +24,14 @@ html {
 }
 
 body {
-  background-color: #050507;
-  color: #e2e8f0;
+  /* Layered warm dark — premium agency feel (not pure cold violet) */
+  background-color: #0a0813;
+  color: #e0deea;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  letter-spacing: -0.005em;
 }
 
 /* Premium scrollbar */
@@ -38,29 +40,29 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #050507;
+  background: #08070d;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #7c3aed, #4c1d95);
+  background: linear-gradient(180deg, #6a3aa8, #3d1d72);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #8b5cf6, #6d28d9);
+  background: linear-gradient(180deg, #8054c2, #522a8f);
 }
 
 /* Selection color */
 ::selection {
-  background: rgba(139, 92, 246, 0.3);
-  color: #e2e8f0;
+  background: rgba(128, 84, 194, 0.28);
+  color: #e2d3f4;
 }
 
 /* Custom cursor */
 .custom-cursor {
   width: 20px;
   height: 20px;
-  border: 1.5px solid rgba(139, 92, 246, 0.8);
+  border: 1.5px solid rgba(128, 84, 194, 0.75);
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
@@ -72,46 +74,512 @@ body {
 .cursor-dot {
   width: 5px;
   height: 5px;
-  background: #8b5cf6;
+  background: #8054c2;
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
   z-index: 9999;
 }
 
-/* Grid background pattern */
+/* Grid background pattern - more subtle */
 .grid-bg {
   background-image:
-    linear-gradient(rgba(139,92,246,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139,92,246,0.06) 1px, transparent 1px);
+    linear-gradient(rgba(128,84,194,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(128,84,194,0.04) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
-/* Glassmorphism */
+/* Glassmorphism - refined */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .glass-violet {
-  background: rgba(139, 92, 246, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(139, 92, 246, 0.15);
+  background: rgba(128, 84, 194, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(128, 84, 194, 0.12);
 }
 
-/* Gradient text */
+.glass-elevated {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+/* PRIMARY gradient text — refined violet → amethyst → gold whisper.
+   Was multi-color aurora (too playful). Now elegant editorial luxury. */
 .gradient-text {
-  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 40%, #c4b5fd 100%);
+  background: linear-gradient(
+    115deg,
+    #cab3ea 0%,
+    #b094db 25%,
+    #7c5fb3 55%,
+    #b09474 82%,
+    #c9a961 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: aurora-shift 14s ease-in-out infinite;
+}
+
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Static variant for places where animation would distract */
+.gradient-text-aurora-static {
+  background: linear-gradient(
+    115deg,
+    #cab3ea 0%,
+    #b094db 25%,
+    #7c5fb3 55%,
+    #b09474 82%,
+    #c9a961 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* PURE violet — when gold accent isn't appropriate */
+.gradient-text-violet {
+  background: linear-gradient(115deg, #cab3ea 0%, #b094db 40%, #7c5fb3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* GOLD signature — for prices, premium signals, exclusive moments */
+.gradient-text-gold {
+  background: linear-gradient(115deg, #f6ecc8 0%, #dec368 40%, #c9a961 70%, #b48f3f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* CHROME — refined neutral for premium labels */
+.gradient-text-chrome {
+  background: linear-gradient(115deg, #e6e8ec 0%, #c2c5cc 50%, #838894 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}
+
+/* ==========================================================================
+   GLOBAL REDUCED MOTION SUPPORT
+   Disables ambient/decorative animations site-wide for users who prefer
+   reduced motion. Preserves essential transitions (focus rings, color
+   feedback) by keeping them short rather than removing them entirely.
+   Framer Motion components handle their own checks via useReducedMotion.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Stop infinite ambient animations entirely */
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .animate-marquee-slow,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-glow-pulse,
+  .animate-shimmer,
+  .animate-spin-slow,
+  .animate-wa-pulse,
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  /* Static state for marquee — center-frozen */
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .animate-marquee-slow {
+    transform: translateX(-25%) !important;
+  }
+}
+
+/* Mobile services carousel — hide scrollbar, smooth momentum scroll */
+.services-scroll {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding: 1rem;
+}
+.services-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   SECTION THEMES — distinct color personality per section.
+   Each theme has a bg + pattern + accent color philosophy.
+   ========================================================================== */
+
+/* WARM ISLAND — champagne/cream inverted section (premium luxury feel) */
+.theme-warm {
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(255,122,89,0.10), transparent 50%),
+    radial-gradient(ellipse at 10% 80%, rgba(196,159,77,0.08), transparent 50%),
+    linear-gradient(135deg, #f3e6c4 0%, #e8d2a0 100%);
+  color: #1a1424;
+}
+
+/* SUNSET ENERGY — coral/violet warm gradient (transformation) */
+.theme-sunset {
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(255,122,89,0.18), transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(128,84,194,0.20), transparent 50%),
+    linear-gradient(135deg, #1a0e1a 0%, #2a1525 50%, #1a0a1a 100%);
+}
+
+/* DATA — refined steel/violet depth (was bright electric blue, too tech-bro).
+   Page bg base for invisible transitions. */
+.theme-data {
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(90, 127, 184, 0.14), transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(124, 95, 179, 0.13), transparent 60%),
+    linear-gradient(180deg, #0a0813 0%, #0c0b1b 30%, #0b0a18 100%);
+}
+
+/* AURORA — editorial luxury banner (was rainbow, too playful).
+   Violet + gold whisper for premium CTA moments. */
+.theme-aurora {
+  background:
+    radial-gradient(ellipse at 25% 35%, rgba(124, 95, 179, 0.20), transparent 55%),
+    radial-gradient(ellipse at 75% 65%, rgba(201, 169, 97, 0.10), transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(124, 95, 179, 0.12), transparent 65%),
+    linear-gradient(180deg, #0a0813 0%, #100b1c 50%, #0c0a18 100%);
+}
+
+/* ==========================================================================
+   PATTERN UTILITIES — different texture per section
+   ========================================================================== */
+
+/* Dot grid pattern */
+.pattern-dots {
+  background-image: radial-gradient(rgba(128,84,194,0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.pattern-dots-warm {
+  background-image: radial-gradient(rgba(26,20,36,0.12) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+/* Diagonal lines pattern */
+.pattern-diagonals {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(128,84,194,0.05) 0,
+    rgba(128,84,194,0.05) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+}
+
+/* Halftone-style dots (gradient density) */
+.pattern-halftone {
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(255,122,89,0.15) 2px, transparent 2.5px),
+    radial-gradient(circle at 75% 75%, rgba(128,84,194,0.1) 1.5px, transparent 2px);
+  background-size: 40px 40px, 30px 30px;
+}
+
+/* ==========================================================================
+   CATEGORY COLOR SIGNATURES — each service category has its own color
+   ========================================================================== */
+.cat-strategy {
+  --cat-from: #8054c2;
+  --cat-to: #4a2972;
+  --cat-glow: rgba(128,84,194,0.4);
+}
+.cat-performance {
+  --cat-from: #3b6fd4;
+  --cat-to: #1d3e85;
+  --cat-glow: rgba(59,111,212,0.4);
+}
+.cat-content {
+  --cat-from: #ff7a59;
+  --cat-to: #b8331a;
+  --cat-glow: rgba(255,122,89,0.4);
+}
+.cat-tech {
+  --cat-from: #c4f54e;
+  --cat-to: #7faa1f;
+  --cat-glow: rgba(196,245,78,0.3);
+}
+.cat-ai {
+  --cat-from: #b596e3;
+  --cat-to: #7c5fb3;
+  --cat-glow: rgba(181,150,227,0.4);
+}
+
+.cat-bg {
+  background: linear-gradient(135deg, var(--cat-from), var(--cat-to));
+  box-shadow: 0 0 18px var(--cat-glow);
+}
+.cat-text {
+  color: var(--cat-from);
+}
+.cat-border {
+  border-color: var(--cat-from);
+}
+.cat-chip {
+  background: color-mix(in srgb, var(--cat-from) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-from) 30%, transparent);
+  color: var(--cat-from);
+}
+
+/* ==========================================================================
+   DECORATIVE ELEMENTS — editorial agency feel
+   ========================================================================== */
+
+/* Giant editorial number — used as background watermark in About / sections */
+.editorial-num {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-weight: 900;
+  font-size: clamp(8rem, 18vw, 22rem);
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  background: linear-gradient(180deg, rgba(128,84,194,0.18) 0%, rgba(128,84,194,0) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* PILL — editorial chip badge (replaces sticker, no rotation, more refined) */
+.sticker,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.sticker-sunset,
+.pill-sunset {
+  background: rgba(255, 122, 89, 0.10);
+  color: #ffc1a8;
+  border: 1px solid rgba(255, 122, 89, 0.30);
+}
+/* LIME — kept for legacy but refined to barely contrast (not the playful highlight) */
+.sticker-lime,
+.pill-lime {
+  background: rgba(201, 169, 97, 0.12);
+  color: #dec368;
+  border: 1px solid rgba(201, 169, 97, 0.32);
+}
+.sticker-champagne,
+.pill-champagne,
+.pill-gold {
+  background: rgba(201, 169, 97, 0.10);
+  color: #dec368;
+  border: 1px solid rgba(201, 169, 97, 0.32);
+}
+.pill-violet {
+  background: rgba(124, 95, 179, 0.10);
+  color: #cab3ea;
+  border: 1px solid rgba(124, 95, 179, 0.30);
+}
+.pill-chrome {
+  background: rgba(194, 197, 204, 0.06);
+  color: #c2c5cc;
+  border: 1px solid rgba(194, 197, 204, 0.20);
+}
+
+/* Decorative asterisk — static, no spin (was childish).
+   Now an editorial mark like a magazine pull-quote. */
+.asterisk-deco {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 400;
+  font-size: 3.5rem;
+  line-height: 1;
+  display: inline-block;
+  font-style: italic;
+}
+
+/* Gradient text — sunset variant (kept for rare warm accents) */
+.gradient-text-sunset {
+  background: linear-gradient(120deg, #ffc1a8 0%, #ff7a59 45%, #e8421f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* REFINED multi — violet → gold (was rainbow, too playful).
+   Editorial impact without the AI-startup feel. */
+.gradient-text-multi {
+  background: linear-gradient(
+    115deg,
+    #e0d2f3 0%,
+    #b094db 25%,
+    #7c5fb3 50%,
+    #c9a961 78%,
+    #dec368 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: aurora-shift 12s ease-in-out infinite;
+}
+
+/* MARKER highlights — subtler, more editorial (was fluorescent highlighter feel).
+   Still readable as emphasis, but doesn't shout. */
+.marker {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 55%,
+    rgba(201, 169, 97, 0.18) 55%,
+    rgba(201, 169, 97, 0.28) 100%
+  );
+  padding: 0 0.15em;
+  border-radius: 1px;
+}
+.marker-sunset {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 55%,
+    rgba(255, 122, 89, 0.16) 55%,
+    rgba(255, 122, 89, 0.24) 100%
+  );
+  padding: 0 0.15em;
+  border-radius: 1px;
+}
+.marker-violet {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 55%,
+    rgba(124, 95, 179, 0.16) 55%,
+    rgba(124, 95, 179, 0.28) 100%
+  );
+  padding: 0 0.15em;
+  border-radius: 1px;
+}
+/* Gold marker — for luxury emphasis */
+.marker-gold {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 55%,
+    rgba(201, 169, 97, 0.20) 55%,
+    rgba(201, 169, 97, 0.32) 100%
+  );
+  padding: 0 0.15em;
+  border-radius: 1px;
+}
+
+/* ==========================================================================
+   EDITORIAL SERIF — for premium emphasis moments only.
+   Use sparingly: quotes, hero accent words, magazine-style captions.
+   ========================================================================== */
+.font-serif-display {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.font-serif-light {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 300;
+  letter-spacing: -0.005em;
+}
+
+/* ==========================================================================
+   PREMIUM ETCHED BORDERS — luxury hardware UI signature
+   ========================================================================== */
+.etched-border {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.etched-border-gold {
+  box-shadow:
+    inset 0 1px 0 rgba(201, 169, 97, 0.20),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(201, 169, 97, 0.10),
+    0 8px 24px -8px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   GOLD UTILITIES — luxury micro-accents
+   ========================================================================== */
+.text-gold {
+  color: #c9a961;
+}
+.text-gold-soft {
+  color: #dec368;
+}
+.bg-gold-soft {
+  background: rgba(201, 169, 97, 0.10);
+}
+.border-gold-soft {
+  border-color: rgba(201, 169, 97, 0.30);
+}
+.divider-gold {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 169, 97, 0.5) 50%,
+    transparent 100%
+  );
+}
+
+/* CHROME utility */
+.text-chrome {
+  color: #c2c5cc;
+}
+.border-chrome {
+  border-color: rgba(194, 197, 204, 0.18);
+}
+
+.gradient-text-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #f0c75e 50%, #b8941f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-white {
-  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #ffffff 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #b596e3 50%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -122,7 +590,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(139, 92, 246, 0.15) 50%,
+    rgba(128, 84, 194, 0.12) 50%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -133,7 +601,7 @@ body {
 .glow-orb {
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.15;
+  opacity: 0.12;
   position: absolute;
   pointer-events: none;
 }
@@ -148,25 +616,31 @@ body {
   opacity: 0.4;
 }
 
-/* Section spacing */
-section {
-  position: relative;
+/* Global noise overlay — fixed, subtle, premium material feel */
+.noise-global {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='ng'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23ng)' opacity='0.06'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  mix-blend-mode: overlay;
 }
 
 /* Premium divider */
 .divider-gradient {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(128, 84, 194, 0.4), transparent);
 }
 
 /* Button glow */
 .btn-glow {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 24px rgba(128, 84, 194, 0.3), 0 0 48px rgba(106, 58, 168, 0.08);
   transition: box-shadow 0.3s ease;
 }
 
 .btn-glow:hover {
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), 0 0 60px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 36px rgba(128, 84, 194, 0.45), 0 0 72px rgba(128, 84, 194, 0.15);
 }
 
 /* Card hover glow */
@@ -175,9 +649,18 @@ section {
 }
 
 .card-hover-glow:hover {
-  border-color: rgba(139, 92, 246, 0.4) !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.15);
+  border-color: rgba(128, 84, 194, 0.3) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 32px rgba(128, 84, 194, 0.12);
   transform: translateY(-4px);
+}
+
+/* Premium card with depth */
+.card-premium {
+  background: #FBF8F1;
+  border: 1px solid rgba(26, 24, 21, 0.08);
+  box-shadow:
+    0 12px 40px -16px rgba(26, 24, 21, 0.18),
+    0 0 0 1px rgba(26, 24, 21, 0.04) inset;
 }
 
 /* Number counter */
@@ -188,8 +671,8 @@ section {
 
 /* Animated border gradient */
 .border-gradient-animated {
-  background: linear-gradient(var(--surface, #0c0c14), var(--surface, #0c0c14)) padding-box,
-    linear-gradient(135deg, #7c3aed, #4c1d95, #7c3aed) border-box;
+  background: linear-gradient(var(--surface, #0e0c17), var(--surface, #0e0c17)) padding-box,
+    linear-gradient(135deg, #6a3aa8, #3d1d72, #6a3aa8) border-box;
   border: 1px solid transparent;
 }
 
@@ -215,7 +698,7 @@ section {
 .typing-cursor::after {
   content: '|';
   animation: blink 1s step-end infinite;
-  color: #8b5cf6;
+  color: #8054c2;
 }
 
 @keyframes blink {
@@ -256,7 +739,7 @@ section {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.5), transparent, rgba(139,92,246,0.3));
+  background: linear-gradient(135deg, rgba(128, 84, 194, 0.4), transparent, rgba(128, 84, 194, 0.2));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -265,7 +748,7 @@ section {
 
 /* Focus styles */
 *:focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline: 2px solid rgba(128, 84, 194, 0.5);
   outline-offset: 2px;
 }
 
@@ -294,6 +777,283 @@ section {
 
 .skeleton {
   animation: skeletonPulse 1.5s ease-in-out infinite;
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(128, 84, 194, 0.08);
   border-radius: 4px;
+}
+
+/* Form input styles */
+.form-input {
+  background: #FFFFFF;
+  border: 1px solid rgba(26, 24, 21, 0.12);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #1A1815;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-input::placeholder {
+  color: rgba(26, 24, 21, 0.35);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: rgba(224, 78, 44, 0.6);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(224, 78, 44, 0.10);
+}
+
+.form-input.error {
+  border-color: rgba(224, 78, 44, 0.6);
+  background: rgba(224, 78, 44, 0.04);
+}
+
+/* WhatsApp floating button */
+.wa-float {
+  animation: waPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes waPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(34, 197, 94, 0), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Premium link hover */
+.link-premium {
+  position: relative;
+  display: inline-block;
+}
+
+.link-premium::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #8054c2, #b596e3);
+  transition: width 0.3s ease;
+}
+
+.link-premium:hover::after {
+  width: 100%;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ==========================================
+   ELECTRIC BLUE ACCENT — controlled secondary
+   ========================================== */
+.gradient-text-electric {
+  background: linear-gradient(135deg, #5a8bf0 0%, #3b6fd4 50%, #cdb6ec 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-electric { color: #5a8bf0; }
+.bg-electric-soft { background: rgba(59, 111, 212, 0.08); }
+.border-electric-soft { border-color: rgba(59, 111, 212, 0.22); }
+
+.glow-electric-orb {
+  background: radial-gradient(ellipse, rgba(59, 111, 212, 0.4) 0%, transparent 70%);
+}
+
+/* ==========================================
+   TILT 3D CARD utilities
+   ========================================== */
+.tilt-wrapper {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.tilt-inner {
+  transform-style: preserve-3d;
+  transition: box-shadow 0.4s ease;
+}
+
+.tilt-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(128, 84, 194, 0.12),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.tilt-wrapper:hover .tilt-shine { opacity: 1; }
+
+/* ==========================================
+   SECTION DEPTH — differentiated backgrounds
+   ========================================== */
+/* Section variants — ALL use the same base #08070d so transitions are invisible.
+   Only the gradient overlays differ to give each section its own atmosphere. */
+.bg-section-a {
+  background:
+    radial-gradient(ellipse at top, rgba(106, 58, 168, 0.06) 0%, transparent 50%),
+    #0a0813;
+}
+
+.bg-section-b {
+  background:
+    radial-gradient(ellipse at bottom, rgba(59, 111, 212, 0.05) 0%, transparent 50%),
+    #0a0813;
+}
+
+.bg-section-c {
+  background:
+    radial-gradient(ellipse at top right, rgba(106, 58, 168, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(59, 111, 212, 0.04) 0%, transparent 50%),
+    #0a0813;
+}
+
+.bg-section-darker {
+  background: #08070d;
+}
+
+/* Inter-section divider line */
+.section-divider {
+  position: relative;
+  height: 1px;
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(128, 84, 194, 0.4) 30%,
+    rgba(59, 111, 212, 0.4) 70%,
+    transparent 100%
+  );
+}
+
+/* ==========================================
+   AI DASHBOARD — premium widget styles
+   ========================================== */
+.dashboard-card {
+  background:
+    linear-gradient(180deg, rgba(20, 16, 32, 0.85) 0%, rgba(10, 8, 18, 0.95) 100%);
+  border: 1px solid rgba(128, 84, 194, 0.15);
+  box-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(128, 84, 194, 0.4),
+    rgba(59, 111, 212, 0.4),
+    transparent
+  );
+}
+
+.dashboard-line-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dashboard-pulse-dot {
+  position: relative;
+}
+
+.dashboard-pulse-dot::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: inherit;
+  opacity: 0.4;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Mini chart bars */
+.chart-bar {
+  background: linear-gradient(180deg, #8054c2 0%, #4a2972 100%);
+  border-radius: 3px 3px 0 0;
+  transition: opacity 0.3s ease;
+}
+
+.chart-bar-electric {
+  background: linear-gradient(180deg, #5a8bf0 0%, #2a55b0 100%);
+}
+
+/* Animated bar fill */
+@keyframes barFill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.animate-bar-fill {
+  transform-origin: bottom;
+  animation: barFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Cursor desktop-only */
+@media (hover: none), (pointer: coarse) {
+  .custom-cursor,
+  .cursor-dot,
+  body[data-cursor="active"] * {
+    cursor: auto !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body[data-cursor="active"] {
+    cursor: none;
+  }
+  body[data-cursor="active"] a,
+  body[data-cursor="active"] button,
+  body[data-cursor="active"] input,
+  body[data-cursor="active"] textarea,
+  body[data-cursor="active"] select {
+    cursor: none;
+  }
+}
+
+/* Data line connecting elements (subtle decorative) */
+.data-line {
+  position: absolute;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 111, 212, 0.3),
+    rgba(128, 84, 194, 0.3),
+    transparent
+  );
+  height: 1px;
+  pointer-events: none;
 }

@@ -32,6 +32,11 @@ export default function ParticleField({ count = 60 }: { count?: number }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Respect reduced-motion: render a single static frame and bail out
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const resize = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
@@ -97,7 +102,26 @@ export default function ParticleField({ count = 60 }: { count?: number }) {
 
     resize();
     createParticles();
-    draw();
+
+    if (reduced) {
+      // Single static frame — no RAF loop, no motion
+      // Lock opacity at the target value so the snapshot looks complete
+      for (const p of particlesRef.current) {
+        p.opacity = p.opacityTarget;
+        p.vx = 0;
+        p.vy = 0;
+      }
+      // Manual one-shot paint without scheduling next frame
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particlesRef.current) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color}${p.opacity})`;
+        ctx.fill();
+      }
+    } else {
+      draw();
+    }
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);

@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Zap,
   Instagram,
   Linkedin,
   Twitter,
   Youtube,
   Mail,
-  Phone,
   MapPin,
-  ArrowRight,
-  Send,
+  MessageCircle,
 } from "lucide-react";
+import { waLink, WHATSAPP_PRETTY } from "@/lib/whatsapp";
+
+const PALETTE = {
+  bgDark: "#1A1815",
+  cream: "#F5F1E8",
+  textMuted: "rgba(245, 241, 232, 0.65)",
+  textSoft: "rgba(245, 241, 232, 0.40)",
+  accent: "#E04E2C",
+  hairline: "rgba(245, 241, 232, 0.10)",
+};
 
 const navigation = {
   servicios: [
@@ -21,7 +27,6 @@ const navigation = {
     { label: "Performance Marketing", href: "#servicios" },
     { label: "SEO Avanzado", href: "#servicios" },
     { label: "Automatización IA", href: "#ia" },
-    { label: "Paid Media", href: "#servicios" },
     { label: "Desarrollo Web", href: "#servicios" },
   ],
   empresa: [
@@ -30,217 +35,262 @@ const navigation = {
     { label: "Proceso", href: "#proceso" },
     { label: "Resultados", href: "#resultados" },
     { label: "Testimonios", href: "#testimonios" },
-    { label: "Blog", href: "#" },
   ],
   legal: [
-    { label: "Política de Privacidad", href: "#" },
-    { label: "Términos de Servicio", href: "#" },
-    { label: "Política de Cookies", href: "#" },
+    { label: "Política de Privacidad", href: "/privacidad" },
+    { label: "Términos y Condiciones", href: "/terminos" },
+    { label: "Cookies", href: "/cookies" },
   ],
 };
 
 const socials = [
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/lancherosstudio" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/lancherosstudio" },
-  { icon: Twitter, label: "Twitter / X", href: "https://twitter.com/lancherosstudio" },
-  { icon: Youtube, label: "YouTube", href: "https://youtube.com/@lancherosstudio" },
+  { Icon: Instagram, href: "#", label: "Instagram" },
+  { Icon: Linkedin, href: "#", label: "LinkedIn" },
+  { Icon: Twitter, href: "#", label: "Twitter" },
+  { Icon: Youtube, href: "#", label: "YouTube" },
 ];
 
 export default function Footer() {
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSent, setNewsletterSent] = useState(false);
-
-  const handleNewsletter = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail) setNewsletterSent(true);
-  };
-
   return (
-    <footer className="relative overflow-hidden bg-[#040408]">
-      {/* Top border */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-
-      {/* Glow */}
+    <footer
+      className="relative w-full overflow-hidden"
+      style={{ backgroundColor: PALETTE.bgDark, color: PALETTE.cream }}
+    >
+      {/* Big editorial letter watermark */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-64 pointer-events-none opacity-10"
+        aria-hidden
+        className="absolute -bottom-12 -right-12 select-none pointer-events-none leading-none"
         style={{
-          background: "radial-gradient(ellipse, rgba(139,92,246,1) 0%, transparent 70%)",
-          filter: "blur(60px)",
+          fontFamily: "var(--font-cormorant), serif",
+          fontStyle: "italic",
+          fontSize: "clamp(20rem, 35vw, 32rem)",
+          fontWeight: 300,
+          color: PALETTE.accent,
+          opacity: 0.10,
         }}
-      />
+      >
+        A
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main footer content */}
-        <div className="pt-16 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Brand column */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Logo */}
-            <motion.a href="/" className="flex items-center gap-2.5 group w-fit">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-800 flex items-center justify-center shadow-glow-violet-sm">
-                <Zap className="w-5 h-5 text-white" fill="currentColor" />
-              </div>
-              <span className="font-display font-bold text-xl">
-                <span className="text-white">LANCHEROS</span>
-                <span className="gradient-text"> STUDIO</span>
+      <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 lg:px-12 pt-20 lg:pt-28 pb-10">
+        {/* Top — big statement */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8 }}
+          className="mb-16 lg:mb-20 max-w-3xl"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: PALETTE.accent }}
+            />
+            <span
+              className="font-mono text-xs uppercase tracking-[0.28em]"
+              style={{ color: PALETTE.accent }}
+            >
+              Aureon Growth · 2026
+            </span>
+          </div>
+          <h3
+            className="font-display font-semibold text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] tracking-[-0.02em]"
+            style={{ color: PALETTE.cream }}
+          >
+            Transformamos marcas{" "}
+            <span
+              style={{
+                fontFamily: "var(--font-cormorant), serif",
+                fontStyle: "italic",
+                fontWeight: 400,
+                color: PALETTE.accent,
+              }}
+            >
+              en sistemas
+            </span>{" "}
+            de crecimiento.
+          </h3>
+        </motion.div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12 mb-16 lg:mb-20">
+          {/* Logo + contact */}
+          <div className="col-span-2 lg:col-span-2">
+            <a href="/" className="flex items-center gap-3 mb-6">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 32 32"
+                className="flex-shrink-0"
+                aria-hidden
+              >
+                <rect width="32" height="32" rx="8" fill="#1A1815" />
+                <circle cx="16" cy="16" r="11" stroke="#c9a961" strokeWidth="1.5" fill="none" />
+                <circle cx="16" cy="16" r="6" fill="url(#aureonCoreFooter)" />
+                <circle cx="16" cy="5" r="2" fill="#c9a961" />
+                <defs>
+                  <linearGradient id="aureonCoreFooter" x1="11" y1="11" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#E04E2C" />
+                    <stop offset="100%" stopColor="#A53B1F" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span
+                className="font-display font-bold text-base tracking-wide"
+                style={{ color: PALETTE.cream }}
+              >
+                AUREON{" "}
+                <span
+                  style={{
+                    fontFamily: "var(--font-cormorant), serif",
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: PALETTE.accent,
+                  }}
+                >
+                  growth
+                </span>
               </span>
-            </motion.a>
-
-            <p className="text-slate-400 leading-relaxed text-sm max-w-xs">
-              Agencia de marketing digital premium. Transformamos marcas en imperios digitales
-              con estrategia, tecnología e inteligencia artificial de clase mundial.
+            </a>
+            <p
+              className="text-sm leading-relaxed mb-6 max-w-sm"
+              style={{ color: PALETTE.textMuted }}
+            >
+              Growth partner premium para marcas con ambición real. LATAM, USA
+              y Europa.
             </p>
 
-            {/* Contact info */}
-            <div className="space-y-3">
-              {[
-                { icon: Mail, text: "hola@lancherosstudio.com", href: "mailto:hola@lancherosstudio.com" },
-                { icon: Phone, text: "+57 300 000 0000", href: "tel:+573000000000" },
-                { icon: MapPin, text: "Bogotá, Colombia · Remote Global", href: "#" },
-              ].map((c) => (
-                <a
-                  key={c.text}
-                  href={c.href}
-                  className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-violet-300 transition-colors group"
-                >
-                  <c.icon className="w-4 h-4 text-violet-500 shrink-0 group-hover:text-violet-400 transition-colors" />
-                  {c.text}
-                </a>
-              ))}
-            </div>
-
-            {/* Socials */}
-            <div className="flex gap-2">
-              {socials.map((s) => (
-                <motion.a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 glass border border-white/8 rounded-xl flex items-center justify-center text-slate-400 hover:text-violet-300 hover:border-violet-500/40 transition-all"
-                  whileHover={{ scale: 1.08, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label={s.label}
-                >
-                  <s.icon className="w-4 h-4" />
-                </motion.a>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation columns */}
-          <div className="lg:col-span-5 grid grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h4 className="font-display font-semibold text-white text-sm uppercase tracking-widest">
-                Servicios
-              </h4>
-              <ul className="space-y-2.5">
-                {navigation.servicios.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-slate-400 hover:text-violet-300 transition-colors flex items-center gap-1.5 group"
-                    >
-                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-violet-400" />
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h4 className="font-display font-semibold text-white text-sm uppercase tracking-widest">
-                Empresa
-              </h4>
-              <ul className="space-y-2.5">
-                {navigation.empresa.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-slate-400 hover:text-violet-300 transition-colors flex items-center gap-1.5 group"
-                    >
-                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-violet-400" />
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Newsletter */}
-          <div className="lg:col-span-3 space-y-5">
-            <div>
-              <h4 className="font-display font-semibold text-white text-sm uppercase tracking-widest mb-2">
-                Newsletter Premium
-              </h4>
-              <p className="text-sm text-slate-400 leading-relaxed">
-                Estrategias, tendencias y casos de éxito exclusivos. Solo contenido que mueve el negocio.
-              </p>
-            </div>
-
-            {!newsletterSent ? (
-              <form onSubmit={handleNewsletter} className="space-y-2.5">
-                <input
-                  type="email"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="tu@empresa.com"
-                  required
-                  className="w-full px-4 py-3 glass border border-white/10 rounded-xl text-slate-200 text-sm placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 transition-all"
-                />
-                <motion.button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-violet-600 to-purple-700 text-white font-display font-medium text-sm rounded-xl btn-glow"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Send className="w-4 h-4" />
-                  Suscribirme Gratis
-                </motion.button>
-                <p className="text-xs text-slate-600 text-center">
-                  Sin spam. Cancela cuando quieras.
-                </p>
-              </form>
-            ) : (
-              <motion.div
-                className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium text-center"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+            {/* Contact rows */}
+            <div className="space-y-3 text-sm">
+              <a
+                href="mailto:hola@aureongrowth.com"
+                className="flex items-center gap-3 hover:text-current transition-colors"
+                style={{ color: PALETTE.textMuted }}
               >
-                ¡Bienvenido! Revisa tu correo.
-              </motion.div>
-            )}
-
-            {/* Certifications */}
-            <div className="space-y-2">
-              <p className="text-xs text-slate-600 uppercase tracking-wider font-medium">Certificaciones</p>
-              <div className="flex flex-wrap gap-2">
-                {["Google Premier", "Meta Partner", "HubSpot Diamond"].map((cert) => (
-                  <span
-                    key={cert}
-                    className="px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/15 text-violet-400 text-xs font-medium"
-                  >
-                    {cert}
-                  </span>
-                ))}
+                <Mail
+                  className="w-4 h-4"
+                  style={{ color: PALETTE.accent }}
+                />
+                hola@aureongrowth.com
+              </a>
+              <a
+                href={waLink("default")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 transition-colors"
+                style={{ color: PALETTE.textMuted }}
+              >
+                <MessageCircle
+                  className="w-4 h-4"
+                  style={{ color: PALETTE.accent }}
+                />
+                {WHATSAPP_PRETTY}
+              </a>
+              <div
+                className="flex items-center gap-3"
+                style={{ color: PALETTE.textMuted }}
+              >
+                <MapPin
+                  className="w-4 h-4"
+                  style={{ color: PALETTE.accent }}
+                />
+                Bogotá, Colombia
               </div>
             </div>
+          </div>
+
+          {/* Nav columns */}
+          <div>
+            <h4
+              className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5"
+              style={{ color: PALETTE.accent }}
+            >
+              Servicios
+            </h4>
+            <ul className="space-y-3">
+              {navigation.servicios.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    className="text-sm hover:opacity-100 transition-opacity"
+                    style={{ color: PALETTE.textMuted }}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4
+              className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5"
+              style={{ color: PALETTE.accent }}
+            >
+              Empresa
+            </h4>
+            <ul className="space-y-3">
+              {navigation.empresa.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    className="text-sm transition-opacity"
+                    style={{ color: PALETTE.textMuted }}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4
+              className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5"
+              style={{ color: PALETTE.accent }}
+            >
+              Legal
+            </h4>
+            <ul className="space-y-3">
+              {navigation.legal.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    className="text-sm transition-opacity"
+                    style={{ color: PALETTE.textMuted }}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="py-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-slate-600">
-            © {new Date().getFullYear()} Lancheros Studio. Todos los derechos reservados.
-          </p>
-          <div className="flex gap-6">
-            {navigation.legal.map((link) => (
+        <div
+          className="border-t pt-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+          style={{ borderColor: PALETTE.hairline }}
+        >
+          <div
+            className="font-mono text-[11px] uppercase tracking-[0.22em]"
+            style={{ color: PALETTE.textSoft }}
+          >
+            © Aureon Growth MMXXVI · Bogotá, CO
+          </div>
+          <div className="flex items-center gap-4">
+            {socials.map(({ Icon, href, label }) => (
               <a
-                key={link.label}
-                href={link.href}
-                className="text-xs text-slate-600 hover:text-slate-400 transition-colors"
+                key={label}
+                href={href}
+                aria-label={label}
+                className="w-9 h-9 rounded-full border flex items-center justify-center transition-all hover:scale-110"
+                style={{
+                  borderColor: PALETTE.hairline,
+                  color: PALETTE.cream,
+                }}
               >
-                {link.label}
+                <Icon className="w-4 h-4" />
               </a>
             ))}
           </div>

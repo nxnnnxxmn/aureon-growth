@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  Bot,
-  Cpu,
   Zap,
   Brain,
   Network,
@@ -15,8 +13,20 @@ import {
   Clock,
   TrendingUp,
 } from "lucide-react";
-import SectionHeader from "@/components/common/SectionHeader";
-import ParticleField from "@/components/common/ParticleField";
+import AIDashboard from "@/components/sections/AIDashboard";
+
+const PALETTE = {
+  bg: "#F5F1E8",
+  bgWhite: "#FBF8F1",
+  bgAlt: "#EFE9DB",
+  text: "#1A1815",
+  textMuted: "#6B655E",
+  accent: "#E04E2C",
+  accentSoft: "#F2D0C1",
+  forest: "#2D5016",
+  hairline: "rgba(26,24,21,0.10)",
+  hairlineSoft: "rgba(26,24,21,0.06)",
+};
 
 const agents = [
   {
@@ -95,208 +105,241 @@ const techStack = [
 
 export default function AiAutomation() {
   return (
-    <section id="ia" className="relative py-32 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[#070710]" />
-
-      {/* Particle field */}
-      <div className="absolute inset-0 opacity-60">
-        <ParticleField count={50} />
-      </div>
-
-      {/* Grid */}
-      <div className="absolute inset-0 grid-bg opacity-40" />
-
-      {/* Large glow */}
+    <section
+      id="ia"
+      className="relative py-24 lg:py-36 overflow-hidden"
+      style={{ backgroundColor: PALETTE.bgAlt, color: PALETTE.text }}
+    >
+      {/* Decorative soft blobs */}
       <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] pointer-events-none"
+        aria-hidden
+        className="absolute left-1/4 top-1/3 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none -z-0"
         style={{
-          background: "radial-gradient(ellipse, rgba(124,58,237,0.15) 0%, transparent 65%)",
+          background: `radial-gradient(ellipse, ${PALETTE.accentSoft} 0%, transparent 65%)`,
+          opacity: 0.5,
+          filter: "blur(60px)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute right-1/4 bottom-1/4 w-[500px] h-[400px] pointer-events-none -z-0"
+        style={{
+          background: "radial-gradient(ellipse, #E8DDC9 0%, transparent 65%)",
+          opacity: 0.6,
           filter: "blur(60px)",
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="space-y-20">
           {/* Header */}
-          <div className="flex flex-col items-center">
-            <SectionHeader
-              badge="IA & Automatización"
-              title="El futuro del marketing "
-              titleHighlight="ya está aquí"
-              description="Somos pioneros en la aplicación de inteligencia artificial al marketing digital. Nuestros agentes IA trabajan de forma autónoma para maximizar resultados mientras tu equipo se enfoca en estrategia."
-            />
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="h-px w-10" style={{ backgroundColor: PALETTE.accent }} />
+              <span
+                className="font-mono text-xs uppercase tracking-[0.28em]"
+                style={{ color: PALETTE.accent }}
+              >
+                Cap. 07 — IA & Automatización
+              </span>
+            </div>
+            <h2
+              className="font-display font-semibold text-[clamp(2rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.02em] mb-6"
+              style={{ color: PALETTE.text }}
+            >
+              El futuro del marketing{" "}
+              <span
+                style={{
+                  fontFamily: "var(--font-cormorant), serif",
+                  fontStyle: "italic",
+                  color: PALETTE.accent,
+                }}
+              >
+                ya está aquí
+              </span>
+            </h2>
+            <p className="text-lg leading-relaxed" style={{ color: PALETTE.textMuted }}>
+              Somos pioneros en la aplicación de inteligencia artificial al
+              marketing digital. Nuestros agentes IA trabajan de forma autónoma
+              para maximizar resultados mientras tu equipo se enfoca en
+              estrategia.
+            </p>
           </div>
 
-          {/* Main feature: Agents showcase */}
-          <div className="relative">
-            <div className="text-center mb-10">
-              <h3 className="font-display font-bold text-2xl text-white">
+          {/* Agents showcase */}
+          <div>
+            <div className="mb-10">
+              <h3
+                className="font-display font-bold text-2xl mb-2"
+                style={{ color: PALETTE.text }}
+              >
                 Nuestros Agentes de IA en Acción
               </h3>
-              <p className="text-slate-400 mt-2">Sistemas autónomos operando 24/7 para tu crecimiento</p>
+              <p style={{ color: PALETTE.textMuted }}>
+                Sistemas autónomos operando 24/7 para tu crecimiento
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
               {agents.map((agent, i) => (
                 <motion.div
                   key={agent.name}
-                  className="relative glass-violet border border-violet-500/20 rounded-2xl p-6 group overflow-hidden"
+                  className="relative rounded-3xl p-6 group overflow-hidden"
+                  style={{
+                    backgroundColor: PALETTE.bgWhite,
+                    boxShadow:
+                      "0 6px 20px -8px rgba(26, 24, 21, 0.08), 0 0 0 1px rgba(26, 24, 21, 0.06)",
+                  }}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.6 }}
-                  whileHover={{ y: -6, borderColor: "rgba(139,92,246,0.5)" }}
+                  whileHover={{ y: -6 }}
                 >
-                  {/* Animated glow dot in top right */}
+                  {/* Status dot */}
                   <div className="absolute top-4 right-4 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-xs text-green-400 font-medium">{agent.status}</span>
-                  </div>
-
-                  {/* Icon with animated ring */}
-                  <div className="relative inline-flex mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-purple-800 flex items-center justify-center shadow-glow-violet-sm">
-                      <agent.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <motion.div
-                      className="absolute -inset-1 rounded-xl border border-violet-500/30"
-                      animate={{
-                        scale: [1, 1.1, 1],
-                        opacity: [0.5, 0.2, 0.5],
-                      }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                    <span
+                      className="w-2 h-2 rounded-full animate-pulse"
+                      style={{ backgroundColor: PALETTE.forest }}
                     />
+                    <span
+                      className="text-xs font-medium"
+                      style={{ color: PALETTE.forest }}
+                    >
+                      {agent.status}
+                    </span>
                   </div>
 
-                  <h4 className="font-display font-bold text-white mb-2">{agent.name}</h4>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-4">{agent.description}</p>
+                  {/* Icon */}
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:rotate-[-8deg] group-hover:scale-105"
+                    style={{ backgroundColor: PALETTE.accent }}
+                  >
+                    <agent.icon className="w-6 h-6" style={{ color: PALETTE.bgWhite }} />
+                  </div>
 
-                  <div className="px-3 py-2 rounded-lg bg-violet-500/15 border border-violet-500/20">
-                    <span className="text-sm font-display font-semibold text-violet-300">{agent.metric}</span>
+                  <h4
+                    className="font-display font-bold mb-2"
+                    style={{ color: PALETTE.text }}
+                  >
+                    {agent.name}
+                  </h4>
+                  <p
+                    className="text-sm leading-relaxed mb-4"
+                    style={{ color: PALETTE.textMuted }}
+                  >
+                    {agent.description}
+                  </p>
+
+                  <div
+                    className="px-3 py-2 rounded-full inline-block"
+                    style={{ backgroundColor: PALETTE.accentSoft }}
+                  >
+                    <span
+                      className="text-sm font-display font-semibold"
+                      style={{ color: PALETTE.accent }}
+                    >
+                      {agent.metric}
+                    </span>
                   </div>
 
                   {/* Background icon */}
-                  <div className="absolute -bottom-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <agent.icon className="w-24 h-24 text-violet-400" />
+                  <div className="absolute -bottom-4 -right-4 opacity-[0.06] group-hover:opacity-[0.1] transition-opacity">
+                    <agent.icon className="w-24 h-24" style={{ color: PALETTE.accent }} />
                   </div>
                 </motion.div>
               ))}
             </div>
           </div>
 
-          {/* Capabilities grid */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Capabilities + Dashboard */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-5">
-              <h3 className="font-display font-bold text-3xl text-white">
+              <h3
+                className="font-display font-bold text-3xl"
+                style={{ color: PALETTE.text }}
+              >
                 Capacidades que{" "}
-                <span className="gradient-text">redefinen el marketing</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-cormorant), serif",
+                    fontStyle: "italic",
+                    color: PALETTE.accent,
+                  }}
+                >
+                  redefinen el marketing
+                </span>
               </h3>
               <div className="space-y-4">
                 {capabilities.map((cap, i) => (
                   <motion.div
                     key={cap.title}
-                    className="flex items-start gap-4 p-5 glass border border-white/5 rounded-2xl card-hover-glow"
+                    className="flex items-start gap-4 p-5 rounded-2xl"
+                    style={{
+                      backgroundColor: PALETTE.bgWhite,
+                      boxShadow: "0 0 0 1px rgba(26, 24, 21, 0.06)",
+                    }}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08, duration: 0.5 }}
+                    whileHover={{ x: 4 }}
                   >
-                    <div className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-800 flex items-center justify-center">
-                      <cap.icon className="w-5 h-5 text-white" />
+                    <div
+                      className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ backgroundColor: PALETTE.accent }}
+                    >
+                      <cap.icon className="w-5 h-5" style={{ color: PALETTE.bgWhite }} />
                     </div>
                     <div>
-                      <h4 className="font-display font-semibold text-white mb-1">{cap.title}</h4>
-                      <p className="text-sm text-slate-400 leading-relaxed">{cap.description}</p>
+                      <h4
+                        className="font-display font-semibold mb-1"
+                        style={{ color: PALETTE.text }}
+                      >
+                        {cap.title}
+                      </h4>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: PALETTE.textMuted }}
+                      >
+                        {cap.description}
+                      </p>
                     </div>
                   </motion.div>
                 ))}
               </div>
             </div>
 
-            {/* Visual: Central AI graphic */}
-            <motion.div
-              className="relative flex items-center justify-center h-[450px]"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              {/* Outer rings */}
-              {[280, 220, 160].map((size, i) => (
-                <motion.div
-                  key={size}
-                  className="absolute rounded-full border border-violet-500/20"
-                  style={{ width: size, height: size }}
-                  animate={{ rotate: [0, i % 2 === 0 ? 360 : -360] }}
-                  transition={{ duration: 20 + i * 5, repeat: Infinity, ease: "linear" }}
-                >
-                  {/* Dot on ring */}
-                  <div
-                    className="absolute w-3 h-3 rounded-full bg-violet-500 shadow-glow-violet-sm"
-                    style={{
-                      top: "50%",
-                      left: "0%",
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  />
-                </motion.div>
-              ))}
-
-              {/* Core */}
-              <motion.div
-                className="relative w-32 h-32 rounded-full bg-gradient-to-br from-violet-600 to-purple-800 flex items-center justify-center shadow-glow-violet"
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Bot className="w-16 h-16 text-white" />
-                {/* Outer glow */}
-                <div className="absolute inset-0 rounded-full bg-violet-500/30 blur-2xl -z-10" />
-              </motion.div>
-
-              {/* Floating labels */}
-              {[
-                { label: "GPT-4o", angle: 0, radius: 160 },
-                { label: "Claude", angle: 72, radius: 160 },
-                { label: "ML Models", angle: 144, radius: 160 },
-                { label: "Analytics", angle: 216, radius: 160 },
-                { label: "Automation", angle: 288, radius: 160 },
-              ].map((item) => {
-                const rad = (item.angle * Math.PI) / 180;
-                const x = Math.cos(rad) * item.radius;
-                const y = Math.sin(rad) * item.radius;
-                return (
-                  <motion.div
-                    key={item.label}
-                    className="absolute px-3 py-1.5 rounded-xl bg-violet-500/20 border border-violet-500/30 text-violet-300 text-xs font-display font-semibold whitespace-nowrap"
-                    style={{
-                      transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
-                    }}
-                    animate={{ opacity: [0.6, 1, 0.6] }}
-                    transition={{ duration: 2 + item.angle / 100, repeat: Infinity }}
-                  >
-                    {item.label}
-                  </motion.div>
-                );
-              })}
-            </motion.div>
+            {/* AI dashboard visual */}
+            <AIDashboard />
           </div>
 
           {/* Tech stack */}
           <div className="space-y-6 text-center">
-            <h3 className="font-display font-semibold text-slate-400 text-sm uppercase tracking-widest">
+            <h3
+              className="font-mono text-xs uppercase tracking-[0.28em]"
+              style={{ color: PALETTE.textMuted }}
+            >
               Stack tecnológico
             </h3>
             <div className="flex flex-wrap items-center justify-center gap-3">
               {techStack.map((tech, i) => (
                 <motion.span
                   key={tech}
-                  className="px-4 py-2 glass border border-white/8 text-slate-300 text-sm rounded-xl font-medium"
+                  className="px-4 py-2 rounded-full text-sm font-medium border"
+                  style={{
+                    backgroundColor: PALETTE.bgWhite,
+                    borderColor: PALETTE.hairline,
+                    color: PALETTE.text,
+                  }}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
-                  whileHover={{ borderColor: "rgba(139,92,246,0.4)", color: "#c4b5fd" }}
+                  whileHover={{
+                    borderColor: PALETTE.accent,
+                    color: PALETTE.accent,
+                  }}
                 >
                   {tech}
                 </motion.span>

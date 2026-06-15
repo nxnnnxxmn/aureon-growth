@@ -1,0 +1,41 @@
+// Aureon Growth - Database schema
+// To switch to PostgreSQL in production: change provider to "postgresql" and update DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Lead capture - main contact form submissions
+model Lead {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  phone        String
+  company      String?
+  service      String
+  budget       String?
+  message      String
+  source       String?  // utm_source, referral, etc.
+  status       String   @default("new") // new | contacted | qualified | won | lost
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Newsletter subscriptions
+model Subscriber {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+}

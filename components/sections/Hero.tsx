@@ -1,298 +1,448 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import {
-  ArrowRight,
-  TrendingUp,
-  Users,
-  DollarSign,
-  Star,
-  Sparkles,
-  ChevronDown,
-} from "lucide-react";
-import ParticleField from "@/components/common/ParticleField";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowUpRight, Sparkles, TrendingUp } from "lucide-react";
 import AnimatedCounter from "@/components/common/AnimatedCounter";
+import MagneticButton from "@/components/common/MagneticButton";
 
-const metrics = [
-  {
-    icon: TrendingUp,
-    value: 400,
-    suffix: "%",
-    label: "ROI Promedio",
-    color: "from-violet-500 to-purple-600",
-  },
-  {
-    icon: Users,
-    value: 850,
-    suffix: "+",
-    label: "Marcas Transformadas",
-    color: "from-purple-500 to-violet-600",
-  },
-  {
-    icon: DollarSign,
-    value: 50,
-    suffix: "M+",
-    label: "Ingresos Generados",
-    prefix: "$",
-    color: "from-violet-600 to-indigo-600",
-  },
-  {
-    icon: Star,
-    value: 98,
-    suffix: "%",
-    label: "Satisfacción",
-    color: "from-purple-600 to-violet-500",
-  },
-];
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+const PALETTE = {
+  bg: "#F5F1E8",
+  bgWhite: "#FBF8F1",
+  bgAlt: "#EFE9DB",
+  text: "#1A1815",
+  textMuted: "#6B655E",
+  textSoft: "#9A938A",
+  accent: "#E04E2C",
+  accentSoft: "#F2D0C1",
+  accentDeep: "#A53B1F",
+  forest: "#2D5016",
+  hairline: "rgba(26,24,21,0.10)",
+};
 
 export default function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Mouse-tracking parallax
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 80, damping: 22 });
+  const springY = useSpring(mouseY, { stiffness: 80, damping: 22 });
+
+  // Distinct ornaments — different intensities
+  const orb1X = useTransform(springX, [-1, 1], [-50, 50]);
+  const orb1Y = useTransform(springY, [-1, 1], [-50, 50]);
+  const orb1Rot = useTransform(springX, [-1, 1], [-12, 12]);
+
+  const orb2X = useTransform(springX, [-1, 1], [30, -30]);
+  const orb2Y = useTransform(springY, [-1, 1], [25, -25]);
+
+  const imgX = useTransform(springX, [-1, 1], [-22, 22]);
+  const imgY = useTransform(springY, [-1, 1], [-15, 15]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(".hero-line", {
+          yPercent: 110,
+          duration: 1.15,
+          ease: "power4.out",
+          stagger: 0.09,
+          delay: 0.3,
+        });
+        gsap.from(".hero-fade", {
+          opacity: 0,
+          y: 24,
+          duration: 0.9,
+          stagger: 0.1,
+          delay: 1.0,
+          ease: "power2.out",
+        });
+        gsap.from(".hero-image", {
+          opacity: 0,
+          scale: 0.92,
+          rotate: -3,
+          duration: 1.3,
+          delay: 0.6,
+          ease: "power3.out",
+        });
+
+        // Scroll parallax
+        gsap.to(".big-number-bg", {
+          yPercent: -10,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+        gsap.to(".dot-pattern", {
+          yPercent: 20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 2,
+          },
+        });
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x * 2);
+    mouseY.set(y * 2);
+  };
 
   return (
     <section
-      ref={ref}
+      ref={sectionRef}
       id="inicio"
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background"
+      onMouseMove={handleMouseMove}
+      className="relative isolate flex flex-col min-h-[100dvh] w-full overflow-hidden pt-24 lg:pt-28 pb-12"
+      style={{ backgroundColor: PALETTE.bg, color: PALETTE.text }}
     >
-      {/* Grid background */}
-      <div className="absolute inset-0 grid-bg opacity-100" />
+      {/* Paper texture */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 pointer-events-none opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' /%3E%3C/svg%3E\")",
+        }}
+      />
 
-      {/* Particles */}
-      <div className="absolute inset-0">
-        <ParticleField count={80} />
+      {/* Dot pattern decorative */}
+      <div
+        aria-hidden
+        className="dot-pattern absolute top-32 right-[8%] w-72 h-72 -z-10 pointer-events-none opacity-30"
+        style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, ${PALETTE.text} 1px, transparent 0)`,
+          backgroundSize: "16px 16px",
+        }}
+      />
+
+      {/* HUGE editorial number — background watermark */}
+      <div
+        aria-hidden
+        className="big-number-bg absolute -top-12 -left-12 -z-10 pointer-events-none select-none leading-none"
+        style={{
+          fontFamily: "var(--font-cormorant), serif",
+          fontStyle: "italic",
+          fontSize: "clamp(18rem, 32vw, 36rem)",
+          fontWeight: 300,
+          color: PALETTE.text,
+          opacity: 0.05,
+        }}
+      >
+        A
       </div>
 
-      {/* Glow orbs */}
-      <motion.div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full"
-        style={{
-          background:
-            "radial-gradient(ellipse, rgba(124,58,237,0.2) 0%, rgba(109,40,217,0.08) 40%, transparent 70%)",
-          filter: "blur(60px)",
-        }}
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.6, 1, 0.6],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div
-        className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full opacity-10"
-        style={{
-          background:
-            "radial-gradient(ellipse, rgba(139,92,246,0.8) 0%, transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
-
-      {/* Noise overlay */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E")`,
-        }}
-      />
-
-      <motion.div
-        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 lg:pt-20 pb-20"
-        style={{ y, opacity }}
-      >
-        <div className="flex flex-col items-center text-center gap-8">
-          {/* Badge */}
-          <motion.div
-            className="flex items-center gap-2 px-5 py-2 rounded-full glass-violet border border-violet-500/25"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <Sparkles className="w-4 h-4 text-violet-400 animate-pulse" />
-            <span className="text-sm font-display font-medium text-violet-300 tracking-wide">
-              Agencia Premium de Marketing Digital con IA
-            </span>
-            <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-400 text-xs font-semibold">
-              NEW 2025
-            </span>
-          </motion.div>
-
-          {/* Headline */}
-          <div className="space-y-3">
-            <motion.h1
-              className="font-display font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-[1.05] tracking-tight"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+      <div className="relative z-10 flex-1 w-full max-w-[1400px] mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        {/* LEFT — text column */}
+        <div className="lg:col-span-7">
+          {/* Eyebrow */}
+          <div className="hero-fade flex items-center gap-3 mb-6">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: PALETTE.accent }}
+            />
+            <span
+              className="font-mono text-xs uppercase tracking-[0.28em]"
+              style={{ color: PALETTE.accent }}
             >
-              <motion.span
-                className="block text-white"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              >
-                Transformamos
-              </motion.span>
-              <motion.span
-                className="block"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <span className="text-white">Marcas en </span>
-                <span className="relative inline-block">
-                  <span className="gradient-text">Imperios</span>
-                  <motion.span
-                    className="absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-gradient-to-r from-violet-500 to-purple-400"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ transformOrigin: "left" }}
-                  />
-                </span>
-              </motion.span>
-              <motion.span
-                className="block text-white"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              >
-                Digitales
-              </motion.span>
-            </motion.h1>
+              Growth Partner · LATAM · Desde 2019
+            </span>
           </div>
 
+          {/* Headline — innovative typography mix */}
+          <h1
+            className="font-display font-semibold tracking-[-0.025em] leading-[0.98] text-[clamp(2.75rem,8vw,6.5rem)] max-w-[16ch]"
+            style={{ color: PALETTE.text }}
+          >
+            <span className="block overflow-hidden pb-2">
+              <span className="hero-line block">
+                Lanzamos
+              </span>
+            </span>
+            <span className="block overflow-hidden pb-2">
+              <span className="hero-line block">
+                <span
+                  style={{
+                    fontFamily: "var(--font-cormorant), serif",
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: PALETTE.accent,
+                  }}
+                >
+                  marcas
+                </span>{" "}
+                que
+              </span>
+            </span>
+            <span className="block overflow-hidden pb-2">
+              <span className="hero-line block">
+                importan
+                <span style={{ color: PALETTE.accent }}>.</span>
+              </span>
+            </span>
+          </h1>
+
           {/* Subtitle */}
-          <motion.p
-            className="max-w-2xl text-lg sm:text-xl text-slate-400 leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.65 }}
+          <p
+            className="hero-fade mt-8 max-w-[52ch] text-lg lg:text-xl leading-[1.55]"
+            style={{ color: PALETTE.textMuted }}
           >
-            Fusionamos estrategia, tecnología e inteligencia artificial para catapultar tu marca
-            al liderazgo digital. No somos una agencia típica — somos el sistema de crecimiento
-            más avanzado del mercado.
-          </motion.p>
+            En 5 años hemos generado{" "}
+            <span style={{ color: PALETTE.text, fontWeight: 600 }}>
+              +$50M en revenue
+            </span>{" "}
+            para 850 marcas. No vendemos servicios — operamos como tu socio
+            estratégico de crecimiento.
+          </p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            className="flex flex-col sm:flex-row items-center gap-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-          >
-            <motion.a
+          {/* CTAs */}
+          <div className="hero-fade flex flex-wrap items-center gap-4 mt-10">
+            <MagneticButton
               href="#contacto"
-              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-700 text-white font-display font-semibold text-lg rounded-2xl overflow-hidden"
+              strength={0.25}
+              innerStrength={0.4}
+              radius={120}
+              className="group inline-flex items-center gap-2 px-8 py-4 font-display font-semibold text-sm rounded-full transition-all duration-300"
               style={{
-                boxShadow:
-                  "0 0 30px rgba(139,92,246,0.4), 0 0 60px rgba(124,58,237,0.15), inset 0 1px 0 rgba(255,255,255,0.1)",
+                backgroundColor: PALETTE.accent,
+                color: PALETTE.bgWhite,
+                boxShadow: "0 14px 36px -10px rgba(224, 78, 44, 0.45)",
               }}
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.97 }}
             >
-              <span className="relative z-10">Iniciar Proyecto Ahora</span>
-              <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              {/* Shimmer */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
-            </motion.a>
+              Conversación gratis
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </MagneticButton>
 
-            <motion.a
+            <MagneticButton
               href="#portafolio"
-              className="inline-flex items-center gap-3 px-8 py-4 glass border border-violet-500/25 text-slate-200 font-display font-medium text-lg rounded-2xl hover:border-violet-400/50 hover:bg-violet-500/10 transition-all duration-300"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              strength={0.18}
+              innerStrength={0.32}
+              radius={110}
+              className="group inline-flex items-center gap-2 px-8 py-4 font-display font-semibold text-sm rounded-full border-2 transition-colors duration-300"
+              style={{
+                borderColor: PALETTE.text,
+                color: PALETTE.text,
+              }}
             >
-              Ver Casos de Éxito
-            </motion.a>
-          </motion.div>
+              Ver portafolio
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </MagneticButton>
+          </div>
 
-          {/* Social proof */}
-          <motion.div
-            className="flex flex-wrap items-center justify-center gap-6 pt-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 1 }}
-          >
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2.5">
-                {["A", "B", "C", "D", "E"].map((l, i) => (
-                  <div
-                    key={l}
-                    className="w-8 h-8 rounded-full border-2 border-background flex items-center justify-center text-xs font-bold text-white"
-                    style={{
-                      background: `linear-gradient(135deg, hsl(${260 + i * 15}, 70%, 55%), hsl(${280 + i * 15}, 65%, 45%))`,
-                    }}
-                  >
-                    {l}
-                  </div>
-                ))}
+          {/* Inline metric strip */}
+          <div className="hero-fade mt-12 lg:mt-14 flex flex-wrap items-end gap-x-8 gap-y-4 pt-8 border-t" style={{ borderColor: PALETTE.hairline }}>
+            {[
+              { v: 850, s: "+", l: "marcas escaladas" },
+              { v: 400, s: "%", l: "ROI promedio" },
+              { v: 50, p: "$", s: "M+", l: "revenue generado" },
+            ].map((m) => (
+              <div key={m.l} className="flex items-baseline gap-2">
+                <div
+                  className="font-display font-bold text-2xl lg:text-3xl tabular-nums leading-none"
+                  style={{ color: PALETTE.text }}
+                >
+                  <AnimatedCounter end={m.v} prefix={m.p || ""} suffix={m.s} />
+                </div>
+                <div
+                  className="text-xs lg:text-sm"
+                  style={{ color: PALETTE.textMuted }}
+                >
+                  {m.l}
+                </div>
               </div>
-              <div className="text-sm text-slate-400">
-                <span className="text-slate-200 font-semibold">+850</span> marcas confían en nosotros
-              </div>
-            </div>
-            <div className="h-4 w-px bg-slate-700 hidden sm:block" />
-            <div className="flex items-center gap-1.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              ))}
-              <span className="text-sm text-slate-400 ml-1">4.9/5 en Google</span>
-            </div>
-          </motion.div>
+            ))}
+          </div>
         </div>
 
-        {/* Metrics floating cards */}
-        <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-20"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {metrics.map((m, i) => (
-            <motion.div
-              key={m.label}
-              className="glass-violet border border-violet-500/15 rounded-2xl p-5 group hover:border-violet-400/40 transition-all duration-300"
+        {/* RIGHT — editorial magazine spread composition */}
+        <div className="lg:col-span-5 relative">
+          <motion.div
+            style={{ x: imgX, y: imgY }}
+            className="hero-image relative aspect-[4/5] w-full max-w-md mx-auto lg:mx-0 lg:ml-auto"
+          >
+            {/* Layer 1: Vermillion rounded block — brand color foundation */}
+            <div
+              className="absolute inset-0 rounded-3xl"
               style={{
-                animationDelay: `${i * 1.5}s`,
-                boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+                backgroundColor: PALETTE.accent,
+                boxShadow: "0 30px 80px -20px rgba(224, 78, 44, 0.35)",
               }}
-              whileHover={{ y: -6, boxShadow: "0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(139,92,246,0.15)" }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${m.color} bg-opacity-20 mb-3`}>
-                <m.icon className="w-5 h-5 text-white" />
-              </div>
-              <div className="font-display font-black text-3xl text-white mb-1">
-                <AnimatedCounter
-                  end={m.value}
-                  prefix={m.prefix || ""}
-                  suffix={m.suffix}
-                />
-              </div>
-              <div className="text-sm text-slate-400 font-medium">{m.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
+            />
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-      >
-        <span className="text-xs text-slate-500 font-medium tracking-widest uppercase">
-          Scroll
-        </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ChevronDown className="w-5 h-5 text-violet-400" />
-        </motion.div>
-      </motion.div>
+            {/* Layer 2: Image with duotone treatment — brand-coherent */}
+            <div
+              className="absolute inset-2 rounded-3xl overflow-hidden"
+              style={{
+                boxShadow: "inset 0 0 0 1px rgba(251, 248, 241, 0.15)",
+              }}
+            >
+              <img
+                src="https://picsum.photos/seed/lancheros-marketing-agency-23/640/800"
+                alt="Aureon Growth creative direction"
+                className="w-full h-full object-cover"
+                style={{
+                  filter: "grayscale(100%) brightness(0.95) contrast(1.1)",
+                }}
+              />
+              {/* Duotone vermillion overlay */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(135deg, rgba(224, 78, 44, 0.55) 0%, rgba(165, 59, 31, 0.65) 60%, rgba(26, 24, 21, 0.35) 100%)`,
+                  mixBlendMode: "multiply",
+                }}
+              />
+              {/* Cream highlight layer */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `radial-gradient(ellipse at top right, rgba(251, 248, 241, 0.25) 0%, transparent 50%)`,
+                }}
+              />
+            </div>
+
+            {/* Layer 3: Editorial typography overlay — "magazine cover" feel */}
+            <div className="absolute inset-2 rounded-3xl overflow-hidden pointer-events-none">
+              {/* Big serif italic letter — top-left corner */}
+              <div
+                className="absolute top-3 left-5 select-none leading-none"
+                style={{
+                  fontFamily: "var(--font-cormorant), serif",
+                  fontStyle: "italic",
+                  fontSize: "clamp(5rem, 12vw, 8rem)",
+                  fontWeight: 300,
+                  color: PALETTE.bgWhite,
+                  opacity: 0.85,
+                }}
+              >
+                L
+              </div>
+              {/* Small mono label — top right */}
+              <div
+                className="absolute top-5 right-5 font-mono text-[10px] uppercase tracking-[0.25em] text-right"
+                style={{ color: PALETTE.bgWhite, opacity: 0.85 }}
+              >
+                Vol. 01<br />
+                Marketing<br />
+                & Growth
+              </div>
+              {/* Bottom catalog footer */}
+              <div
+                className="absolute bottom-5 left-5 right-5 flex justify-between items-end"
+              >
+                <div
+                  className="font-display font-bold text-2xl leading-none"
+                  style={{ color: PALETTE.bgWhite }}
+                >
+                  AUREON<br />
+                  <span
+                    style={{
+                      fontFamily: "var(--font-cormorant), serif",
+                      fontStyle: "italic",
+                      fontWeight: 400,
+                      fontSize: "0.65em",
+                    }}
+                  >
+                    growth
+                  </span>
+                </div>
+                <div
+                  className="font-mono text-[9px] uppercase tracking-[0.25em] text-right"
+                  style={{ color: PALETTE.bgWhite, opacity: 0.7 }}
+                >
+                  Ed. MMXXVI<br />
+                  Bogotá
+                </div>
+              </div>
+              {/* Decorative line */}
+              <div
+                className="absolute top-32 left-5 right-5 h-px"
+                style={{ backgroundColor: PALETTE.bgWhite, opacity: 0.3 }}
+              />
+            </div>
+
+            {/* Floating quote card */}
+            <motion.div
+              style={{
+                x: orb2X,
+                y: orb2Y,
+                backgroundColor: PALETTE.bgWhite,
+                boxShadow: "0 20px 50px -15px rgba(26, 24, 21, 0.18)",
+              }}
+              className="absolute -bottom-8 -left-8 lg:-left-16 max-w-[280px] p-6 rounded-3xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
+            >
+              <Sparkles
+                className="w-5 h-5 mb-3"
+                style={{ color: PALETTE.accent }}
+              />
+              <p
+                className="text-sm leading-snug font-medium mb-3"
+                style={{ color: PALETTE.text }}
+              >
+                &ldquo;Aureon llevó nuestro revenue de{" "}
+                <span style={{ color: PALETTE.accent }}>$2M a $14M</span> en 18
+                meses.&rdquo;
+              </p>
+              <div
+                className="text-[10px] uppercase tracking-[0.2em] font-mono"
+                style={{ color: PALETTE.textMuted }}
+              >
+                — Founder, Marca DTC
+              </div>
+            </motion.div>
+
+            {/* Floating metric pill */}
+            <motion.div
+              style={{
+                x: orb1X,
+                y: orb1Y,
+                rotate: orb1Rot,
+                backgroundColor: PALETTE.accent,
+                color: PALETTE.bgWhite,
+                boxShadow: "0 16px 40px -10px rgba(224, 78, 44, 0.50)",
+              }}
+              className="absolute -top-6 -right-6 lg:-right-10 p-5 rounded-2xl flex items-center gap-3"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.4, duration: 0.6, ease: "backOut" }}
+            >
+              <TrendingUp className="w-7 h-7" />
+              <div>
+                <div className="font-display font-bold text-2xl leading-none">
+                  +400%
+                </div>
+                <div className="text-[10px] uppercase tracking-wider opacity-85">
+                  ROI promedio
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

@@ -1,84 +1,178 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, ExternalLink } from "lucide-react";
-import SectionHeader from "@/components/common/SectionHeader";
+import { useState, useRef } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { CASES } from "@/lib/cases";
+
+const PALETTE = {
+  bg: "#F5F1E8",
+  bgWhite: "#FBF8F1",
+  bgAlt: "#EFE9DB",
+  text: "#1A1815",
+  textMuted: "#6B655E",
+  accent: "#E04E2C",
+  accentSoft: "#F2D0C1",
+  hairline: "rgba(26,24,21,0.10)",
+};
 
 const filters = ["Todos", "Branding", "Web", "Performance", "Contenido", "IA"];
+const LARGE_SLUGS = new Set(["reachmore-saas", "medpro-clinics"]);
 
-const projects = [
-  {
-    id: 1,
-    title: "ReachMore SaaS",
-    category: "Performance",
-    tags: ["Performance", "Web"],
-    description: "Plataforma B2B que escaló de 0 a $2M ARR con estrategia de growth y paid media.",
-    metric: "+2,400% MQL",
-    bg: "from-violet-900/50 to-purple-950/80",
-    accentBg: "#7c3aed",
-    size: "large",
-  },
-  {
-    id: 2,
-    title: "Natura Cosméticos",
-    category: "Branding",
-    tags: ["Branding", "Contenido"],
-    description: "Rebranding completo y estrategia de contenido que triplicó el engagement.",
-    metric: "3X Engagement",
-    bg: "from-purple-900/50 to-violet-950/80",
-    accentBg: "#6d28d9",
-    size: "normal",
-  },
-  {
-    id: 3,
-    title: "FinFlow App",
-    category: "IA",
-    tags: ["IA", "Web", "Performance"],
-    description: "Sistema de automatización con IA que redujo el CPA en 71% en 45 días.",
-    metric: "-71% CPA",
-    bg: "from-indigo-900/50 to-violet-950/80",
-    accentBg: "#4c1d95",
-    size: "normal",
-  },
-  {
-    id: 4,
-    title: "Urban Threads",
-    category: "Contenido",
-    tags: ["Contenido", "Branding"],
-    description: "Identidad visual y sistema de contenido para marca de moda emergente.",
-    metric: "500K → 2M seguidores",
-    bg: "from-violet-950/80 to-purple-900/50",
-    accentBg: "#7c3aed",
-    size: "normal",
-  },
-  {
-    id: 5,
-    title: "MedPro Clinics",
-    category: "Web",
-    tags: ["Web", "Performance"],
-    description: "Desarrollo web + SEO técnico que posicionó 80 keywords en top 3 de Google.",
-    metric: "80 Keywords #1-3",
-    bg: "from-purple-950/80 to-indigo-900/50",
-    accentBg: "#6d28d9",
-    size: "large",
-  },
-  {
-    id: 6,
-    title: "EduVerse Platform",
-    category: "IA",
-    tags: ["IA", "Performance", "Web"],
-    description: "Funnels inteligentes con personalización IA que cuadruplicaron la conversión.",
-    metric: "4X Conversión",
-    bg: "from-violet-900/60 to-purple-950/80",
-    accentBg: "#7c3aed",
-    size: "normal",
-  },
-];
+const projects = CASES.map((c, idx) => ({
+  slug: c.slug,
+  title: c.brand,
+  category: c.category,
+  tags: c.tags,
+  description: c.description,
+  metric: c.heroMetric,
+  num: String(idx + 1).padStart(2, "0"),
+  size: LARGE_SLUGS.has(c.slug) ? "large" : "normal",
+}));
+
+function ProjectCard({ project, idx }: { project: typeof projects[0]; idx: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springCfg = { stiffness: 180, damping: 22 };
+  const rotateX = useTransform(useSpring(y, springCfg), [-0.5, 0.5], [5, -5]);
+  const rotateY = useTransform(useSpring(x, springCfg), [-0.5, 0.5], [-5, 5]);
+
+  const handleMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const r = cardRef.current.getBoundingClientRect();
+    x.set((e.clientX - r.left) / r.width - 0.5);
+    y.set((e.clientY - r.top) / r.height - 0.5);
+  };
+  const handleLeave = () => {
+    x.set(0);
+    y.set(0);
+    setHovered(false);
+  };
+
+  const isLarge = project.size === "large";
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={handleLeave}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      style={{ rotateX, rotateY, transformPerspective: 1200 }}
+      className={`group relative rounded-3xl overflow-hidden cursor-pointer will-change-transform ${
+        isLarge ? "md:col-span-2" : ""
+      }`}
+    >
+      <Link href={`/casos/${project.slug}`} className="block h-full">
+        <div
+          className="relative rounded-3xl overflow-hidden transition-all duration-500 h-full min-h-[420px]"
+          style={{
+            backgroundColor: hovered ? PALETTE.accent : PALETTE.bgWhite,
+            boxShadow: hovered
+              ? "0 30px 70px -20px rgba(224, 78, 44, 0.40), 0 0 0 1px rgba(224, 78, 44, 0.20)"
+              : "0 12px 32px -12px rgba(26, 24, 21, 0.10), 0 0 0 1px rgba(26, 24, 21, 0.06)",
+          }}
+        >
+          {/* Pattern */}
+          <div
+            className="absolute inset-0 transition-opacity duration-500"
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, ${
+                hovered ? "rgba(251,248,241,0.18)" : "rgba(26,24,21,0.05)"
+              } 1.5px, transparent 0)`,
+              backgroundSize: "18px 18px",
+              opacity: hovered ? 1 : 0.65,
+            }}
+          />
+
+          {/* Big italic number */}
+          <div
+            className="absolute top-5 right-7 select-none leading-none pointer-events-none transition-all duration-500"
+            style={{
+              fontFamily: "var(--font-cormorant), serif",
+              fontStyle: "italic",
+              fontSize: "5rem",
+              fontWeight: 300,
+              color: hovered ? "rgba(251, 248, 241, 0.55)" : PALETTE.accent,
+              opacity: hovered ? 0.7 : 0.4,
+            }}
+          >
+            {project.num}
+          </div>
+
+          <div className="relative z-10 p-7 lg:p-9 h-full flex flex-col">
+            {/* Category badge */}
+            <div className="mb-6">
+              <span
+                className="font-mono text-[10px] uppercase tracking-[0.22em] px-3 py-1.5 rounded-full inline-block transition-all duration-500"
+                style={{
+                  backgroundColor: hovered ? PALETTE.bgWhite : PALETTE.accentSoft,
+                  color: PALETTE.accent,
+                }}
+              >
+                {project.category}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h3
+              className="font-display font-semibold text-xl lg:text-2xl leading-tight mb-3 transition-colors duration-500"
+              style={{ color: hovered ? PALETTE.bgWhite : PALETTE.text }}
+            >
+              {project.title}
+            </h3>
+
+            {/* Description */}
+            <p
+              className="text-sm leading-relaxed mb-6 transition-colors duration-500"
+              style={{
+                color: hovered
+                  ? "rgba(251, 248, 241, 0.85)"
+                  : PALETTE.textMuted,
+              }}
+            >
+              {project.description.substring(0, 140)}...
+            </p>
+
+            {/* Metric */}
+            <div
+              className="mt-auto pt-5 border-t flex items-center justify-between transition-all duration-500"
+              style={{
+                borderColor: hovered
+                  ? "rgba(251, 248, 241, 0.25)"
+                  : PALETTE.hairline,
+              }}
+            >
+              <div
+                className="font-display font-bold text-xl lg:text-2xl leading-none transition-colors duration-500"
+                style={{ color: hovered ? PALETTE.bgWhite : PALETTE.accent }}
+              >
+                {project.metric}
+              </div>
+              <ArrowUpRight
+                className="w-5 h-5 transition-all"
+                style={{
+                  color: hovered ? PALETTE.bgWhite : PALETTE.accent,
+                  transform: hovered ? "translate(3px, -3px)" : "none",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
 
 export default function Portfolio() {
   const [active, setActive] = useState("Todos");
-  const [hovered, setHovered] = useState<number | null>(null);
 
   const filtered =
     active === "Todos"
@@ -86,155 +180,101 @@ export default function Portfolio() {
       : projects.filter((p) => p.tags.includes(active));
 
   return (
-    <section id="portafolio" className="relative py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-[#070710]" />
-      <div className="absolute inset-0 grid-bg opacity-40" />
+    <section
+      id="portafolio"
+      className="relative w-full overflow-hidden py-24 lg:py-32"
+      style={{ backgroundColor: PALETTE.bg, color: PALETTE.text }}
+    >
       <div
-        className="absolute top-1/2 left-0 w-96 h-96 opacity-15 pointer-events-none"
+        aria-hidden
+        className="absolute -top-32 right-0 w-[600px] h-[600px] rounded-full -z-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse, rgba(124,58,237,1) 0%, transparent 70%)",
-          filter: "blur(80px)",
+          background: `radial-gradient(circle, ${PALETTE.accentSoft} 0%, transparent 70%)`,
+          opacity: 0.3,
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-14">
-          {/* Header */}
-          <div className="flex flex-col items-center">
-            <SectionHeader
-              badge="Portafolio"
-              title="Proyectos que "
-              titleHighlight="definen categorías"
-              description="Cada proyecto es una historia de transformación. Aquí, algunas de las marcas que llevamos de la ambición a los resultados."
-            />
+      <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 lg:px-12">
+        {/* Header */}
+        <div className="mb-12 lg:mb-16 max-w-3xl">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="h-px w-10" style={{ backgroundColor: PALETTE.accent }} />
+            <span
+              className="font-mono text-xs uppercase tracking-[0.28em]"
+              style={{ color: PALETTE.accent }}
+            >
+              Cap. 05 — Casos de éxito
+            </span>
           </div>
+          <h2
+            className="font-display font-semibold text-[clamp(2rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.02em] mb-6"
+            style={{ color: PALETTE.text }}
+          >
+            Transformaciones que{" "}
+            <span
+              style={{
+                fontFamily: "var(--font-cormorant), serif",
+                fontStyle: "italic",
+                color: PALETTE.accent,
+              }}
+            >
+              definen categorías
+            </span>
+            .
+          </h2>
+          <p
+            className="text-base lg:text-lg leading-relaxed"
+            style={{ color: PALETTE.textMuted }}
+          >
+            Cada caso documenta el reto, la estrategia y los resultados — un
+            patrón de transformación por industria. Trabajamos bajo NDA con la
+            mayoría de nuestros clientes.
+          </p>
+        </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {filters.map((f) => (
-              <motion.button
-                key={f}
-                onClick={() => setActive(f)}
-                className={`px-5 py-2.5 rounded-xl text-sm font-display font-medium transition-all duration-300 ${
-                  active === f
-                    ? "bg-gradient-to-r from-violet-600 to-purple-700 text-white shadow-glow-violet-sm"
-                    : "glass border border-white/8 text-slate-400 hover:text-slate-200 hover:border-violet-500/25"
-                }`}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                {f}
-              </motion.button>
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2 mb-12">
+          {filters.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActive(f)}
+              className="px-5 py-2.5 rounded-full text-sm font-medium transition-all border-2"
+              style={{
+                backgroundColor: active === f ? PALETTE.accent : "transparent",
+                borderColor: active === f ? PALETTE.accent : PALETTE.hairline,
+                color: active === f ? PALETTE.bgWhite : PALETTE.text,
+              }}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        {/* Projects grid */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 auto-rows-min"
+          style={{ perspective: 1500 }}
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.slice(0, 6).map((p, idx) => (
+              <ProjectCard key={p.slug} project={p} idx={idx} />
             ))}
-          </div>
-
-          {/* Grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {filtered.map((project, i) => (
-                <motion.div
-                  key={project.id}
-                  className={`relative rounded-3xl overflow-hidden cursor-pointer group ${
-                    project.size === "large" ? "md:col-span-2 lg:col-span-1" : ""
-                  }`}
-                  style={{ minHeight: "280px" }}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  onHoverStart={() => setHovered(project.id)}
-                  onHoverEnd={() => setHovered(null)}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  {/* Background */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.bg}`} />
-                  <div
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                      backgroundImage: `radial-gradient(circle at 70% 30%, ${project.accentBg}60, transparent 60%)`,
-                    }}
-                  />
-
-                  {/* Grid pattern */}
-                  <div className="absolute inset-0 grid-bg opacity-30" />
-
-                  {/* Border */}
-                  <div className="absolute inset-0 border border-violet-500/20 rounded-3xl group-hover:border-violet-400/50 transition-colors duration-300" />
-
-                  {/* Hover overlay */}
-                  <motion.div
-                    className="absolute inset-0 bg-violet-600/10 backdrop-blur-[2px]"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: hovered === project.id ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-
-                  {/* Content */}
-                  <div className="relative z-10 p-7 h-full flex flex-col justify-between" style={{ minHeight: "280px" }}>
-                    {/* Top */}
-                    <div className="flex items-start justify-between">
-                      <span className="px-3 py-1.5 rounded-xl bg-violet-500/20 border border-violet-500/20 text-violet-300 text-xs font-display font-medium">
-                        {project.category}
-                      </span>
-                      <motion.div
-                        className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center"
-                        initial={{ rotate: 0 }}
-                        animate={{ rotate: hovered === project.id ? 45 : 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <ExternalLink className="w-4 h-4 text-white" />
-                      </motion.div>
-                    </div>
-
-                    {/* Bottom */}
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="font-display font-bold text-xl text-white mb-1">
-                          {project.title}
-                        </h3>
-                        <p className="text-sm text-slate-300/80 leading-relaxed">
-                          {project.description}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between pt-2">
-                        <span
-                          className="font-display font-black text-2xl"
-                          style={{ color: project.accentBg }}
-                        >
-                          {project.metric}
-                        </span>
-                        <motion.button
-                          className="flex items-center gap-1.5 text-sm text-violet-300 font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          Ver caso
-                          <ArrowUpRight className="w-4 h-4" />
-                        </motion.button>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
           </AnimatePresence>
+        </div>
 
-          {/* CTA */}
-          <div className="text-center">
-            <motion.a
-              href="#contacto"
-              className="inline-flex items-center gap-3 px-7 py-3.5 glass border border-violet-500/25 text-violet-300 font-display font-medium rounded-xl hover:border-violet-400/50 hover:bg-violet-500/10 transition-all"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              Ver todos los proyectos
-              <ArrowUpRight className="w-4 h-4" />
-            </motion.a>
-          </div>
+        {/* See all */}
+        <div className="mt-16 text-center">
+          <Link
+            href="/casos"
+            className="group inline-flex items-center gap-2 px-8 py-4 font-display font-semibold text-sm rounded-full border-2 transition-colors"
+            style={{
+              borderColor: PALETTE.text,
+              color: PALETTE.text,
+            }}
+          >
+            Ver todos los casos
+            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
         </div>
       </div>
     </section>
