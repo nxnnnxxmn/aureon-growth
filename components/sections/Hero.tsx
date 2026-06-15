@@ -336,7 +336,7 @@ export default function Hero() {
                   opacity: 0.85,
                 }}
               >
-                L
+                A
               </div>
               {/* Small mono label — top right */}
               <div
