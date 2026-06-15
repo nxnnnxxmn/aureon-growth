@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   title: "Proceso · Cómo trabajamos",
   description:
     "El proceso de trabajo de Aureon Growth Services: diagnóstico, blueprint estratégico, implementación, lanzamiento, optimización y escalamiento.",
-  alternates: { canonical: "https://aureongrowth.com/proceso" },
-  openGraph: { title: "Proceso | Aureon Growth Services", description: "De diagnóstico a escalamiento, paso a paso.", url: "https://aureongrowth.com/proceso", type: "article" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/proceso" },
+  openGraph: { title: "Proceso | Aureon Growth Services", description: "De diagnóstico a escalamiento, paso a paso.", url: "https://aureon-growth.vercel.app/proceso", type: "article" },
 };
 
 export default function ProcesoPage() {

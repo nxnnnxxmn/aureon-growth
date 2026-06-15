@@ -572,8 +572,8 @@ export default function Contact() {
                 {
                   icon: Mail,
                   label: "Email",
-                  value: "hola@aureongrowth.com",
-                  href: "mailto:hola@aureongrowth.com",
+                  value: "aureongrowthservices@outlook.com",
+                  href: "mailto:aureongrowthservices@outlook.com",
                 },
                 {
                   icon: Phone,

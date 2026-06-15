@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { GROWTH_SYSTEMS } from "@/lib/growth";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://aureongrowth.com";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://aureon-growth.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

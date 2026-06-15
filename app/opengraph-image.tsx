@@ -240,7 +240,7 @@ export default async function OpengraphImage() {
               display: "flex",
             }}
           >
-            aureongrowth.com
+            aureon-growth.vercel.app
           </div>
         </div>
       </div>

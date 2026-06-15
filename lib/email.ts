@@ -8,11 +8,11 @@ const resend = apiKey ? new Resend(apiKey) : null;
 const FROM =
   process.env.CONTACT_FROM_EMAIL ||
   process.env.EMAIL_FROM ||
-  "Aureon Growth <onboarding@resend.dev>";
+  "Aureon Growth Services <onboarding@resend.dev>";
 const TO =
   process.env.CONTACT_TO_EMAIL ||
   process.env.EMAIL_TO ||
-  "hola@aureongrowth.com";
+  "aureongrowthservices@outlook.com";
 
 if (!apiKey && process.env.NODE_ENV !== "production") {
   console.warn(
@@ -64,7 +64,7 @@ function internalLeadTemplate(data: ContactFormData): string {
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<title>Nuevo lead — Aureon Growth</title>
+<title>Nuevo lead — Aureon Growth Services</title>
 </head>
 <body style="margin:0;background:${BRAND_DARK};font-family:-apple-system,BlinkMacSystemFont,Inter,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:32px 16px;">
@@ -75,7 +75,7 @@ function internalLeadTemplate(data: ContactFormData): string {
       </div>
       <div style="padding:28px;">
         <p style="color:#cdb6ec;font-size:14px;margin:0 0 18px;line-height:1.6;">
-          Un prospecto envió el formulario de contacto en aureongrowth.com.
+          Un prospecto envió el formulario de contacto en aureon-growth.vercel.app.
           Responder en menos de <strong style="color:#fff;">2 horas</strong> aumenta la conversión hasta 7×.
         </p>
         <table style="width:100%;border-collapse:collapse;background:rgba(128,84,194,0.04);border:1px solid rgba(128,84,194,0.15);border-radius:12px;overflow:hidden;">
@@ -91,7 +91,7 @@ function internalLeadTemplate(data: ContactFormData): string {
         </div>
       </div>
       <div style="padding:16px 28px;background:rgba(0,0,0,0.3);text-align:center;color:#776a93;font-size:11px;">
-        Aureon Growth · Lead capturado ${new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" })}
+        Aureon Growth Services · Lead capturado ${new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" })}
       </div>
     </div>
   </div>
@@ -106,7 +106,7 @@ function clientReplyTemplate(name: string): string {
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<title>Recibimos tu solicitud — Aureon Growth</title>
+<title>Recibimos tu solicitud — Aureon Growth Services</title>
 </head>
 <body style="margin:0;background:${BRAND_DARK};font-family:-apple-system,BlinkMacSystemFont,Inter,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:32px 16px;">
@@ -165,16 +165,16 @@ function clientReplyTemplate(name: string): string {
           Bienvenido a la familia.
         </p>
         <p style="color:#fff;font-size:14px;line-height:1.7;font-weight:600;margin:0;">
-          El equipo de Aureon Growth
+          El equipo de Aureon Growth Services
         </p>
       </div>
 
       <div style="padding:18px 28px;background:rgba(0,0,0,0.3);border-top:1px solid rgba(128,84,194,0.1);text-align:center;">
         <p style="margin:0 0 6px;color:#776a93;font-size:11px;">
-          Aureon Growth · Agencia premium de marketing digital
+          Aureon Growth Services · Estrategia, tecnología y performance
         </p>
         <p style="margin:0;color:#776a93;font-size:11px;">
-          hola@aureongrowth.com · +57 321 239 6665
+          aureongrowthservices@outlook.com · +57 321 239 6665
         </p>
       </div>
     </div>
@@ -205,7 +205,7 @@ export async function sendClientReply(data: ContactFormData): Promise<SendResult
     await resend.emails.send({
       from: FROM,
       to: data.email,
-      subject: `✨ ${data.name.split(" ")[0]}, recibimos tu solicitud — Aureon Growth`,
+      subject: `✨ ${data.name.split(" ")[0]}, recibimos tu solicitud — Aureon Growth Services`,
       html: clientReplyTemplate(data.name),
     });
     return { ok: true };

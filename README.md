@@ -128,12 +128,12 @@ For production, swap SQLite → Postgres (Supabase recommended):
 1. In `prisma/schema.prisma` change `provider = "sqlite"` to `provider = "postgresql"`
 2. Set `DATABASE_URL` to your Supabase/Neon/Railway connection string
 3. Run `npx prisma migrate deploy`
-4. Verify your domain in Resend, update `EMAIL_FROM` to `hola@yourdomain.com`
+4. Verify your domain in Resend, update `EMAIL_FROM` to `noreply@yourdomain.com`
 
 ---
 
 ## Contact
 
 - WhatsApp: +57 321 239 6665
-- Email: hola@aureongrowth.com
+- Email: aureongrowthservices@outlook.com
 - Location: Bogotá, Colombia · Remote Global

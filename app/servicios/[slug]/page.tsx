@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: s.metaTitle,
     description: s.metaDescription,
-    alternates: { canonical: `https://aureongrowth.com/servicios/${s.slug}` },
-    openGraph: { title: `${s.name} | Aureon Growth Services`, description: s.metaDescription, url: `https://aureongrowth.com/servicios/${s.slug}`, type: "article" },
+    alternates: { canonical: `https://aureon-growth.vercel.app/servicios/${s.slug}` },
+    openGraph: { title: `${s.name} | Aureon Growth Services`, description: s.metaDescription, url: `https://aureon-growth.vercel.app/servicios/${s.slug}`, type: "article" },
   };
 }
 
@@ -33,8 +33,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   const jsonLd = {
     "@context": "https://schema.org", "@type": "Service", name: s.name, description: s.metaDescription,
-    provider: { "@type": "Organization", name: "Aureon Growth Services", url: "https://aureongrowth.com" },
-    areaServed: ["Colombia", "Latinoamérica", "España", "Estados Unidos"], url: `https://aureongrowth.com/servicios/${s.slug}`,
+    provider: { "@type": "Organization", name: "Aureon Growth Services", url: "https://aureon-growth.vercel.app" },
+    areaServed: ["Colombia", "Latinoamérica", "España", "Estados Unidos"], url: `https://aureon-growth.vercel.app/servicios/${s.slug}`,
   };
   const others = GROWTH_SYSTEMS.filter((x) => x.slug !== s.slug);
 

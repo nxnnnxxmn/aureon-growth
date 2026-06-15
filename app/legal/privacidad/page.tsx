@@ -1,184 +1,134 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/sections/Footer";
+import { A } from "@/lib/ui";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad",
   description:
-    "Política de privacidad de Aureon Growth. Cómo recopilamos, usamos y protegemos tu información personal.",
+    "Política de privacidad de Aureon Growth Services. Cómo recopilamos, usamos y protegemos tu información personal.",
+  alternates: { canonical: "https://aureon-growth.vercel.app/legal/privacidad" },
 };
 
 export default function PrivacidadPage() {
   return (
-    <main className="min-h-screen bg-[#F5F1E8]">
-      <div className="max-w-3xl mx-auto px-6 py-20 lg:py-28">
-        {/* Back link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-[#6B655E] hover:text-[#1A1815] transition-colors mb-12 font-medium"
-        >
-          <span aria-hidden>&larr;</span> Volver al inicio
-        </Link>
+    <>
+      <Navbar dark />
+      <main className="relative min-h-screen overflow-hidden" style={{ backgroundColor: A.bg, color: A.text }}>
+        <div aria-hidden className="absolute inset-0 -z-0 tech-grid opacity-30" />
+        <div aria-hidden className="absolute -top-32 -right-24 w-[520px] h-[520px] rounded-full glow-gold pointer-events-none" />
 
-        <h1 className="font-display font-bold text-4xl lg:text-5xl text-[#1A1815] tracking-tight mb-4">
-          Política de Privacidad
-        </h1>
-        <p className="text-sm text-[#9A938A] font-mono uppercase tracking-[0.2em] mb-12">
-          Última actualización: junio 2026
-        </p>
+        <div className="relative z-10 max-w-3xl mx-auto px-6 pt-32 pb-20 lg:pt-40 lg:pb-28">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm transition-colors mb-12 font-medium focus-ring rounded" style={{ color: A.text2 }}>
+            <span aria-hidden>&larr;</span> Volver al inicio
+          </Link>
 
-        <div className="prose-legal space-y-8 text-[#1A1815] leading-relaxed">
-          <Section title="1. Responsable del tratamiento">
-            <p>
-              <strong>Aureon Growth</strong> (en adelante, &quot;nosotros&quot;) es responsable del
-              tratamiento de los datos personales recopilados a través de este sitio web
-              (<strong>aureongrowth.com</strong>).
-            </p>
-            <p>
-              Correo de contacto:{" "}
-              <a href="mailto:hola@aureongrowth.com" className="text-[#E04E2C] hover:underline">
-                hola@aureongrowth.com
-              </a>
-            </p>
-          </Section>
-
-          <Section title="2. Datos que recopilamos">
-            <p>Recopilamos los siguientes datos cuando completas nuestro formulario de contacto:</p>
-            <ul className="list-disc pl-6 space-y-1">
-              <li>Nombre completo</li>
-              <li>Correo electrónico</li>
-              <li>Teléfono (opcional)</li>
-              <li>Nombre de empresa (opcional)</li>
-              <li>Tipo de servicio de interés</li>
-              <li>Rango de presupuesto (opcional)</li>
-              <li>Mensaje descriptivo del proyecto</li>
-            </ul>
-            <p className="mt-3">
-              También recopilamos datos de navegación de forma anonimizada a través de:
-            </p>
-            <ul className="list-disc pl-6 space-y-1">
-              <li>
-                <strong>Google Analytics 4</strong> — métricas de uso del sitio con IP anonimizada
-              </li>
-              <li>
-                <strong>Microsoft Clarity</strong> — mapas de calor y grabaciones de sesión
-                anonimizadas
-              </li>
-            </ul>
-          </Section>
-
-          <Section title="3. Finalidad del tratamiento">
-            <p>Tus datos se utilizan exclusivamente para:</p>
-            <ul className="list-disc pl-6 space-y-1">
-              <li>Responder a tu solicitud de contacto o consulta</li>
-              <li>Enviarte una propuesta personalizada</li>
-              <li>Mejorar la experiencia del sitio web (analítica)</li>
-              <li>Enviarte comunicaciones comerciales si otorgas consentimiento</li>
-            </ul>
-          </Section>
-
-          <Section title="4. Base legal">
-            <p>El tratamiento de tus datos se fundamenta en:</p>
-            <ul className="list-disc pl-6 space-y-1">
-              <li>
-                <strong>Consentimiento</strong> — al enviar el formulario de contacto o aceptar
-                cookies
-              </li>
-              <li>
-                <strong>Interés legítimo</strong> — para responder solicitudes comerciales
-              </li>
-            </ul>
-          </Section>
-
-          <Section title="5. Cookies">
-            <p>
-              Utilizamos cookies esenciales (funcionamiento básico), analíticas (GA4 + Clarity) y de
-              marketing (retargeting). Puedes gestionar tus preferencias desde el banner de cookies
-              que aparece en tu primera visita, o contactándonos directamente.
-            </p>
-            <p>
-              Las cookies analíticas y de marketing solo se activan con tu consentimiento explícito.
-            </p>
-          </Section>
-
-          <Section title="6. Conservación de datos">
-            <p>
-              Los datos de contacto se conservan durante un máximo de <strong>24 meses</strong> desde
-              la última interacción. Los datos analíticos se anonimizar automáticamente según las
-              políticas de Google y Microsoft.
-            </p>
-          </Section>
-
-          <Section title="7. Tus derechos">
-            <p>
-              Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación,
-              portabilidad y oposición enviando un correo a{" "}
-              <a href="mailto:hola@aureongrowth.com" className="text-[#E04E2C] hover:underline">
-                hola@aureongrowth.com
-              </a>{" "}
-              con el asunto &quot;Derechos ARCO&quot;.
-            </p>
-            <p>Responderemos en un plazo máximo de 15 días hábiles.</p>
-          </Section>
-
-          <Section title="8. Seguridad">
-            <p>
-              Implementamos medidas técnicas y organizativas para proteger tus datos: cifrado en
-              tránsito (HTTPS), acceso restringido a bases de datos, y auditorías periódicas.
-            </p>
-          </Section>
-
-          <Section title="9. Terceros">
-            <p>Podemos compartir datos con los siguientes proveedores de servicio:</p>
-            <ul className="list-disc pl-6 space-y-1">
-              <li>
-                <strong>Resend</strong> — envío de correos transaccionales
-              </li>
-              <li>
-                <strong>Google (GA4)</strong> — analítica web
-              </li>
-              <li>
-                <strong>Microsoft (Clarity)</strong> — analítica de comportamiento
-              </li>
-              <li>
-                <strong>Vercel</strong> — alojamiento del sitio web
-              </li>
-            </ul>
-            <p className="mt-3">
-              Todos los proveedores cumplen con estándares de protección de datos equivalentes o
-              superiores a la normativa colombiana y europea.
-            </p>
-          </Section>
-
-          <Section title="10. Cambios en esta política">
-            <p>
-              Nos reservamos el derecho de actualizar esta política. Cualquier cambio se publicará en
-              esta misma página con la fecha de actualización revisada.
-            </p>
-          </Section>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-16 pt-8 border-t border-[rgba(26,24,21,0.1)]">
-          <p className="text-sm text-[#9A938A]">
-            &copy; {new Date().getFullYear()} Aureon Growth. Todos los derechos reservados.
+          <h1 className="font-display font-bold text-4xl lg:text-5xl tracking-tight mb-4" style={{ color: A.text }}>
+            Política de Privacidad
+          </h1>
+          <p className="text-sm font-mono uppercase tracking-[0.2em] mb-12" style={{ color: A.textDim }}>
+            Última actualización: junio 2026
           </p>
+
+          <div className="space-y-8 leading-relaxed">
+            <Section title="1. Responsable del tratamiento">
+              <p>
+                <strong style={{ color: A.text }}>Aureon Growth Services</strong> (en adelante,
+                &quot;Aureon Growth Services&quot; o &quot;nosotros&quot;) es responsable del
+                tratamiento de los datos personales recopilados a través de este sitio web
+                (<strong style={{ color: A.text }}>aureon-growth.vercel.app</strong>).
+              </p>
+              <p>
+                Correo de contacto:{" "}
+                <a href="mailto:aureongrowthservices@outlook.com" className="underline" style={{ color: A.gold }}>
+                  aureongrowthservices@outlook.com
+                </a>
+              </p>
+            </Section>
+
+            <Section title="2. Datos que recopilamos">
+              <p>Recopilamos los datos que nos compartes voluntariamente a través del formulario de diagnóstico:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Nombre</li>
+                <li>Correo electrónico</li>
+                <li>Teléfono / WhatsApp</li>
+                <li>Empresa (opcional)</li>
+                <li>Sitio web o Instagram (opcional)</li>
+                <li>Servicio de interés y etapa de la empresa</li>
+                <li>Mensaje y reto principal que nos describas</li>
+              </ul>
+            </Section>
+
+            <Section title="3. Finalidad del tratamiento">
+              <p>Tus datos se utilizan exclusivamente para:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Responder a tu solicitud de diagnóstico o contacto</li>
+                <li>Coordinar una conversación y, si aplica, una propuesta</li>
+                <li>Dar seguimiento comercial a tu solicitud</li>
+              </ul>
+            </Section>
+
+            <Section title="4. Base legal">
+              <p>El tratamiento de tus datos se fundamenta en tu <strong style={{ color: A.text }}>consentimiento</strong> al enviar el formulario y en el <strong style={{ color: A.text }}>interés legítimo</strong> de responder solicitudes comerciales.</p>
+            </Section>
+
+            <Section title="5. Cookies y analítica">
+              <p>
+                Actualmente el sitio puede utilizar cookies necesarias para su funcionamiento. En el
+                futuro, Aureon Growth Services podría integrar herramientas de analítica, formularios,
+                CRM o medición publicitaria, siempre que sean configuradas y comunicadas de forma
+                correspondiente.
+              </p>
+              <p>
+                Cualquier cookie no esencial se activaría únicamente con tu consentimiento. Consulta más
+                detalle en nuestra{" "}
+                <a href="/legal/cookies" className="underline" style={{ color: A.gold }}>Política de Cookies</a>.
+              </p>
+            </Section>
+
+            <Section title="6. Conservación de datos">
+              <p>Conservamos los datos de contacto durante el tiempo necesario para atender tu solicitud y mantener la relación comercial, o hasta que solicites su eliminación.</p>
+            </Section>
+
+            <Section title="7. Tus derechos">
+              <p>
+                Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación,
+                portabilidad y oposición escribiendo a{" "}
+                <a href="mailto:aureongrowthservices@outlook.com" className="underline" style={{ color: A.gold }}>aureongrowthservices@outlook.com</a>. Responderemos en un plazo razonable.
+              </p>
+            </Section>
+
+            <Section title="8. Seguridad">
+              <p>Aplicamos medidas razonables para proteger tu información, incluyendo cifrado en tránsito (HTTPS) y acceso restringido a los datos.</p>
+            </Section>
+
+            <Section title="9. Proveedores">
+              <p>Para operar el sitio y atender solicitudes podemos apoyarnos en proveedores de servicio como el alojamiento del sitio y el envío de correos transaccionales. Estos proveedores tratan los datos únicamente para prestar dichos servicios.</p>
+            </Section>
+
+            <Section title="10. Cambios en esta política">
+              <p>Podemos actualizar esta política. Cualquier cambio se publicará en esta página con la fecha de actualización revisada.</p>
+            </Section>
+          </div>
+
+          <div className="mt-16 pt-8 border-t" style={{ borderColor: A.border }}>
+            <p className="text-sm" style={{ color: A.textDim }}>
+              &copy; {new Date().getFullYear()} Aureon Growth Services. Todos los derechos reservados.
+            </p>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="font-display font-semibold text-xl text-[#1A1815] mb-3">{title}</h2>
-      <div className="text-[15px] text-[#1A1815]/85 space-y-3">{children}</div>
+      <h2 className="font-display font-semibold text-xl mb-3" style={{ color: A.text }}>{title}</h2>
+      <div className="text-[15px] space-y-3" style={{ color: A.text2 }}>{children}</div>
     </section>
   );
 }

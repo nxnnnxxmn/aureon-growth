@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   title: "Manifiesto · Por qué construimos Aureon Growth",
   description:
     "Una carta personal del fundador de Aureon Growth sobre por qué construimos una agencia diferente: filosofía, principios y compromiso con las marcas que confían en nosotros.",
-  alternates: { canonical: "https://aureongrowth.com/manifiesto" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/manifiesto" },
   openGraph: {
     title: "Manifiesto Aureon Growth | Carta del fundador",
     description:
       "Por qué construimos un growth partner distinto: filosofía, principios y la promesa que hacemos a cada marca.",
-    url: "https://aureongrowth.com/manifiesto",
+    url: "https://aureon-growth.vercel.app/manifiesto",
     type: "article",
   },
 };

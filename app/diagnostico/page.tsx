@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   title: "Diagnóstico estratégico",
   description:
     "Solicita un diagnóstico estratégico de Aureon Growth Services. Revisamos marca, canales, funnel y CRM, y te entregamos un mapa de oportunidades priorizadas.",
-  alternates: { canonical: "https://aureongrowth.com/diagnostico" },
-  openGraph: { title: "Diagnóstico estratégico | Aureon Growth Services", description: "Diagnóstico inicial sin compromiso. Respuesta en menos de 24 horas hábiles.", url: "https://aureongrowth.com/diagnostico", type: "website" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/diagnostico" },
+  openGraph: { title: "Diagnóstico estratégico | Aureon Growth Services", description: "Diagnóstico inicial sin compromiso. Respuesta en menos de 24 horas hábiles.", url: "https://aureon-growth.vercel.app/diagnostico", type: "website" },
 };
 
 const PREVIEW = [

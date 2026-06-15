@@ -14,11 +14,11 @@ export const metadata: Metadata = {
   title: "Servicios · Sistemas de crecimiento",
   description:
     "Los cuatro sistemas de Aureon Growth Services: Brand Authority, Acquisition Engine, Revenue Automation y Growth Intelligence. Branding, performance, automatización, CRM e IA.",
-  alternates: { canonical: "https://aureongrowth.com/servicios" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/servicios" },
   openGraph: {
     title: "Servicios | Aureon Growth Services",
     description: "Cuatro sistemas de crecimiento integrados: marca, adquisición, automatización y analítica.",
-    url: "https://aureongrowth.com/servicios",
+    url: "https://aureon-growth.vercel.app/servicios",
     type: "website",
   },
 };

@@ -9,13 +9,13 @@ export const metadata: Metadata = {
   description:
     "Calcula el ROI proyectado de tu growth con métricas reales por industria. Diagnóstico de unit economics, benchmark vs. tu vertical y proyección de crecimiento a 6 meses. 100% gratis, sin registro.",
   alternates: {
-    canonical: "https://aureongrowth.com/herramientas/calculadora-roi",
+    canonical: "https://aureon-growth.vercel.app/herramientas/calculadora-roi",
   },
   openGraph: {
     title: "Calculadora ROI | Aureon Growth",
     description:
       "Diagnóstico de growth en 3 minutos. Calcula tu LTV:CAC, payback period y proyección de crecimiento por industria.",
-    url: "https://aureongrowth.com/herramientas/calculadora-roi",
+    url: "https://aureon-growth.vercel.app/herramientas/calculadora-roi",
     type: "website",
   },
 };

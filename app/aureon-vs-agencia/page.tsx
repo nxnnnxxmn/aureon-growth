@@ -20,13 +20,13 @@ export const metadata: Metadata = {
   description:
     "Comparación honesta y específica entre un Growth Partner (Aureon) y una agencia de marketing tradicional. 18 dimensiones de diferencia, framework de decisión y casos donde cada modelo encaja mejor.",
   alternates: {
-    canonical: "https://aureongrowth.com/aureon-vs-agencia",
+    canonical: "https://aureon-growth.vercel.app/aureon-vs-agencia",
   },
   openGraph: {
     title: "Growth Partner vs. Agencia tradicional | Aureon Growth",
     description:
       "Comparación de 18 dimensiones para tu comité de decisión. Cuándo Aureon encaja, cuándo una agencia tradicional es mejor opción.",
-    url: "https://aureongrowth.com/aureon-vs-agencia",
+    url: "https://aureon-growth.vercel.app/aureon-vs-agencia",
     type: "article",
   },
 };

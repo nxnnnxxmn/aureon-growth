@@ -76,8 +76,8 @@ export default function Footer() {
               inteligencia artificial en un solo sistema comercial medible.
             </p>
             <div className="space-y-3 text-sm">
-              <a href="mailto:hola@aureongrowth.com" className="flex items-center gap-3 transition-opacity hover:opacity-100 focus-ring rounded" style={{ color: A.text2 }}>
-                <Mail className="w-4 h-4" style={{ color: A.gold }} /> hola@aureongrowth.com
+              <a href="mailto:aureongrowthservices@outlook.com" className="flex items-center gap-3 transition-opacity hover:opacity-100 focus-ring rounded" style={{ color: A.text2 }}>
+                <Mail className="w-4 h-4" style={{ color: A.gold }} /> aureongrowthservices@outlook.com
               </a>
               <a href={waLink("default")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 transition-opacity hover:opacity-100 focus-ring rounded" style={{ color: A.text2 }}>
                 <MessageCircle className="w-4 h-4" style={{ color: A.gold }} /> {WHATSAPP_PRETTY}

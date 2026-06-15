@@ -17,12 +17,12 @@ export const metadata: Metadata = {
   title: "Equipo · Las personas detrás del crecimiento",
   description:
     "Conoce al equipo de Aureon Growth: 30+ especialistas senior en growth, brand, tech, data e IA. El equipo que asignamos a tu cuenta tiene en promedio 9+ años de experiencia.",
-  alternates: { canonical: "https://aureongrowth.com/equipo" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/equipo" },
   openGraph: {
     title: "El equipo detrás del crecimiento | Aureon Growth",
     description:
       "30+ especialistas senior — growth, brand, tech, data, IA. Promedio de 9+ años de experiencia por persona.",
-    url: "https://aureongrowth.com/equipo",
+    url: "https://aureon-growth.vercel.app/equipo",
     type: "website",
   },
 };

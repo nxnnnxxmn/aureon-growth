@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: "Escenarios de aplicación",
   description:
     "Escenarios reales donde Aureon Growth Services genera impacto: producto fuerte con pipeline débil, campañas sin CRM, leads que no convierten y más.",
-  alternates: { canonical: "https://aureongrowth.com/casos" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/casos" },
   openGraph: {
     title: "Escenarios de aplicación | Aureon Growth Services",
     description:
       "Contextos típicos donde nuestra metodología aporta valor, con el sistema activado en cada caso.",
-    url: "https://aureongrowth.com/casos",
+    url: "https://aureon-growth.vercel.app/casos",
     type: "website",
   },
 };

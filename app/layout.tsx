@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     "Aureon Growth Services",
     "Aureon Growth System",
   ],
-  metadataBase: new URL("https://aureongrowth.com"),
+  metadataBase: new URL("https://aureon-growth.vercel.app"),
   authors: [{ name: "Aureon Growth Services" }],
   creator: "Aureon Growth Services",
   publisher: "Aureon Growth Services",
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://aureongrowth.com",
+    url: "https://aureon-growth.vercel.app",
     siteName: "Aureon Growth Services",
     title: "Aureon Growth Services | Growth Partner, Branding, Performance e IA",
     description:
@@ -94,7 +94,7 @@ export const metadata: Metadata = {
     creator: "@aureongrowth",
   },
   alternates: {
-    canonical: "https://aureongrowth.com",
+    canonical: "https://aureon-growth.vercel.app",
   },
 };
 
@@ -105,8 +105,8 @@ const orgJsonLd = {
   alternateName: "Aureon Growth",
   description:
     "Growth partner especializado en sistemas de crecimiento: branding estratégico, performance marketing, funnels, CRM, automatización e inteligencia artificial aplicada.",
-  url: "https://aureongrowth.com",
-  logo: "https://aureongrowth.com/logo.svg",
+  url: "https://aureon-growth.vercel.app",
+  logo: "https://aureon-growth.vercel.app/logo.svg",
   areaServed: ["Colombia", "Latinoamérica", "España", "Estados Unidos"],
   serviceType: [
     "Branding Estratégico",
@@ -123,7 +123,7 @@ const orgJsonLd = {
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer service",
-    email: "hola@aureongrowth.com",
+    email: "aureongrowthservices@outlook.com",
   },
 };
 
@@ -131,7 +131,7 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Aureon Growth Services",
-  url: "https://aureongrowth.com",
+  url: "https://aureon-growth.vercel.app",
   inLanguage: "es-CO",
 };
 

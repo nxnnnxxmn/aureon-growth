@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   title: "Metodología · Aureon Growth System",
   description:
     "El Aureon Growth System: metodología propietaria en cuatro fases para convertir marketing y tecnología en un sistema comercial medible.",
-  alternates: { canonical: "https://aureongrowth.com/metodologia" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/metodologia" },
   openGraph: {
     title: "Metodología | Aureon Growth Services",
     description:
       "Diagnóstico, arquitectura de crecimiento, implementación y optimización continua.",
-    url: "https://aureongrowth.com/metodologia",
+    url: "https://aureon-growth.vercel.app/metodologia",
     type: "article",
   },
 };

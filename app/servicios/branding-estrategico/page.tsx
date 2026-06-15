@@ -54,12 +54,12 @@ export const metadata: Metadata = {
   title: "Branding Estratégico",
   description:
     "Construimos sistemas de branding estratégico: posicionamiento, identidad verbal, sistema visual, contenido y una marca preparada para crecer. Brand Authority System de Aureon Growth Services.",
-  alternates: { canonical: "https://aureongrowth.com/servicios/branding-estrategico" },
+  alternates: { canonical: "https://aureon-growth.vercel.app/servicios/branding-estrategico" },
   openGraph: {
     title: "Branding Estratégico | Aureon Growth Services",
     description:
       "Brand Authority System: posicionamiento, identidad verbal, sistema visual y aplicación comercial para vender mejor y diferenciarse.",
-    url: "https://aureongrowth.com/servicios/branding-estrategico",
+    url: "https://aureon-growth.vercel.app/servicios/branding-estrategico",
     type: "article",
   },
 };
@@ -116,9 +116,9 @@ export default function BrandingEstrategicoPage() {
     "@type": "Service",
     name: "Branding Estratégico — Brand Authority System",
     description: metadata.description,
-    provider: { "@type": "Organization", name: "Aureon Growth Services", url: "https://aureongrowth.com" },
+    provider: { "@type": "Organization", name: "Aureon Growth Services", url: "https://aureon-growth.vercel.app" },
     areaServed: ["Colombia", "Latinoamérica", "España", "Estados Unidos"],
-    url: "https://aureongrowth.com/servicios/branding-estrategico",
+    url: "https://aureon-growth.vercel.app/servicios/branding-estrategico",
   };
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -133,9 +133,9 @@ export default function BrandingEstrategicoPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://aureongrowth.com" },
-      { "@type": "ListItem", position: 2, name: "Servicios", item: "https://aureongrowth.com/servicios" },
-      { "@type": "ListItem", position: 3, name: "Branding Estratégico", item: "https://aureongrowth.com/servicios/branding-estrategico" },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://aureon-growth.vercel.app" },
+      { "@type": "ListItem", position: 2, name: "Servicios", item: "https://aureon-growth.vercel.app/servicios" },
+      { "@type": "ListItem", position: 3, name: "Branding Estratégico", item: "https://aureon-growth.vercel.app/servicios/branding-estrategico" },
     ],
   };
 
