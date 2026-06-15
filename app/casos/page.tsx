@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function CasosPage() {
   return (
     <>
-      <Navbar />
+      <Navbar dark />
       <PageHeader
         eyebrow="Escenarios de aplicación"
         title={

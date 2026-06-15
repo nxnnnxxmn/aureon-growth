@@ -22,7 +22,10 @@ const PALETTE = {
 };
 
 export function generateStaticParams() {
-  return GROWTH_SYSTEMS.map((s) => ({ slug: s.slug }));
+  // branding-estrategico has its own dedicated rich page (static route wins).
+  return GROWTH_SYSTEMS.filter((s) => s.slug !== "branding-estrategico").map((s) => ({
+    slug: s.slug,
+  }));
 }
 
 export async function generateMetadata({
@@ -78,7 +81,7 @@ export default async function ServiceDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar />
+      <Navbar dark />
       <PageHeader
         eyebrow={s.short}
         title={s.name}

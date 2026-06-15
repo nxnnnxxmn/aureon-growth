@@ -8,7 +8,7 @@ import AutomationSection from "@/components/sections/AutomationSection";
 import ProcessSection from "@/components/sections/ProcessSection";
 import ScenariosSection from "@/components/sections/ScenariosSection";
 import WhyAureon from "@/components/sections/WhyAureon";
-import WorkModels from "@/components/sections/WorkModels";
+import Plans from "@/components/sections/Plans";
 import DiagnosticCTA from "@/components/sections/DiagnosticCTA";
 import FAQ from "@/components/sections/FAQ";
 import Footer from "@/components/sections/Footer";
@@ -27,7 +27,7 @@ export default function Home() {
       <ProcessSection />
       <ScenariosSection limit={3} />
       <WhyAureon />
-      <WorkModels />
+      <Plans variant="light" />
       <DiagnosticCTA />
       <FAQ limit={5} />
       <Footer />

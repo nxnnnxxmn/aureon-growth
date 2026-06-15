@@ -9,6 +9,7 @@ import ScrollProgress from "@/components/common/ScrollProgress";
 const PALETTE = {
   bg: "#F5F1E8",
   text: "#1A1815",
+  cream: "#F5F1E8",
   accent: "#E04E2C",
   gold: "#C9A961",
   hairline: "rgba(26,24,21,0.10)",
@@ -22,7 +23,8 @@ const links = [
   { label: "Diagnóstico", href: "/diagnostico" },
 ];
 
-export default function Navbar() {
+/** `dark` = page renders a dark header behind the (transparent) navbar at top. */
+export default function Navbar({ dark = false }: { dark?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -31,6 +33,10 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Text adapts to the surface behind it: cream over a dark hero, charcoal over cream.
+  const topText = dark ? PALETTE.cream : PALETTE.text;
+  const textColor = scrolled ? PALETTE.text : topText;
 
   return (
     <>
@@ -47,22 +53,12 @@ export default function Navbar() {
       >
         <nav
           className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 border-b"
-          style={{ borderColor: PALETTE.hairline }}
+          style={{ borderColor: scrolled ? PALETTE.hairline : "transparent" }}
         >
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <a
-              href="/"
-              className="flex items-center gap-3 group"
-              aria-label="Aureon Growth Services — Inicio"
-            >
-              <svg
-                width="36"
-                height="36"
-                viewBox="0 0 32 32"
-                className="flex-shrink-0"
-                aria-hidden
-              >
+            <a href="/" className="flex items-center gap-3 group" aria-label="Aureon Growth Services — Inicio">
+              <svg width="36" height="36" viewBox="0 0 32 32" className="flex-shrink-0" aria-hidden>
                 <rect width="32" height="32" rx="8" fill="#1A1815" />
                 <circle cx="16" cy="16" r="11" stroke="#c9a961" strokeWidth="1.5" fill="none" />
                 <circle cx="16" cy="16" r="6" fill="url(#aureonCoreNav)" />
@@ -75,11 +71,10 @@ export default function Navbar() {
                 </defs>
               </svg>
               <span
-                className="font-display font-bold text-sm lg:text-base tracking-wide leading-tight"
-                style={{ color: PALETTE.text }}
+                className="font-display font-bold text-sm lg:text-base tracking-wide leading-tight transition-colors duration-300"
+                style={{ color: textColor }}
               >
-                AUREON{" "}
-                <span style={{ color: PALETTE.accent }}>GROWTH</span>
+                AUREON <span style={{ color: PALETTE.accent }}>GROWTH</span>
                 <span
                   className="hidden md:inline ml-1 font-normal text-[10px] uppercase tracking-[0.22em] align-middle"
                   style={{ color: PALETTE.gold }}
@@ -96,7 +91,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   className="text-sm font-medium transition-colors duration-200 hover:opacity-70"
-                  style={{ color: PALETTE.text }}
+                  style={{ color: textColor }}
                 >
                   {link.label}
                 </a>
@@ -110,7 +105,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-xs tracking-wide uppercase font-medium transition-opacity hover:opacity-70"
-                style={{ color: PALETTE.text }}
+                style={{ color: textColor }}
                 aria-label="Contactar por WhatsApp"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -132,7 +127,7 @@ export default function Navbar() {
             {/* Mobile toggle */}
             <button
               className="lg:hidden p-2 transition-colors"
-              style={{ color: PALETTE.text }}
+              style={{ color: textColor }}
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={mobileOpen}
@@ -147,10 +142,7 @@ export default function Navbar() {
           {mobileOpen && (
             <motion.div
               className="lg:hidden border-t"
-              style={{
-                backgroundColor: PALETTE.bg,
-                borderColor: PALETTE.hairline,
-              }}
+              style={{ backgroundColor: PALETTE.bg, borderColor: PALETTE.hairline }}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
@@ -162,10 +154,7 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     className="block px-0 py-3 text-sm font-medium border-b transition-colors"
-                    style={{
-                      color: PALETTE.text,
-                      borderColor: PALETTE.hairline,
-                    }}
+                    style={{ color: PALETTE.text, borderColor: PALETTE.hairline }}
                     onClick={() => setMobileOpen(false)}
                   >
                     {link.label}
@@ -174,10 +163,7 @@ export default function Navbar() {
                 <a
                   href="/diagnostico"
                   className="flex items-center justify-center w-full mt-6 px-6 py-4 text-xs tracking-wide uppercase font-display font-semibold rounded-full"
-                  style={{
-                    backgroundColor: PALETTE.accent,
-                    color: PALETTE.bg,
-                  }}
+                  style={{ backgroundColor: PALETTE.accent, color: PALETTE.bg }}
                   onClick={() => setMobileOpen(false)}
                 >
                   Solicitar diagnóstico
@@ -187,10 +173,7 @@ export default function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full mt-2 px-6 py-4 text-xs tracking-wide uppercase font-display font-semibold rounded-full"
-                  style={{
-                    backgroundColor: "#25d366",
-                    color: PALETTE.bg,
-                  }}
+                  style={{ backgroundColor: "#25d366", color: PALETTE.bg }}
                   onClick={() => setMobileOpen(false)}
                 >
                   <MessageCircle className="w-4 h-4" />

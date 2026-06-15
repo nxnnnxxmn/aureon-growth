@@ -36,7 +36,7 @@ const PALETTE = {
 export default function ProcesoPage() {
   return (
     <>
-      <Navbar />
+      <Navbar dark />
       <PageHeader
         eyebrow="Proceso de trabajo"
         title={

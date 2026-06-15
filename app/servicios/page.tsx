@@ -5,6 +5,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/sections/Footer";
 import FloatingWhatsApp from "@/components/common/FloatingWhatsApp";
 import PageHeader from "@/components/ui/PageHeader";
+import ServicesMatrix from "@/components/sections/ServicesMatrix";
+import Plans from "@/components/sections/Plans";
 import { GROWTH_SYSTEMS } from "@/lib/growth";
 
 export const metadata: Metadata = {
@@ -36,7 +38,7 @@ const PALETTE = {
 export default function ServiciosPage() {
   return (
     <>
-      <Navbar />
+      <Navbar dark />
       <PageHeader
         eyebrow="Servicios"
         title={
@@ -150,7 +152,39 @@ export default function ServiciosPage() {
             </Link>
           </div>
         </section>
+
+        {/* 24 services catalog */}
+        <section
+          className="py-20 lg:py-28"
+          style={{ backgroundColor: PALETTE.bgWhite, borderTop: `1px solid ${PALETTE.hairline}` }}
+        >
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+            <div className="max-w-3xl mb-12">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="h-px w-10" style={{ backgroundColor: PALETTE.accent }} />
+                <span className="font-mono text-xs uppercase tracking-[0.28em]" style={{ color: PALETTE.accent }}>
+                  24 especialidades
+                </span>
+              </div>
+              <h2 className="font-display font-semibold text-[clamp(1.85rem,4.5vw,3rem)] leading-[1.06] tracking-[-0.02em] mb-5" style={{ color: PALETTE.text }}>
+                Todas las disciplinas, organizadas por{" "}
+                <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: PALETTE.accent }}>
+                  sistema
+                </span>
+                .
+              </h2>
+              <p className="text-base lg:text-lg leading-relaxed" style={{ color: PALETTE.textMuted }}>
+                Cada especialidad pertenece a uno de los cuatro sistemas. Filtra
+                por categoría para ver cómo se agrupan.
+              </p>
+            </div>
+            <ServicesMatrix variant="light" />
+          </div>
+        </section>
       </main>
+
+      {/* Plans */}
+      <Plans variant="light" />
 
       <Footer />
       <FloatingWhatsApp />

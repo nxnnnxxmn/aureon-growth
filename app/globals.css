@@ -1057,3 +1057,18 @@ body {
   height: 1px;
   pointer-events: none;
 }
+
+/* --- Branding service page utilities --- */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes aureonFloat {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-12px) rotate(var(--rot, 0deg)); }
+}
+.aureon-float { animation: aureonFloat 7s ease-in-out infinite; }
+.aureon-float-2 { animation: aureonFloat 9s ease-in-out infinite; animation-delay: -2s; }
+.aureon-float-3 { animation: aureonFloat 8s ease-in-out infinite; animation-delay: -4s; }
+@media (prefers-reduced-motion: reduce) {
+  .aureon-float, .aureon-float-2, .aureon-float-3 { animation: none; }
+}

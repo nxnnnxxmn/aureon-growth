@@ -53,7 +53,7 @@ const steps = [
 export default function DiagnosticoPage() {
   return (
     <>
-      <Navbar />
+      <Navbar dark />
       <PageHeader
         eyebrow="Diagnóstico estratégico"
         title={

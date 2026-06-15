@@ -32,7 +32,7 @@ const PALETTE = {
 export default function MetodologiaPage() {
   return (
     <>
-      <Navbar />
+      <Navbar dark />
       <PageHeader
         eyebrow="Aureon Growth System"
         title={
