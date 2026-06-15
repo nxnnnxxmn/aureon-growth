@@ -15,15 +15,15 @@ import {
 } from "lucide-react";
 
 const C = {
-  text: "#FBF8F1",
-  textMuted: "rgba(251,248,241,0.70)",
-  textSoft: "rgba(251,248,241,0.45)",
-  accent: "#E04E2C",
-  gold: "#C9A961",
-  goldBright: "#D6B46A",
-  panel: "rgba(251,248,241,0.04)",
-  panelSolid: "#221F1B",
-  hairline: "rgba(251,248,241,0.12)",
+  text: "#F0EDF8",
+  textMuted: "#A8B4C8",
+  textSoft: "#6F7890",
+  accent: "#7C5CBF",
+  gold: "#D6B46A",
+  goldBright: "#E2C58A",
+  panel: "rgba(255,255,255,0.045)",
+  panelSolid: "#11101A",
+  hairline: "rgba(255,255,255,0.10)",
 };
 
 // ============================================================
@@ -85,7 +85,7 @@ export function BrandModules() {
               onClick={() => setActive(i)}
               className="shrink-0 lg:w-full text-left rounded-2xl p-4 lg:p-5 transition-all duration-300 flex items-center gap-3"
               style={{
-                backgroundColor: isActive ? "rgba(224,78,44,0.12)" : C.panel,
+                backgroundColor: isActive ? "rgba(124,92,191,0.16)" : C.panel,
                 border: `1px solid ${isActive ? C.accent : C.hairline}`,
               }}
               aria-pressed={isActive}
@@ -292,8 +292,8 @@ export function BeforeAfter() {
               key={it}
               className="flex items-center gap-3 rounded-2xl px-5 py-4"
               style={{
-                backgroundColor: isAfter ? "rgba(224,78,44,0.10)" : C.panel,
-                border: `1px solid ${isAfter ? "rgba(224,78,44,0.28)" : C.hairline}`,
+                backgroundColor: isAfter ? "rgba(124,92,191,0.14)" : C.panel,
+                border: `1px solid ${isAfter ? "rgba(124,92,191,0.34)" : C.hairline}`,
               }}
             >
               <span
@@ -393,7 +393,7 @@ export function SectionNav() {
   return (
     <div
       className="sticky top-16 lg:top-20 z-40 backdrop-blur-md border-y"
-      style={{ backgroundColor: "rgba(16,13,10,0.85)", borderColor: C.hairline }}
+      style={{ backgroundColor: "rgba(8,7,13,0.85)", borderColor: C.hairline }}
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <nav className="flex gap-1 overflow-x-auto no-scrollbar py-3" aria-label="Secciones del servicio">
@@ -405,9 +405,9 @@ export function SectionNav() {
                 href={`#${n.id}`}
                 className="shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-display font-medium transition-all"
                 style={{
-                  backgroundColor: isActive ? "rgba(224,78,44,0.15)" : "transparent",
+                  backgroundColor: isActive ? "rgba(124,92,191,0.18)" : "transparent",
                   color: isActive ? C.text : C.textSoft,
-                  border: `1px solid ${isActive ? "rgba(224,78,44,0.4)" : "transparent"}`,
+                  border: `1px solid ${isActive ? "rgba(124,92,191,0.4)" : "transparent"}`,
                 }}
               >
                 {n.label}

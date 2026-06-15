@@ -6,6 +6,7 @@ import Footer from "@/components/sections/Footer";
 import FloatingWhatsApp from "@/components/common/FloatingWhatsApp";
 import PageHeader from "@/components/ui/PageHeader";
 import MethodologySection from "@/components/sections/MethodologySection";
+import { A } from "@/lib/ui";
 
 export const metadata: Metadata = {
   title: "Metodología · Aureon Growth System",
@@ -22,11 +23,11 @@ export const metadata: Metadata = {
 };
 
 const PALETTE = {
-  bg: "#1A1815",
-  text: "#FBF8F1",
-  textMuted: "rgba(251,248,241,0.70)",
-  accent: "#E04E2C",
-  gold: "#C9A961",
+  bg: A.bg2,
+  text: A.text,
+  textMuted: A.text2,
+  accent: A.gold,
+  gold: A.gold,
 };
 
 export default function MetodologiaPage() {
@@ -68,8 +69,8 @@ export default function MetodologiaPage() {
           </p>
           <Link
             href="/diagnostico"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm transition-all hover:-translate-y-0.5"
-            style={{ backgroundColor: PALETTE.accent, color: PALETTE.text, boxShadow: "0 14px 36px -10px rgba(224,78,44,0.5)" }}
+            className="btn-premium focus-ring inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm"
+            style={{ backgroundColor: A.gold, color: A.bg, boxShadow: "0 14px 36px -10px rgba(214,180,106,0.5)" }}
           >
             Solicitar diagnóstico estratégico
             <ArrowRight className="w-4 h-4" />

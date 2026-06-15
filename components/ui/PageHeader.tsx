@@ -1,13 +1,5 @@
 import Link from "next/link";
-
-const PALETTE = {
-  bg: "#1A1815",
-  text: "#FBF8F1",
-  textMuted: "rgba(251, 248, 241, 0.70)",
-  accent: "#E04E2C",
-  gold: "#C9A961",
-  hairline: "rgba(251, 248, 241, 0.14)",
-};
+import { A } from "@/lib/ui";
 
 interface Crumb {
   label: string;
@@ -26,25 +18,11 @@ export default function PageHeader({
   crumbs?: Crumb[];
 }) {
   return (
-    <header
-      className="relative w-full overflow-hidden pt-32 pb-16 lg:pt-40 lg:pb-20"
-      style={{ backgroundColor: PALETTE.bg, color: PALETTE.text }}
-    >
-      <div
-        aria-hidden
-        className="absolute -top-32 -right-24 w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, rgba(224,78,44,0.16) 0%, transparent 60%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-0 pointer-events-none opacity-[0.05]"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, ${PALETTE.gold} 1px, transparent 0)`,
-          backgroundSize: "26px 26px",
-        }}
-      />
+    <header className="relative w-full overflow-hidden pt-32 pb-16 lg:pt-40 lg:pb-20" style={{ backgroundColor: A.bg, color: A.text }}>
+      <div aria-hidden className="absolute inset-0 -z-0 tech-grid opacity-50" />
+      <div aria-hidden className="absolute inset-0 -z-0 diag-lines opacity-60" />
+      <div aria-hidden className="absolute -top-40 -right-24 w-[620px] h-[620px] rounded-full glow-gold pointer-events-none" />
+      <div aria-hidden className="absolute -bottom-32 -left-24 w-[480px] h-[480px] rounded-full glow-violet pointer-events-none" />
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         {crumbs && (
@@ -53,19 +31,11 @@ export default function PageHeader({
               {crumbs.map((c, i) => (
                 <li key={c.label} className="flex items-center gap-2">
                   {c.href ? (
-                    <Link
-                      href={c.href}
-                      className="transition-colors hover:opacity-100"
-                      style={{ color: PALETTE.textMuted }}
-                    >
-                      {c.label}
-                    </Link>
+                    <Link href={c.href} className="transition-colors hover:opacity-100" style={{ color: A.textDim }}>{c.label}</Link>
                   ) : (
-                    <span style={{ color: PALETTE.gold }}>{c.label}</span>
+                    <span style={{ color: A.gold }}>{c.label}</span>
                   )}
-                  {i < crumbs.length - 1 && (
-                    <span style={{ color: PALETTE.hairline }}>/</span>
-                  )}
+                  {i < crumbs.length - 1 && <span style={{ color: A.border }}>/</span>}
                 </li>
               ))}
             </ol>
@@ -73,29 +43,16 @@ export default function PageHeader({
         )}
 
         <div className="flex items-center gap-3 mb-6">
-          <span className="h-px w-10" style={{ backgroundColor: PALETTE.accent }} />
-          <span
-            className="font-mono text-xs uppercase tracking-[0.28em]"
-            style={{ color: PALETTE.accent }}
-          >
-            {eyebrow}
-          </span>
+          <span className="h-px w-10" style={{ backgroundColor: A.gold }} />
+          <span className="font-mono text-xs uppercase tracking-[0.28em]" style={{ color: A.gold }}>{eyebrow}</span>
         </div>
 
-        <h1
-          className="font-display font-semibold text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.04] tracking-[-0.02em] max-w-[20ch]"
-          style={{ color: PALETTE.text }}
-        >
+        <h1 className="font-display font-semibold text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.04] tracking-[-0.02em] max-w-[20ch]" style={{ color: A.text }}>
           {title}
         </h1>
 
         {description && (
-          <p
-            className="mt-6 text-base lg:text-lg leading-relaxed max-w-2xl"
-            style={{ color: PALETTE.textMuted }}
-          >
-            {description}
-          </p>
+          <p className="mt-6 text-base lg:text-lg leading-relaxed max-w-2xl" style={{ color: A.text2 }}>{description}</p>
         )}
       </div>
     </header>

@@ -4,6 +4,7 @@ import "./globals.css";
 import CustomCursor from "@/components/common/CustomCursor";
 import Analytics from "@/components/common/Analytics";
 import CookieBanner from "@/components/common/CookieBanner";
+import SoundToggle from "@/components/common/SoundToggle";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,7 +33,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#1A1815",
+  themeColor: "#08070D",
   width: "device-width",
   initialScale: 1,
 };
@@ -156,11 +157,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
-      <body className="antialiased bg-[#F5F1E8] text-[#1A1815]">
+      <body className="antialiased bg-[#08070D] text-[#F0EDF8]">
         <CustomCursor />
         {children}
         <div className="noise-global" aria-hidden />
         <CookieBanner />
+        <SoundToggle />
         <Analytics />
       </body>
     </html>

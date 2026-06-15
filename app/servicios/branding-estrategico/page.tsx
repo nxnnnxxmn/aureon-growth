@@ -34,20 +34,20 @@ import {
 import { waLink } from "@/lib/whatsapp";
 
 const C = {
-  bgDeep: "#100D0A",
-  bg: "#1A1815",
-  bgAlt: "#14110E",
-  panel: "rgba(251,248,241,0.04)",
-  panelSolid: "#221F1B",
-  text: "#FBF8F1",
-  textMuted: "rgba(251,248,241,0.70)",
-  textSoft: "rgba(251,248,241,0.45)",
-  accent: "#E04E2C",
-  accentDeep: "#A53B1F",
-  gold: "#C9A961",
-  goldBright: "#D6B46A",
-  blue: "#6E8FD6",
-  hairline: "rgba(251,248,241,0.12)",
+  bgDeep: "#08070D",
+  bg: "#0D0B18",
+  bgAlt: "#0A0912",
+  panel: "rgba(255,255,255,0.045)",
+  panelSolid: "#11101A",
+  text: "#F0EDF8",
+  textMuted: "#A8B4C8",
+  textSoft: "#6F7890",
+  accent: "#D6B46A",
+  accentDeep: "#7C5CBF",
+  gold: "#D6B46A",
+  goldBright: "#E2C58A",
+  blue: "#3B6FD4",
+  hairline: "rgba(255,255,255,0.10)",
 };
 
 export const metadata: Metadata = {
@@ -151,7 +151,7 @@ export default function BrandingEstrategicoPage() {
         {/* ===================== HERO ===================== */}
         <section id="vision" className="relative overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-28">
           {/* glows + grid */}
-          <div aria-hidden className="absolute -top-40 -right-32 w-[700px] h-[700px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(224,78,44,0.18) 0%, transparent 60%)" }} />
+          <div aria-hidden className="absolute -top-40 -right-32 w-[700px] h-[700px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(214,180,106,0.18) 0%, transparent 60%)" }} />
           <div aria-hidden className="absolute -bottom-40 -left-32 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(201,169,97,0.12) 0%, transparent 60%)" }} />
           <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.05]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, ${C.gold} 1px, transparent 0)`, backgroundSize: "28px 28px" }} />
 
@@ -170,7 +170,7 @@ export default function BrandingEstrategicoPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               {/* copy */}
               <div className="lg:col-span-6">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase font-mono tracking-[0.22em] mb-6" style={{ backgroundColor: "rgba(224,78,44,0.12)", color: C.accent }}>
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase font-mono tracking-[0.22em] mb-6" style={{ backgroundColor: "rgba(124,92,191,0.16)", color: C.accent }}>
                   <Sparkles className="w-3 h-3" />
                   Servicio estratégico · Brand Authority System
                 </span>
@@ -188,7 +188,7 @@ export default function BrandingEstrategicoPage() {
                   consistencia.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Link href="/diagnostico" className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-display font-semibold text-sm transition-all hover:-translate-y-0.5" style={{ backgroundColor: C.accent, color: C.text, boxShadow: "0 14px 36px -10px rgba(224,78,44,0.5)" }}>
+                  <Link href="/diagnostico" className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-display font-semibold text-sm transition-all hover:-translate-y-0.5" style={{ backgroundColor: C.gold, color: C.bg, boxShadow: "0 14px 36px -10px rgba(214,180,106,0.5)" }}>
                     Solicitar diagnóstico de marca
                     <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -255,7 +255,7 @@ export default function BrandingEstrategicoPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {PROBLEMS.map((p) => (
                 <div key={p.t} className="group rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1" style={{ backgroundColor: C.panel, border: `1px solid ${C.hairline}` }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(224,78,44,0.12)" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(124,92,191,0.16)" }}>
                     <p.icon className="w-5 h-5" style={{ color: C.accent }} strokeWidth={1.6} />
                   </div>
                   <h3 className="font-display font-semibold text-base mb-2" style={{ color: C.text }}>{p.t}</h3>
@@ -359,7 +359,7 @@ export default function BrandingEstrategicoPage() {
               {PROCESS_BRAND.map((s) => (
                 <div key={s.n} className="rounded-2xl p-6" style={{ backgroundColor: C.panel, border: `1px solid ${C.hairline}` }}>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(224,78,44,0.12)" }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(124,92,191,0.16)" }}>
                       <s.icon className="w-5 h-5" style={{ color: C.accent }} strokeWidth={1.6} />
                     </div>
                     <span className="font-mono text-xs tabular-nums" style={{ color: C.gold }}>{s.n}</span>
@@ -422,7 +422,7 @@ export default function BrandingEstrategicoPage() {
                 <div className="relative mx-auto max-w-sm aspect-square">
                   <svg viewBox="0 0 320 320" className="w-full h-full" aria-hidden>
                     <defs>
-                      <radialGradient id="bGlow" cx="0.5" cy="0.5"><stop offset="0%" stopColor="rgba(224,78,44,0.35)" /><stop offset="100%" stopColor="rgba(224,78,44,0)" /></radialGradient>
+                      <radialGradient id="bGlow" cx="0.5" cy="0.5"><stop offset="0%" stopColor="rgba(214,180,106,0.35)" /><stop offset="100%" stopColor="rgba(214,180,106,0)" /></radialGradient>
                     </defs>
                     <circle cx="160" cy="160" r="120" fill="url(#bGlow)" />
                     <circle cx="160" cy="160" r="120" fill="none" stroke={C.gold} strokeWidth="0.6" opacity="0.4" strokeDasharray="3,4" />
@@ -433,7 +433,7 @@ export default function BrandingEstrategicoPage() {
                     <circle cx="280" cy="230" r="6" fill={C.gold} />
                     <circle cx="40" cy="230" r="6" fill={C.blue} />
                   </svg>
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full flex flex-col items-center justify-center text-center" style={{ background: `linear-gradient(135deg, ${C.accent}, ${C.accentDeep})`, boxShadow: "0 0 40px rgba(224,78,44,0.4)" }}>
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full flex flex-col items-center justify-center text-center" style={{ background: `linear-gradient(135deg, ${C.accent}, ${C.accentDeep})`, boxShadow: "0 0 40px rgba(214,180,106,0.4)" }}>
                     <Compass className="w-6 h-6 mb-1" style={{ color: C.text }} />
                     <span className="font-display font-bold text-xs leading-tight" style={{ color: C.text }}>Brand<br/>Authority</span>
                   </div>
@@ -478,7 +478,7 @@ export default function BrandingEstrategicoPage() {
 
         {/* ===================== CTA ===================== */}
         <section className="py-24 lg:py-32 text-center relative overflow-hidden" style={{ backgroundColor: C.bgDeep }}>
-          <div aria-hidden className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(224,78,44,0.16) 0%, transparent 60%)" }} />
+          <div aria-hidden className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(214,180,106,0.16) 0%, transparent 60%)" }} />
           <div className="relative z-10 max-w-3xl mx-auto px-6 lg:px-12">
             <H2>
               Tu marca no necesita verse más bonita. Necesita{" "}
@@ -488,7 +488,7 @@ export default function BrandingEstrategicoPage() {
               Diferénciate con claridad y construye un sistema de marca que pueda escalar.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link href="/diagnostico" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm transition-all hover:-translate-y-0.5" style={{ backgroundColor: C.accent, color: C.text, boxShadow: "0 14px 36px -10px rgba(224,78,44,0.5)" }}>
+              <Link href="/diagnostico" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm transition-all hover:-translate-y-0.5" style={{ backgroundColor: C.gold, color: C.bg, boxShadow: "0 14px 36px -10px rgba(214,180,106,0.5)" }}>
                 Solicitar diagnóstico de marca
                 <ArrowRight className="w-4 h-4" />
               </Link>
