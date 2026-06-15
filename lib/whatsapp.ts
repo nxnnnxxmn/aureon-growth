@@ -6,15 +6,15 @@ export const WHATSAPP_PRETTY = "+57 321 239 6665";
 
 export const WA_MESSAGES = {
   default:
-    "Hola, quiero recibir información sobre los servicios de marketing y crecimiento de Aureon Growth.",
+    "Hola, quiero solicitar un diagnóstico estratégico para mi empresa. Me interesa revisar cómo mejorar adquisición, conversión, CRM y automatización comercial.",
   consultation:
-    "Hola, me interesa agendar una consultoría estratégica gratuita con Aureon Growth.",
+    "Hola, me interesa agendar un diagnóstico estratégico con Aureon Growth Services.",
   audit:
-    "Hola, quiero solicitar un diagnóstico digital gratuito para mi marca.",
+    "Hola, quiero solicitar un diagnóstico inicial de mi sistema de crecimiento.",
   pricing:
-    "Hola, me gustaría conocer los planes y precios de Aureon Growth.",
+    "Hola, me gustaría conocer las formas de trabajo de Aureon Growth Services.",
   urgent:
-    "Hola, tengo un proyecto urgente y quiero hablar con un estratega ahora.",
+    "Hola, tengo un proyecto con timing crítico y quiero hablar con un especialista.",
 } as const;
 
 export function waLink(messageKey: keyof typeof WA_MESSAGES = "default"): string {

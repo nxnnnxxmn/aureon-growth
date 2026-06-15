@@ -3,31 +3,28 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, MessageCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { waLink } from "@/lib/whatsapp";
 import ScrollProgress from "@/components/common/ScrollProgress";
 
 const PALETTE = {
   bg: "#F5F1E8",
-  bgDark: "#1A1815",
-  cream: "#1A1815",     // ahora "cream" = texto (charcoal)
-  gold: "#E04E2C",       // vermillion (CTA accent)
-  green: "#2D5016",
+  text: "#1A1815",
+  accent: "#E04E2C",
+  gold: "#C9A961",
   hairline: "rgba(26,24,21,0.10)",
 };
 
 const links = [
-  { label: "Servicios", href: "/#servicios" },
-  { label: "Casos", href: "/casos" },
-  { label: "Equipo", href: "/equipo" },
-  { label: "Inversión", href: "/#inversion" },
-  { label: "FAQ", href: "/#faq" },
+  { label: "Servicios", href: "/servicios" },
+  { label: "Metodología", href: "/metodologia" },
+  { label: "Proceso", href: "/proceso" },
+  { label: "Escenarios", href: "/casos" },
+  { label: "Diagnóstico", href: "/diagnostico" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30);
@@ -53,11 +50,11 @@ export default function Navbar() {
           style={{ borderColor: PALETTE.hairline }}
         >
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo — sólido cream, sin gradient */}
-            <motion.a
+            {/* Logo */}
+            <a
               href="/"
               className="flex items-center gap-3 group"
-              whileHover={{ scale: 1.02 }}
+              aria-label="Aureon Growth Services — Inicio"
             >
               <svg
                 width="36"
@@ -78,84 +75,70 @@ export default function Navbar() {
                 </defs>
               </svg>
               <span
-                className="font-display font-bold text-sm lg:text-base tracking-wide"
-                style={{ color: PALETTE.cream }}
+                className="font-display font-bold text-sm lg:text-base tracking-wide leading-tight"
+                style={{ color: PALETTE.text }}
               >
                 AUREON{" "}
-                <span style={{ color: PALETTE.gold }}>GROWTH</span>
+                <span style={{ color: PALETTE.accent }}>GROWTH</span>
+                <span
+                  className="hidden md:inline ml-1 font-normal text-[10px] uppercase tracking-[0.22em] align-middle"
+                  style={{ color: PALETTE.gold }}
+                >
+                  · Services
+                </span>
               </span>
-            </motion.a>
+            </a>
 
-            {/* Desktop nav — sin gradients, texto cream, active state en gold */}
-            <div className="hidden lg:flex items-center gap-6">
+            {/* Desktop nav */}
+            <div className="hidden lg:flex items-center gap-7">
               {links.map((link) => (
-                <motion.a
+                <a
                   key={link.href}
                   href={link.href}
-                  className="relative px-0 py-2 text-sm font-medium transition-colors duration-200"
-                  style={{
-                    color:
-                      activeLink === link.href ? PALETTE.gold : PALETTE.cream,
-                  }}
-                  onClick={() => setActiveLink(link.href)}
-                  whileHover={{ scale: 1.02 }}
+                  className="text-sm font-medium transition-colors duration-200 hover:opacity-70"
+                  style={{ color: PALETTE.text }}
                 >
                   {link.label}
-                  {activeLink === link.href && (
-                    <motion.span
-                      className="absolute bottom-0 left-0 right-0 h-px"
-                      style={{ backgroundColor: PALETTE.gold }}
-                      layoutId="activeNav"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                </motion.a>
+                </a>
               ))}
             </div>
 
-            {/* CTA Desktop — oro sólido, no gradient */}
+            {/* CTA Desktop */}
             <div className="hidden lg:flex items-center gap-4">
-              <motion.a
+              <a
                 href={waLink("default")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-xs tracking-wide uppercase font-medium transition-colors duration-200"
-                style={{ color: PALETTE.cream }}
-                whileHover={{ scale: 1.03 }}
+                className="flex items-center gap-2 text-xs tracking-wide uppercase font-medium transition-opacity hover:opacity-70"
+                style={{ color: PALETTE.text }}
                 aria-label="Contactar por WhatsApp"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span className="hidden xl:inline">WhatsApp</span>
-              </motion.a>
-              <motion.a
-                href="#contacto"
-                className="px-6 py-3 text-xs tracking-wide uppercase font-display font-semibold transition-all duration-200 border"
+              </a>
+              <a
+                href="/diagnostico"
+                className="px-6 py-3 text-xs tracking-wide uppercase font-display font-semibold transition-all duration-200 rounded-full"
                 style={{
-                  backgroundColor: PALETTE.gold,
+                  backgroundColor: PALETTE.accent,
                   color: PALETTE.bg,
-                  borderColor: PALETTE.gold,
+                  boxShadow: "0 8px 20px -6px rgba(224, 78, 44, 0.35)",
                 }}
-                whileHover={{
-                  scale: 1.04,
-                  backgroundColor: PALETTE.bg,
-                  color: PALETTE.gold,
-                }}
-                whileTap={{ scale: 0.97 }}
               >
-                Iniciar Proyecto
-              </motion.a>
+                Solicitar diagnóstico
+              </a>
             </div>
 
             {/* Mobile toggle */}
-            <motion.button
+            <button
               className="lg:hidden p-2 transition-colors"
-              style={{ color: PALETTE.cream }}
+              style={{ color: PALETTE.text }}
               onClick={() => setMobileOpen(!mobileOpen)}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Toggle menu"
+              aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </motion.button>
+            </button>
           </div>
         </nav>
 
@@ -173,63 +156,51 @@ export default function Navbar() {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="px-6 py-6 space-y-3">
-                {links.map((link, i) => (
-                  <motion.a
+              <div className="px-6 py-6 space-y-1">
+                {links.map((link) => (
+                  <a
                     key={link.href}
                     href={link.href}
                     className="block px-0 py-3 text-sm font-medium border-b transition-colors"
                     style={{
-                      color: PALETTE.cream,
+                      color: PALETTE.text,
                       borderColor: PALETTE.hairline,
                     }}
                     onClick={() => setMobileOpen(false)}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
                   >
                     {link.label}
-                  </motion.a>
+                  </a>
                 ))}
-                <motion.a
-                  href="#contacto"
-                  className="flex items-center justify-center w-full mt-6 px-6 py-4 text-xs tracking-wide uppercase font-display font-semibold border transition-all"
+                <a
+                  href="/diagnostico"
+                  className="flex items-center justify-center w-full mt-6 px-6 py-4 text-xs tracking-wide uppercase font-display font-semibold rounded-full"
                   style={{
-                    backgroundColor: PALETTE.gold,
+                    backgroundColor: PALETTE.accent,
                     color: PALETTE.bg,
-                    borderColor: PALETTE.gold,
                   }}
                   onClick={() => setMobileOpen(false)}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
                 >
-                  Iniciar Proyecto
-                </motion.a>
-                <motion.a
+                  Solicitar diagnóstico
+                </a>
+                <a
                   href={waLink("default")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full mt-2 px-6 py-4 text-xs tracking-wide uppercase font-display font-semibold border transition-all"
+                  className="flex items-center justify-center gap-2 w-full mt-2 px-6 py-4 text-xs tracking-wide uppercase font-display font-semibold rounded-full"
                   style={{
                     backgroundColor: "#25d366",
                     color: PALETTE.bg,
-                    borderColor: "#25d366",
                   }}
                   onClick={() => setMobileOpen(false)}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35 }}
                 >
                   <MessageCircle className="w-4 h-4" />
                   WhatsApp
-                </motion.a>
+                </a>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Scroll progress indicator — bottom edge of navbar */}
         <ScrollProgress />
       </motion.header>
     </>

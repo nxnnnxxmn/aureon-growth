@@ -51,13 +51,17 @@ export default function CalendarEmbed({
           Calendario en configuración
         </h3>
         <p className="text-sm max-w-md leading-relaxed mb-6" style={{ color: "#6B655E" }}>
-          Estamos terminando de configurar el agendamiento directo. Mientras
-          tanto, envíanos un mensaje y te contactaremos en menos de 24h con la
-          disponibilidad de tu consultor asignado.
+          Para coordinar tu diagnóstico estratégico, escríbenos por WhatsApp o
+          completa el formulario. Te confirmaremos disponibilidad en menos de
+          24 horas hábiles.
         </p>
-        <p className="text-[11px] uppercase tracking-[0.2em] font-display font-semibold" style={{ color: "#9A938A" }}>
-          Set <code className="font-mono" style={{ color: "#E04E2C" }}>NEXT_PUBLIC_CAL_LINK</code> in .env
-        </p>
+        <a
+          href="#contacto"
+          className="px-7 py-3.5 rounded-full font-display font-semibold text-sm transition-colors"
+          style={{ backgroundColor: "#E04E2C", color: "#FBF8F1" }}
+        >
+          Solicitar diagnóstico
+        </a>
       </div>
     );
   }

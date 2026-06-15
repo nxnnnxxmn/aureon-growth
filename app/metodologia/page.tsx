@@ -1,0 +1,84 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/sections/Footer";
+import FloatingWhatsApp from "@/components/common/FloatingWhatsApp";
+import PageHeader from "@/components/ui/PageHeader";
+import MethodologySection from "@/components/sections/MethodologySection";
+
+export const metadata: Metadata = {
+  title: "Metodología · Aureon Growth System",
+  description:
+    "El Aureon Growth System: metodología propietaria en cuatro fases para convertir marketing y tecnología en un sistema comercial medible.",
+  alternates: { canonical: "https://aureongrowth.com/metodologia" },
+  openGraph: {
+    title: "Metodología | Aureon Growth Services",
+    description:
+      "Diagnóstico, arquitectura de crecimiento, implementación y optimización continua.",
+    url: "https://aureongrowth.com/metodologia",
+    type: "article",
+  },
+};
+
+const PALETTE = {
+  bg: "#1A1815",
+  text: "#FBF8F1",
+  textMuted: "rgba(251,248,241,0.70)",
+  accent: "#E04E2C",
+  gold: "#C9A961",
+};
+
+export default function MetodologiaPage() {
+  return (
+    <>
+      <Navbar />
+      <PageHeader
+        eyebrow="Aureon Growth System"
+        title={
+          <>
+            Una metodología que convierte marketing en un{" "}
+            <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic" }}>
+              sistema medible
+            </span>
+            .
+          </>
+        }
+        description="Cuatro fases que ordenan el crecimiento: del diagnóstico inicial al escalamiento de los canales con mejor retorno."
+        crumbs={[{ label: "Inicio", href: "/" }, { label: "Metodología" }]}
+      />
+
+      <MethodologySection />
+
+      {/* Closing CTA */}
+      <section className="py-20 lg:py-28 text-center" style={{ backgroundColor: PALETTE.bg, color: PALETTE.text }}>
+        <div className="max-w-2xl mx-auto px-6 lg:px-12">
+          <h2
+            className="font-display font-semibold text-[clamp(1.75rem,4vw,2.75rem)] leading-tight mb-6"
+            style={{ color: PALETTE.text }}
+          >
+            ¿Listo para aplicar el{" "}
+            <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: PALETTE.gold }}>
+              sistema
+            </span>{" "}
+            a tu empresa?
+          </h2>
+          <p className="text-base lg:text-lg leading-relaxed mb-8" style={{ color: PALETTE.textMuted }}>
+            Todo empieza con un diagnóstico estratégico para entender tu punto de partida real.
+          </p>
+          <Link
+            href="/diagnostico"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm transition-all hover:-translate-y-0.5"
+            style={{ backgroundColor: PALETTE.accent, color: PALETTE.text, boxShadow: "0 14px 36px -10px rgba(224,78,44,0.5)" }}
+          >
+            Solicitar diagnóstico estratégico
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
+      <FloatingWhatsApp />
+    </>
+  );
+}

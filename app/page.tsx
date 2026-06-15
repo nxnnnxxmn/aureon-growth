@@ -1,37 +1,35 @@
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Services from "@/components/sections/Services";
-import Results from "@/components/sections/Results";
-import Portfolio from "@/components/sections/Portfolio";
-import Pricing from "@/components/sections/Pricing";
-import Process from "@/components/sections/Process";
-import AiAutomation from "@/components/sections/AiAutomation";
-import Testimonials from "@/components/sections/Testimonials";
-import CTA from "@/components/sections/CTA";
+import ProblemSection from "@/components/sections/ProblemSection";
+import SolutionSection from "@/components/sections/SolutionSection";
+import ServicesSystems from "@/components/sections/ServicesSystems";
+import MethodologySection from "@/components/sections/MethodologySection";
+import AutomationSection from "@/components/sections/AutomationSection";
+import ProcessSection from "@/components/sections/ProcessSection";
+import ScenariosSection from "@/components/sections/ScenariosSection";
+import WhyAureon from "@/components/sections/WhyAureon";
+import WorkModels from "@/components/sections/WorkModels";
+import DiagnosticCTA from "@/components/sections/DiagnosticCTA";
 import FAQ from "@/components/sections/FAQ";
-import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import FloatingWhatsApp from "@/components/common/FloatingWhatsApp";
-import LogoMarquee from "@/components/common/LogoMarquee";
 
 export default function Home() {
   return (
     <main className="relative overflow-hidden">
       <Navbar />
       <Hero />
-      <LogoMarquee />
-      <About />
-      <Services />
-      <Results />
-      <Portfolio />
-      <Pricing />
-      <Process />
-      <AiAutomation />
-      <Testimonials />
-      <CTA />
-      <FAQ />
-      <Contact />
+      <ProblemSection />
+      <SolutionSection />
+      <ServicesSystems />
+      <MethodologySection showCta />
+      <AutomationSection />
+      <ProcessSection />
+      <ScenariosSection limit={3} />
+      <WhyAureon />
+      <WorkModels />
+      <DiagnosticCTA />
+      <FAQ limit={5} />
       <Footer />
       <FloatingWhatsApp />
     </main>

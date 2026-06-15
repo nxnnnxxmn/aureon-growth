@@ -35,26 +35,23 @@ export const contactSchema = z.object({
 export type ContactFormData = z.infer<typeof contactSchema>;
 
 export const SERVICE_OPTIONS = [
-  "Branding Estratégico",
-  "Performance Marketing",
-  "Growth Marketing",
-  "SEO & Posicionamiento",
-  "Automatización & IA",
-  "Diseño Web & UX/UI",
-  "Funnels de Conversión",
-  "Social Media & Contenido",
-  "Estrategia Integral 360°",
+  "Brand Authority System (Branding)",
+  "Acquisition Engine (Performance)",
+  "Revenue Automation (CRM & IA)",
+  "Growth Intelligence (Analítica)",
+  "Sistema de crecimiento integral",
   "No estoy seguro / Asesoría",
 ] as const;
 
 export const BUDGET_OPTIONS = [
-  "Menos de $2.000 USD/mes",
-  "$2.000 - $5.000 USD/mes",
-  "$5.000 - $10.000 USD/mes",
-  "$10.000 - $25.000 USD/mes",
-  "Más de $25.000 USD/mes",
-  "Lo definimos en la consultoría",
+  "Idea / etapa temprana",
+  "Empresa en crecimiento",
+  "Empresa consolidada",
+  "Lo definimos en el diagnóstico",
 ] as const;
+
+// Alias used by the diagnostic form (company stage instead of budget)
+export const STAGE_OPTIONS = BUDGET_OPTIONS;
 
 export const SOURCE_OPTIONS = [
   "Google",

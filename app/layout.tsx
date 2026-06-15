@@ -17,15 +17,12 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-// Tactical/telemetry monospace — used for data labels, meta bars, ticker.
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jet-brains",
   display: "swap",
 });
 
-// Editorial serif for premium emphasis moments (quotes, italics, accents).
-// Used surgically — never for body. Loaded with only the weights we use.
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-cormorant",
@@ -35,47 +32,39 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#050507",
+  themeColor: "#1A1815",
   width: "device-width",
   initialScale: 1,
 };
 
 export const metadata: Metadata = {
   title: {
-    default: "Aureon Growth | Growth Partner & Agencia de Marketing Digital Premium",
-    template: "%s | Aureon Growth",
+    default: "Aureon Growth Services | Growth Partner, Branding, Performance e IA",
+    template: "%s | Aureon Growth Services",
   },
   description:
-    "Tu socio estratégico de crecimiento. Generamos pipeline calificado, escalamos marcas con performance marketing, automatización con IA y branding premium. +850 marcas, 400% ROI promedio.",
+    "Aureon Growth Services ayuda a empresas a construir sistemas de crecimiento con branding, performance marketing, funnels, CRM, automatización, inteligencia artificial y analítica.",
   keywords: [
     "growth partner",
-    "agencia de marketing digital",
-    "agencia de marketing Colombia",
-    "agencia de marketing Bogotá",
+    "agencia de marketing digital premium",
+    "agencia de performance marketing",
     "branding estratégico",
-    "performance marketing",
-    "growth marketing",
-    "SEO avanzado",
     "automatización de marketing",
-    "agentes de IA marketing",
     "inteligencia artificial aplicada al marketing",
-    "embudos de conversión",
-    "generación de leads B2B",
-    "captación de clientes",
-    "paid media Google Ads Meta",
-    "social media management premium",
-    "estrategia digital integral",
-    "consultoría estratégica de marketing",
-    "diseño web de alta conversión",
-    "CRO optimización de conversión",
-    "Aureon Growth",
-    "Aureon Agency",
-    "marketing internacional LATAM",
+    "CRM y funnels",
+    "generación de leads",
+    "marketing B2B",
+    "growth marketing",
+    "conversión digital",
+    "agencia de branding y performance",
+    "sistemas de crecimiento empresarial",
+    "Aureon Growth Services",
+    "Aureon Growth System",
   ],
   metadataBase: new URL("https://aureongrowth.com"),
-  authors: [{ name: "Aureon Growth" }],
-  creator: "Aureon Growth",
-  publisher: "Aureon Growth",
+  authors: [{ name: "Aureon Growth Services" }],
+  creator: "Aureon Growth Services",
+  publisher: "Aureon Growth Services",
   robots: {
     index: true,
     follow: true,
@@ -91,17 +80,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_CO",
     url: "https://aureongrowth.com",
-    siteName: "Aureon Growth",
-    title: "Aureon Growth | Growth Partner & Agencia Premium de Marketing",
+    siteName: "Aureon Growth Services",
+    title: "Aureon Growth Services | Growth Partner, Branding, Performance e IA",
     description:
-      "Tu socio estratégico de crecimiento. Branding, performance, automatización con IA y growth marketing. +850 marcas escaladas.",
-    // Next.js auto-detects app/opengraph-image.tsx — no need to specify images here
+      "Sistemas de crecimiento que integran branding, performance marketing, funnels, CRM, automatización e inteligencia artificial.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aureon Growth | Growth Partner Premium",
+    title: "Aureon Growth Services | Growth Partner",
     description:
-      "Transformamos marcas en imperios digitales. +850 clientes · 400% ROI promedio · 98% retención.",
+      "Estrategia, tecnología y performance para crecimiento medible.",
     creator: "@aureongrowth",
   },
   alternates: {
@@ -109,35 +97,41 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
+const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Aureon Growth",
+  name: "Aureon Growth Services",
+  alternateName: "Aureon Growth",
   description:
-    "Agencia de marketing digital premium especializada en branding estratégico, performance marketing y crecimiento empresarial con IA.",
+    "Growth partner especializado en sistemas de crecimiento: branding estratégico, performance marketing, funnels, CRM, automatización e inteligencia artificial aplicada.",
   url: "https://aureongrowth.com",
   logo: "https://aureongrowth.com/logo.svg",
-  foundingDate: "2019",
-  numberOfEmployees: "25-50",
   areaServed: ["Colombia", "Latinoamérica", "España", "Estados Unidos"],
   serviceType: [
-    "Marketing Digital",
     "Branding Estratégico",
-    "SEO Avanzado",
     "Performance Marketing",
-    "Automatización con IA",
-    "Desarrollo Web",
+    "Automatización & CRM",
+    "Inteligencia Artificial aplicada",
+    "Generación de Leads",
+    "Analítica & Growth Intelligence",
   ],
   sameAs: [
     "https://instagram.com/aureongrowth",
     "https://linkedin.com/company/aureongrowth",
-    "https://twitter.com/aureongrowth",
   ],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer service",
     email: "hola@aureongrowth.com",
   },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Aureon Growth Services",
+  url: "https://aureongrowth.com",
+  inLanguage: "es-CO",
 };
 
 export default function RootLayout({
@@ -153,21 +147,20 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        {/* Speed up Cal.com iframe load by warming up the connection ahead of time */}
-        <link rel="dns-prefetch" href="https://cal.com" />
-        <link rel="preconnect" href="https://cal.com" crossOrigin="anonymous" />
       </head>
       <body className="antialiased bg-[#F5F1E8] text-[#1A1815]">
         <CustomCursor />
         {children}
-        {/* Global noise overlay — fixed material texture for premium feel */}
         <div className="noise-global" aria-hidden />
         <CookieBanner />
-        {/* Analytics — GA4 + Microsoft Clarity. No-op if env vars not set. */}
         <Analytics />
       </body>
     </html>

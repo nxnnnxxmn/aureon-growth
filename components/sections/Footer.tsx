@@ -1,16 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Instagram,
-  Linkedin,
-  Twitter,
-  Youtube,
-  Mail,
-  MapPin,
-  MessageCircle,
-} from "lucide-react";
+import { Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
 import { waLink, WHATSAPP_PRETTY } from "@/lib/whatsapp";
+import { GROWTH_SYSTEMS } from "@/lib/growth";
 
 const PALETTE = {
   bgDark: "#1A1815",
@@ -18,36 +12,32 @@ const PALETTE = {
   textMuted: "rgba(245, 241, 232, 0.65)",
   textSoft: "rgba(245, 241, 232, 0.40)",
   accent: "#E04E2C",
+  gold: "#C9A961",
   hairline: "rgba(245, 241, 232, 0.10)",
 };
 
 const navigation = {
-  servicios: [
-    { label: "Branding Estratégico", href: "#servicios" },
-    { label: "Performance Marketing", href: "#servicios" },
-    { label: "SEO Avanzado", href: "#servicios" },
-    { label: "Automatización IA", href: "#ia" },
-    { label: "Desarrollo Web", href: "#servicios" },
-  ],
+  servicios: GROWTH_SYSTEMS.map((s) => ({
+    label: s.short,
+    href: `/servicios/${s.slug}`,
+  })),
   empresa: [
-    { label: "Sobre Nosotros", href: "#nosotros" },
-    { label: "Portafolio", href: "#portafolio" },
-    { label: "Proceso", href: "#proceso" },
-    { label: "Resultados", href: "#resultados" },
-    { label: "Testimonios", href: "#testimonios" },
+    { label: "Servicios", href: "/servicios" },
+    { label: "Metodología", href: "/metodologia" },
+    { label: "Proceso", href: "/proceso" },
+    { label: "Escenarios", href: "/casos" },
+    { label: "Diagnóstico", href: "/diagnostico" },
   ],
   legal: [
-    { label: "Política de Privacidad", href: "/privacidad" },
-    { label: "Términos y Condiciones", href: "/terminos" },
-    { label: "Cookies", href: "/cookies" },
+    { label: "Privacidad", href: "/legal/privacidad" },
+    { label: "Términos", href: "/legal/terminos" },
+    { label: "Cookies", href: "/legal/cookies" },
   ],
 };
 
 const socials = [
-  { Icon: Instagram, href: "#", label: "Instagram" },
-  { Icon: Linkedin, href: "#", label: "LinkedIn" },
-  { Icon: Twitter, href: "#", label: "Twitter" },
-  { Icon: Youtube, href: "#", label: "YouTube" },
+  { Icon: Instagram, href: "https://instagram.com/aureongrowth", label: "Instagram" },
+  { Icon: Linkedin, href: "https://linkedin.com/company/aureongrowth", label: "LinkedIn" },
 ];
 
 export default function Footer() {
@@ -56,7 +46,6 @@ export default function Footer() {
       className="relative w-full overflow-hidden"
       style={{ backgroundColor: PALETTE.bgDark, color: PALETTE.cream }}
     >
-      {/* Big editorial letter watermark */}
       <div
         aria-hidden
         className="absolute -bottom-12 -right-12 select-none pointer-events-none leading-none"
@@ -66,14 +55,14 @@ export default function Footer() {
           fontSize: "clamp(20rem, 35vw, 32rem)",
           fontWeight: 300,
           color: PALETTE.accent,
-          opacity: 0.10,
+          opacity: 0.08,
         }}
       >
         A
       </div>
 
       <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 lg:px-12 pt-20 lg:pt-28 pb-10">
-        {/* Top — big statement */}
+        {/* Top statement */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -82,33 +71,30 @@ export default function Footer() {
           className="mb-16 lg:mb-20 max-w-3xl"
         >
           <div className="flex items-center gap-3 mb-6">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: PALETTE.accent }}
-            />
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: PALETTE.accent }} />
             <span
               className="font-mono text-xs uppercase tracking-[0.28em]"
               style={{ color: PALETTE.accent }}
             >
-              Aureon Growth · 2026
+              Aureon Growth Services
             </span>
           </div>
           <h3
-            className="font-display font-semibold text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] tracking-[-0.02em]"
+            className="font-display font-semibold text-[clamp(1.85rem,4.5vw,3.25rem)] leading-[1.06] tracking-[-0.02em]"
             style={{ color: PALETTE.cream }}
           >
-            Transformamos marcas{" "}
+            Estrategia, tecnología y performance para{" "}
             <span
               style={{
                 fontFamily: "var(--font-cormorant), serif",
                 fontStyle: "italic",
                 fontWeight: 400,
-                color: PALETTE.accent,
+                color: PALETTE.gold,
               }}
             >
-              en sistemas
-            </span>{" "}
-            de crecimiento.
+              crecimiento medible
+            </span>
+            .
           </h3>
         </motion.div>
 
@@ -116,15 +102,9 @@ export default function Footer() {
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12 mb-16 lg:mb-20">
           {/* Logo + contact */}
           <div className="col-span-2 lg:col-span-2">
-            <a href="/" className="flex items-center gap-3 mb-6">
-              <svg
-                width="36"
-                height="36"
-                viewBox="0 0 32 32"
-                className="flex-shrink-0"
-                aria-hidden
-              >
-                <rect width="32" height="32" rx="8" fill="#1A1815" />
+            <Link href="/" className="flex items-center gap-3 mb-6" aria-label="Aureon Growth Services — Inicio">
+              <svg width="36" height="36" viewBox="0 0 32 32" className="flex-shrink-0" aria-hidden>
+                <rect width="32" height="32" rx="8" fill="#221F1B" />
                 <circle cx="16" cy="16" r="11" stroke="#c9a961" strokeWidth="1.5" fill="none" />
                 <circle cx="16" cy="16" r="6" fill="url(#aureonCoreFooter)" />
                 <circle cx="16" cy="5" r="2" fill="#c9a961" />
@@ -135,136 +115,50 @@ export default function Footer() {
                   </linearGradient>
                 </defs>
               </svg>
-              <span
-                className="font-display font-bold text-base tracking-wide"
-                style={{ color: PALETTE.cream }}
-              >
-                AUREON{" "}
-                <span
-                  style={{
-                    fontFamily: "var(--font-cormorant), serif",
-                    fontStyle: "italic",
-                    fontWeight: 400,
-                    color: PALETTE.accent,
-                  }}
-                >
-                  growth
+              <span className="font-display font-bold text-base tracking-wide" style={{ color: PALETTE.cream }}>
+                AUREON <span style={{ color: PALETTE.accent }}>GROWTH</span>
+                <span className="block font-normal text-[10px] uppercase tracking-[0.22em]" style={{ color: PALETTE.gold }}>
+                  Services
                 </span>
               </span>
-            </a>
-            <p
-              className="text-sm leading-relaxed mb-6 max-w-sm"
-              style={{ color: PALETTE.textMuted }}
-            >
-              Growth partner premium para marcas con ambición real. LATAM, USA
-              y Europa.
+            </Link>
+            <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: PALETTE.textMuted }}>
+              Growth partner que integra branding, performance, automatización e
+              inteligencia artificial en un solo sistema comercial medible.
             </p>
 
-            {/* Contact rows */}
             <div className="space-y-3 text-sm">
               <a
                 href="mailto:hola@aureongrowth.com"
-                className="flex items-center gap-3 hover:text-current transition-colors"
+                className="flex items-center gap-3 transition-opacity hover:opacity-100"
                 style={{ color: PALETTE.textMuted }}
               >
-                <Mail
-                  className="w-4 h-4"
-                  style={{ color: PALETTE.accent }}
-                />
+                <Mail className="w-4 h-4" style={{ color: PALETTE.accent }} />
                 hola@aureongrowth.com
               </a>
               <a
                 href={waLink("default")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 transition-colors"
+                className="flex items-center gap-3 transition-opacity hover:opacity-100"
                 style={{ color: PALETTE.textMuted }}
               >
-                <MessageCircle
-                  className="w-4 h-4"
-                  style={{ color: PALETTE.accent }}
-                />
+                <MessageCircle className="w-4 h-4" style={{ color: PALETTE.accent }} />
                 {WHATSAPP_PRETTY}
               </a>
-              <div
-                className="flex items-center gap-3"
-                style={{ color: PALETTE.textMuted }}
-              >
-                <MapPin
-                  className="w-4 h-4"
-                  style={{ color: PALETTE.accent }}
-                />
+              <div className="flex items-center gap-3" style={{ color: PALETTE.textMuted }}>
+                <MapPin className="w-4 h-4" style={{ color: PALETTE.accent }} />
                 Bogotá, Colombia
               </div>
             </div>
           </div>
 
-          {/* Nav columns */}
-          <div>
-            <h4
-              className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5"
-              style={{ color: PALETTE.accent }}
-            >
-              Servicios
-            </h4>
-            <ul className="space-y-3">
-              {navigation.servicios.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="text-sm hover:opacity-100 transition-opacity"
-                    style={{ color: PALETTE.textMuted }}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4
-              className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5"
-              style={{ color: PALETTE.accent }}
-            >
-              Empresa
-            </h4>
-            <ul className="space-y-3">
-              {navigation.empresa.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="text-sm transition-opacity"
-                    style={{ color: PALETTE.textMuted }}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4
-              className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5"
-              style={{ color: PALETTE.accent }}
-            >
-              Legal
-            </h4>
-            <ul className="space-y-3">
-              {navigation.legal.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="text-sm transition-opacity"
-                    style={{ color: PALETTE.textMuted }}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Servicios */}
+          <FooterCol title="Servicios" items={navigation.servicios} />
+          {/* Empresa */}
+          <FooterCol title="Empresa" items={navigation.empresa} />
+          {/* Legal */}
+          <FooterCol title="Legal" items={navigation.legal} />
         </div>
 
         {/* Bottom bar */}
@@ -272,23 +166,19 @@ export default function Footer() {
           className="border-t pt-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
           style={{ borderColor: PALETTE.hairline }}
         >
-          <div
-            className="font-mono text-[11px] uppercase tracking-[0.22em]"
-            style={{ color: PALETTE.textSoft }}
-          >
-            © Aureon Growth MMXXVI · Bogotá, CO
+          <div className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: PALETTE.textSoft }}>
+            © {new Date().getFullYear()} Aureon Growth Services · Bogotá, CO
           </div>
           <div className="flex items-center gap-4">
             {socials.map(({ Icon, href, label }) => (
               <a
                 key={label}
                 href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={label}
                 className="w-9 h-9 rounded-full border flex items-center justify-center transition-all hover:scale-110"
-                style={{
-                  borderColor: PALETTE.hairline,
-                  color: PALETTE.cream,
-                }}
+                style={{ borderColor: PALETTE.hairline, color: PALETTE.cream }}
               >
                 <Icon className="w-4 h-4" />
               </a>
@@ -297,5 +187,34 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  items,
+}: {
+  title: string;
+  items: { label: string; href: string }[];
+}) {
+  return (
+    <div>
+      <h4 className="font-mono text-[11px] uppercase tracking-[0.22em] mb-5" style={{ color: PALETTE.accent }}>
+        {title}
+      </h4>
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li key={item.label}>
+            <Link
+              href={item.href}
+              className="text-sm transition-opacity hover:opacity-100"
+              style={{ color: PALETTE.textMuted }}
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
