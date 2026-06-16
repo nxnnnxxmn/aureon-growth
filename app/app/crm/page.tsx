@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { LEADS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Lead, CrmStage, RequestSource } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -25,7 +25,7 @@ const emptyLead: Omit<Lead, "id"> = {
 export default function CrmPage() {
   const [view, setView] = useState<"kanban" | "table">("kanban");
   const [filter, setFilter] = useState<string>("Todos");
-  const [leads, setLeads] = useLocal<Lead[]>("aureon_leads_v1", LEADS);
+  const [leads, setLeads] = useStore<Lead>(STORE_KEYS.leads);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<CrmStage | null>(null);
   const [modalOpen, setModalOpen] = useState(false);

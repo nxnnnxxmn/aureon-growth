@@ -5,11 +5,15 @@ import { Building2, Mail, Shield, Users as UsersIcon, Save, Plus, Trash2 } from 
 import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel, StatusBadge, Button } from "@/components/app/primitives";
 import { useLocal } from "@/lib/internal/storage";
-import { USERS } from "@/lib/internal/mock-data";
 import type { Role, User } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const ROLES: Role[] = ["Owner", "Admin", "Strategy", "Design", "Performance", "Automation", "Finance", "Viewer"];
+
+// Honest default: only the account owner. No fabricated team members.
+const DEFAULT_USERS: User[] = [
+  { id: "owner", name: "Owner", email: "aureongrowthservices@outlook.com", role: "Owner", department: "Dirección", active: true },
+];
 
 const inputClass = "w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-[rgba(214,180,106,0.55)]";
 
@@ -30,7 +34,7 @@ const DEFAULT_COMPANY: CompanyInfo = {
 export default function ConfiguracionPage() {
   const [company, setCompany] = useLocal<CompanyInfo>("aureon_company_v1", DEFAULT_COMPANY);
   const [draft, setDraft] = useState<CompanyInfo>(company);
-  const [users, setUsers] = useLocal<User[]>("aureon_users_v1", USERS);
+  const [users, setUsers] = useLocal<User[]>("aureon_users_v1", DEFAULT_USERS);
   const [savedFlash, setSavedFlash] = useState(false);
 
   function saveCompany() {

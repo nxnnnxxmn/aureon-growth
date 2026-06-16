@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, DataTable, StatusBadge, FilterChips, StatCard } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { EXPENSES } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Expense, ExpenseStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -22,7 +22,7 @@ const empty: Omit<Expense, "id"> = {
 
 export default function GastosPage() {
   const [filter, setFilter] = useState<ExpenseStatus | "Todos">("Todos");
-  const [items, setItems] = useLocal<Expense[]>("aureon_expenses_v1", EXPENSES);
+  const [items, setItems] = useStore<Expense>(STORE_KEYS.expenses);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Expense, "id">>(empty);
 

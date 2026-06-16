@@ -7,7 +7,7 @@ import { AppPageHeader, FilterChips, Button, PriorityBadge, StatusBadge, DataTab
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { REQUESTS } from "@/lib/internal/mock-data";
 import type { IncomingRequest, RequestStatus, Priority, RequestSource } from "@/lib/internal/types";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import { A } from "@/lib/ui";
 
 const STATUSES: (RequestStatus | "Todas")[] = ["Todas", "Nueva", "En revisión", "Contactada", "Diagnóstico agendado", "Propuesta enviada", "Ganada", "Perdida", "Nurturing"];
@@ -25,7 +25,7 @@ export default function SolicitudesPage() {
   const [filter, setFilter] = useState<RequestStatus | "Todas">("Todas");
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<IncomingRequest | null>(null);
-  const [items, setItems] = useLocal<IncomingRequest[]>("aureon_requests_v1", REQUESTS);
+  const [items, setItems] = useStore<IncomingRequest>(STORE_KEYS.requests);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<IncomingRequest, "id" | "date">>(emptyDraft);
 

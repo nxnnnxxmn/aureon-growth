@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { CLIENTS, PROJECTS, INVOICES, TASKS, FILES } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -20,7 +20,7 @@ const empty: Omit<Client, "id"> = {
 };
 
 export default function ClientesPage() {
-  const [clients, setClients] = useLocal<Client[]>("aureon_clients_v1", CLIENTS);
+  const [clients, setClients] = useStore<Client>(STORE_KEYS.clients);
   const [selected, setSelected] = useState<Client | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Client, "id">>(empty);

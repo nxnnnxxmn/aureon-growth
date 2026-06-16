@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, DataTable, StatusBadge, StatCard, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { INVOICES, CLIENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Invoice, InvoiceStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -23,7 +23,7 @@ const empty: Omit<Invoice, "id"> = {
 
 export default function FacturacionPage() {
   const [filter, setFilter] = useState<InvoiceStatus | "Todas">("Todas");
-  const [items, setItems] = useLocal<Invoice[]>("aureon_invoices_v1", INVOICES);
+  const [items, setItems] = useStore<Invoice>(STORE_KEYS.invoices);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Invoice, "id">>(empty);
 

@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, DataTable, StatusBadge, FilterChips } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { PROPOSALS, CLIENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Proposal, ProposalStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -22,7 +22,7 @@ const empty: Omit<Proposal, "id"> = {
 
 export default function PropuestasPage() {
   const [filter, setFilter] = useState<ProposalStatus | "Todas">("Todas");
-  const [items, setItems] = useLocal<Proposal[]>("aureon_proposals_v1", PROPOSALS);
+  const [items, setItems] = useStore<Proposal>(STORE_KEYS.proposals);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Proposal, "id">>(empty);
 

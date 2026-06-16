@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, DataTable, StatusBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { CONTRACTS, CLIENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Contract, ContractStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -23,7 +23,7 @@ const empty: Omit<Contract, "id"> = {
 };
 
 export default function ContratosPage() {
-  const [items, setItems] = useLocal<Contract[]>("aureon_contracts_v1", CONTRACTS);
+  const [items, setItems] = useStore<Contract>(STORE_KEYS.contracts);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Contract, "id">>(empty);
 

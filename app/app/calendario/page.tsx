@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { EVENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { CalendarEvent } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -36,7 +36,7 @@ function buildMonth(year: number, monthIndex: number) {
 }
 
 export default function CalendarioPage() {
-  const [events, setEvents] = useLocal<CalendarEvent[]>("aureon_events_v1", EVENTS);
+  const [events, setEvents] = useStore<CalendarEvent>(STORE_KEYS.events);
   const [view, setView] = useState<"month" | "agenda">("month");
   const [year, setYear] = useState(2026);
   const [month, setMonth] = useState(5); // June (0-indexed)

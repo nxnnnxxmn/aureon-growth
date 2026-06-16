@@ -5,7 +5,7 @@ import { Plus, FileText, Upload, Trash2 } from "lucide-react";
 import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, Panel } from "@/components/app/primitives";
 import { FILES, CLIENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { FileRecord } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -32,7 +32,7 @@ function categoryFor(name: string): FileRecord["category"] {
 
 export default function ArchivosPage() {
   const [filter, setFilter] = useState<FileRecord["category"] | "Todos">("Todos");
-  const [files, setFiles] = useLocal<FileRecord[]>("aureon_files_v1", FILES);
+  const [files, setFiles] = useStore<FileRecord>(STORE_KEYS.files);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 

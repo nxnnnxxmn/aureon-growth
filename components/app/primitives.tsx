@@ -39,7 +39,7 @@ export function AppPageHeader({
 
 /* ─── KPI / stat card ───────────────────────────────────────────── */
 export function StatCard({
-  label, value, sub, accent = "gold", icon: Icon, hint,
+  label, value, sub, accent = "gold", icon: Icon, hint, source,
 }: {
   label: string;
   value: string | number;
@@ -47,6 +47,7 @@ export function StatCard({
   accent?: "gold" | "violet" | "blue" | "positive" | "alert";
   icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   hint?: string;
+  source?: "real" | "manual" | "importado" | "pendiente" | "sin-datos" | "demo";
 }) {
   const color = { gold: A.gold, violet: A.violet, blue: A.blue, positive: A.positive, alert: A.alert }[accent];
   return (
@@ -61,7 +62,10 @@ export function StatCard({
       </div>
       <div className="font-display font-bold text-2xl lg:text-3xl tabular-nums" style={{ color: A.text }}>{value}</div>
       {sub && <div className="text-xs mt-1" style={{ color: A.text2 }}>{sub}</div>}
-      {hint && <div className="text-[10px] font-mono mt-2" style={{ color: A.textDim }}>{hint}</div>}
+      <div className="flex items-center justify-between mt-2">
+        {hint ? <div className="text-[10px] font-mono" style={{ color: A.textDim }}>{hint}</div> : <span />}
+        {source && <SourceTag origin={source} />}
+      </div>
     </div>
   );
 }
@@ -154,13 +158,35 @@ export function Panel({ children, className = "", title, action }: { children: R
 }
 
 /* ─── Empty state ───────────────────────────────────────────────── */
-export function EmptyState({ title, hint, icon: Icon }: { title: string; hint?: string; icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }) {
+export function EmptyState({ title, hint, icon: Icon, action }: { title: string; hint?: string; icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; action?: React.ReactNode }) {
   return (
-    <div className="text-center py-16 surface" style={{ backgroundColor: A.surface }}>
-      {Icon && <Icon className="w-8 h-8 mx-auto mb-3" style={{ color: A.textDim }} />}
-      <div className="font-display font-semibold" style={{ color: A.text }}>{title}</div>
-      {hint && <div className="text-sm mt-1" style={{ color: A.textDim }}>{hint}</div>}
+    <div className="text-center py-16 px-6 surface" style={{ backgroundColor: A.surface }}>
+      <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "rgba(214,180,106,0.10)", border: `1px solid ${A.border}` }}>
+        {Icon ? <Icon className="w-5 h-5" style={{ color: A.gold }} /> : <span className="font-mono text-xs" style={{ color: A.gold }}>0</span>}
+      </div>
+      <div className="font-display font-semibold text-base" style={{ color: A.text }}>{title}</div>
+      {hint && <div className="text-sm mt-1.5 max-w-md mx-auto leading-relaxed" style={{ color: A.textDim }}>{hint}</div>}
+      {action && <div className="mt-5 flex items-center justify-center gap-2">{action}</div>}
     </div>
+  );
+}
+
+/* ─── Data source label (every KPI must declare its source) ─────── */
+type DataOrigin = "real" | "manual" | "importado" | "pendiente" | "sin-datos" | "demo";
+const ORIGIN_META: Record<DataOrigin, { label: string; color: string }> = {
+  real: { label: "Real", color: A.positive },
+  manual: { label: "Manual", color: A.gold },
+  importado: { label: "Importado", color: A.blue },
+  pendiente: { label: "Pendiente", color: A.violet },
+  "sin-datos": { label: "Sin datos", color: A.textDim },
+  demo: { label: "Demo", color: A.alert },
+};
+export function SourceTag({ origin }: { origin: DataOrigin }) {
+  const m = ORIGIN_META[origin];
+  return (
+    <span className="inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.14em] px-1.5 py-0.5 rounded-full" style={{ color: m.color, backgroundColor: "rgba(255,255,255,0.04)" }}>
+      <span className="w-1 h-1 rounded-full" style={{ backgroundColor: m.color }} />{m.label}
+    </span>
   );
 }
 

@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel, PriorityBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { PROJECTS, CLIENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Project, ProjectStatus, Priority } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -24,7 +24,7 @@ const empty: Omit<Project, "id"> = {
 
 export default function ProyectosPage() {
   const [view, setView] = useState<"kanban" | "table">("kanban");
-  const [projects, setProjects] = useLocal<Project[]>("aureon_projects_v1", PROJECTS);
+  const [projects, setProjects] = useStore<Project>(STORE_KEYS.projects);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Project, "id">>(empty);
   const [deliverablesText, setDeliverablesText] = useState("");

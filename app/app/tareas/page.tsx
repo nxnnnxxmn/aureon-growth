@@ -6,7 +6,7 @@ import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, StatusBadge, PriorityBadge, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { TASKS, PROJECTS, CLIENTS } from "@/lib/internal/mock-data";
-import { useLocal } from "@/lib/internal/storage";
+import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Task, TaskStatus, Priority } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -21,7 +21,7 @@ const empty: Omit<Task, "id"> = {
 export default function TareasPage() {
   const [view, setView] = useState<"list" | "kanban">("list");
   const [filter, setFilter] = useState<"Todas" | TaskStatus>("Todas");
-  const [tasks, setTasks] = useLocal<Task[]>("aureon_tasks_v1", TASKS);
+  const [tasks, setTasks] = useStore<Task>(STORE_KEYS.tasks);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Task, "id">>(empty);
   const [tagsText, setTagsText] = useState("");
