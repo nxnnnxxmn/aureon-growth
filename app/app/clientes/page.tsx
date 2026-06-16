@@ -1,29 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, Mail, Phone, Calendar, ExternalLink } from "lucide-react";
+import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save } from "lucide-react";
 import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
+import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { CLIENTS, PROJECTS, INVOICES, TASKS, FILES } from "@/lib/internal/mock-data";
-import type { Client } from "@/lib/internal/types";
+import { useLocal } from "@/lib/internal/storage";
+import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
+const STATUSES: ClientStatus[] = ["Activo", "Pausado", "Potencial", "Cerrado"];
+const SERVICES = ["Brand Authority System", "Acquisition Engine", "Revenue Automation", "Growth Intelligence"];
+
+const empty: Omit<Client, "id"> = {
+  company: "", contact: "", email: "", phone: "", services: [],
+  status: "Potencial", startDate: "", monthlyValue: 0, projects: [], pendingInvoices: 0, notes: "",
+};
 
 export default function ClientesPage() {
+  const [clients, setClients] = useLocal<Client[]>("aureon_clients_v1", CLIENTS);
   const [selected, setSelected] = useState<Client | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [draft, setDraft] = useState<Omit<Client, "id">>(empty);
+  const [servicesText, setServicesText] = useState("");
+
+  function create() {
+    const id = `C-${200 + clients.length + 1}`;
+    const services = servicesText.split(",").map((s) => s.trim()).filter(Boolean);
+    setClients((arr) => [{ id, ...draft, services }, ...arr]);
+    setModalOpen(false);
+    setDraft(empty);
+    setServicesText("");
+  }
 
   return (
     <AppShell>
       <AppPageHeader
         title="Clientes"
-        subtitle="Cuentas activas, pausadas y potenciales. Mock interno."
+        subtitle="Cuentas activas, pausadas y potenciales. Persistencia local."
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Clientes" }]}
-        actions={<Button variant="outline"><Plus className="w-3.5 h-3.5" />Nuevo cliente</Button>}
+        actions={<Button variant="outline" onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nuevo cliente</Button>}
       />
 
       <DataTable
-        rows={CLIENTS}
+        rows={clients}
         onRowClick={(r) => setSelected(r)}
         columns={[
           { key: "company", label: "Empresa", render: (r) => (<div><div className="font-display font-semibold text-sm">{r.company}</div><div className="text-xs" style={{ color: A.textDim }}>{r.contact}</div></div>) },
@@ -31,7 +53,7 @@ export default function ClientesPage() {
           { key: "services", label: "Servicios", render: (r) => <span className="text-xs">{r.services.join(", ")}</span> },
           { key: "status", label: "Estado", render: (r) => <StatusBadge status={r.status} /> },
           { key: "monthlyValue", label: "Valor mensual", render: (r) => <span className="font-mono text-xs tabular-nums" style={{ color: A.gold }}>{money(r.monthlyValue)}</span> },
-          { key: "startDate", label: "Inicio", render: (r) => <span className="font-mono text-xs">{r.startDate}</span> },
+          { key: "startDate", label: "Inicio", render: (r) => <span className="font-mono text-xs">{r.startDate || "—"}</span> },
           { key: "projects", label: "Proyectos", render: (r) => <span className="text-xs">{r.projects.length}</span> },
           { key: "pendingInvoices", label: "Facturas pend.", render: (r) => <span className="text-xs">{r.pendingInvoices}</span> },
         ]}
@@ -57,7 +79,7 @@ export default function ClientesPage() {
               </div>
               <div className="rounded-xl p-3" style={{ backgroundColor: A.surface, border: `1px solid ${A.border}` }}>
                 <div className="font-mono text-[10px] uppercase tracking-[0.16em] mb-1" style={{ color: A.textDim }}>Inicio</div>
-                <div className="font-display font-bold text-lg" style={{ color: A.text }}>{selected.startDate}</div>
+                <div className="font-display font-bold text-lg" style={{ color: A.text }}>{selected.startDate || "—"}</div>
               </div>
             </div>
 
@@ -65,7 +87,7 @@ export default function ClientesPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2"><Mail className="w-3.5 h-3.5" style={{ color: A.gold }} /><a href={`mailto:${selected.email}`} style={{ color: A.text }}>{selected.email}</a></div>
                 <div className="flex items-center gap-2"><Phone className="w-3.5 h-3.5" style={{ color: A.gold }} /><span style={{ color: A.text }}>{selected.phone}</span></div>
-                <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" style={{ color: A.gold }} /><span style={{ color: A.text }}>Inicio: {selected.startDate}</span></div>
+                <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" style={{ color: A.gold }} /><span style={{ color: A.text }}>Inicio: {selected.startDate || "—"}</span></div>
               </div>
             </Panel>
 
@@ -118,6 +140,28 @@ export default function ClientesPage() {
           </aside>
         </>
       )}
+
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Nuevo cliente" size="lg"
+        footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={create}><Save className="w-3.5 h-3.5" /> Guardar</Button></>}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField label="Empresa" required><input className={inputClass} style={inputStyle} value={draft.company} onChange={(e) => setDraft({ ...draft, company: e.target.value })} required /></FormField>
+          <FormField label="Contacto principal" required><input className={inputClass} style={inputStyle} value={draft.contact} onChange={(e) => setDraft({ ...draft, contact: e.target.value })} required /></FormField>
+          <FormField label="Email" required><input type="email" className={inputClass} style={inputStyle} value={draft.email} onChange={(e) => setDraft({ ...draft, email: e.target.value })} required /></FormField>
+          <FormField label="Teléfono"><input className={inputClass} style={inputStyle} value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} /></FormField>
+          <FormField label="Estado"><select className={inputClass} style={inputStyle} value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as ClientStatus })}>{STATUSES.map((s) => <option key={s}>{s}</option>)}</select></FormField>
+          <FormField label="Inicio"><input type="date" className={inputClass} style={inputStyle} value={draft.startDate} onChange={(e) => setDraft({ ...draft, startDate: e.target.value })} /></FormField>
+          <FormField label="Valor mensual (USD)"><input type="number" className={inputClass} style={inputStyle} value={draft.monthlyValue} onChange={(e) => setDraft({ ...draft, monthlyValue: Number(e.target.value) || 0 })} /></FormField>
+          <FormField label="Facturas pendientes"><input type="number" className={inputClass} style={inputStyle} value={draft.pendingInvoices} onChange={(e) => setDraft({ ...draft, pendingInvoices: Number(e.target.value) || 0 })} /></FormField>
+          <div className="sm:col-span-2">
+            <FormField label="Servicios" hint={`Coma separados — ej: ${SERVICES.slice(0, 2).join(", ")}`}>
+              <input className={inputClass} style={inputStyle} value={servicesText} onChange={(e) => setServicesText(e.target.value)} placeholder="Brand Authority System, Acquisition Engine" />
+            </FormField>
+          </div>
+          <div className="sm:col-span-2">
+            <FormField label="Notas"><textarea rows={3} className={inputClass} style={{ ...inputStyle, resize: "vertical" }} value={draft.notes || ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></FormField>
+          </div>
+        </div>
+      </Modal>
     </AppShell>
   );
 }
