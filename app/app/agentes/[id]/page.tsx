@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Bot, Plus, FolderPlus } from "lucide-react";
 import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel, StatusBadge } from "@/components/app/primitives";
+import AgentWorkspace from "@/components/app/AgentWorkspace";
 import { AGENTS, getAgent } from "@/lib/internal/agents";
 import { A } from "@/lib/ui";
 
@@ -69,12 +70,9 @@ export default async function AgentDetail({ params }: { params: Promise<{ id: st
         <div className="flex flex-wrap gap-2">{agent.relatedServices.map((s) => <span key={s} className="px-3 py-1.5 rounded-full text-xs font-medium" style={{ backgroundColor: "rgba(214,180,106,0.12)", color: A.gold }}>{s}</span>)}</div>
       </Panel>
 
-      <Panel title="Workspace del agente" className="mt-4">
-        <p className="text-sm mb-3" style={{ color: A.text2 }}>Espacio preparado para conectar un proveedor LLM (Anthropic / OpenAI). Mientras no haya integración, la ejecución queda como tarea manual con este prompt como guía.</p>
-        <div className="rounded-xl p-4 text-sm" style={{ backgroundColor: A.bg2, border: `1px dashed ${A.border}`, color: A.textDim }}>
-          <em>Integración LLM pendiente · sin respuestas simuladas para evitar inventar datos.</em>
-        </div>
-      </Panel>
+      <div className="mt-4">
+        <AgentWorkspace agent={agent} />
+      </div>
     </AppShell>
   );
 }

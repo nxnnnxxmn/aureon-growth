@@ -8,6 +8,7 @@ import {
   Calendar, Layers, Bot, Settings2, FileText, ShieldCheck, Receipt,
   Calculator, LineChart, CreditCard, BarChart3, Folder, Sliders,
   HelpCircle, Search, Menu, X, ChevronRight, LogOut,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { A } from "@/lib/ui";
 
@@ -44,10 +45,33 @@ const NAV = [
   ]},
 ];
 
+function currentLabel(pathname: string): string {
+  for (const g of NAV) {
+    for (const it of g.items) {
+      if (pathname === it.href || (it.href !== "/app" && pathname.startsWith(it.href + "/"))) return it.label;
+    }
+  }
+  return "Command Center";
+}
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // mobile drawer
+  const [collapsed, setCollapsed] = useState(false); // desktop collapsed
+
+  // Persist collapsed state across navigations
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("aureon_sidebar_collapsed");
+      if (saved === "1") setCollapsed(true);
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem("aureon_sidebar_collapsed", collapsed ? "1" : "0"); } catch {}
+  }, [collapsed]);
+
+  // Close mobile drawer on route change
   useEffect(() => { setOpen(false); }, [pathname]);
 
   async function logout() {
@@ -55,53 +79,71 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     router.replace("/app/login");
   }
 
+  const sidebarWidth = collapsed ? "w-[68px]" : "w-[260px]";
+
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: A.bg, color: A.text }}>
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 z-40 h-screen w-[260px] shrink-0 flex flex-col border-r transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        className={`fixed lg:sticky top-0 z-40 h-screen shrink-0 flex flex-col border-r transition-all duration-300 ${sidebarWidth} ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
         style={{ backgroundColor: A.bg2, borderColor: A.border }}
       >
         {/* Brand */}
-        <div className="px-5 py-4 flex items-center gap-3 border-b" style={{ borderColor: A.border }}>
-          <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden>
-            <rect width="32" height="32" rx="8" fill="#11101A" stroke="rgba(214,180,106,0.4)" strokeWidth="0.75" />
-            <circle cx="16" cy="16" r="11" stroke={A.gold} strokeWidth="1.3" fill="none" opacity="0.8" />
-            <circle cx="16" cy="16" r="6" fill="url(#sidebarCore)" />
-            <circle cx="16" cy="5" r="2" fill={A.gold} />
-            <defs>
-              <linearGradient id="sidebarCore" x1="11" y1="11" x2="21" y2="21" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor={A.gold} />
-                <stop offset="100%" stopColor={A.violet} />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div className="leading-tight">
-            <div className="font-display font-bold text-sm" style={{ color: A.text }}>Aureon</div>
-            <div className="font-mono text-[9px] uppercase tracking-[0.22em]" style={{ color: A.gold }}>Command Center</div>
-          </div>
+        <div className="px-3 py-4 flex items-center gap-3 border-b" style={{ borderColor: A.border }}>
+          <Link href="/app" className="flex items-center gap-3 min-w-0 focus-ring rounded">
+            <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden className="shrink-0">
+              <rect width="32" height="32" rx="8" fill="#11101A" stroke="rgba(214,180,106,0.4)" strokeWidth="0.75" />
+              <circle cx="16" cy="16" r="11" stroke={A.gold} strokeWidth="1.3" fill="none" opacity="0.8" />
+              <circle cx="16" cy="16" r="6" fill="url(#sidebarCore)" />
+              <circle cx="16" cy="5" r="2" fill={A.gold} />
+              <defs>
+                <linearGradient id="sidebarCore" x1="11" y1="11" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor={A.gold} />
+                  <stop offset="100%" stopColor={A.violet} />
+                </linearGradient>
+              </defs>
+            </svg>
+            {!collapsed && (
+              <div className="leading-tight min-w-0">
+                <div className="font-display font-bold text-sm truncate" style={{ color: A.text }}>Aureon</div>
+                <div className="font-mono text-[9px] uppercase tracking-[0.22em] truncate" style={{ color: A.gold }}>Command Center</div>
+              </div>
+            )}
+          </Link>
           <button onClick={() => setOpen(false)} className="lg:hidden ml-auto p-1 rounded focus-ring" style={{ color: A.text2 }} aria-label="Cerrar menú">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
           {NAV.map((g) => (
             <div key={g.group}>
-              <div className="px-3 mb-1.5 font-mono text-[9px] uppercase tracking-[0.22em]" style={{ color: A.textDim }}>{g.group}</div>
+              {!collapsed && (
+                <div className="px-3 mb-1.5 font-mono text-[9px] uppercase tracking-[0.22em]" style={{ color: A.textDim }}>{g.group}</div>
+              )}
               <div className="space-y-0.5">
                 {g.items.map((it) => {
                   const isActive = pathname === it.href || (it.href !== "/app" && pathname.startsWith(it.href + "/"));
                   return (
-                    <Link key={it.href} href={it.href} className="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-colors focus-ring" style={{
-                      backgroundColor: isActive ? "rgba(214,180,106,0.10)" : "transparent",
-                      color: isActive ? A.text : A.text2,
-                      border: `1px solid ${isActive ? A.borderActive : "transparent"}`,
-                    }}>
-                      <it.icon className="w-4 h-4" style={{ color: isActive ? A.gold : A.text2 }} strokeWidth={1.6} />
-                      <span className="flex-1 truncate">{it.label}</span>
-                      {isActive && <ChevronRight className="w-3.5 h-3.5" style={{ color: A.gold }} />}
+                    <Link
+                      key={it.href}
+                      href={it.href}
+                      title={collapsed ? it.label : undefined}
+                      className={`group flex items-center ${collapsed ? "justify-center" : "gap-3"} px-3 py-2 rounded-xl text-sm transition-colors focus-ring`}
+                      style={{
+                        backgroundColor: isActive ? "rgba(214,180,106,0.10)" : "transparent",
+                        color: isActive ? A.text : A.text2,
+                        border: `1px solid ${isActive ? A.borderActive : "transparent"}`,
+                      }}
+                    >
+                      <it.icon className="w-4 h-4 shrink-0" style={{ color: isActive ? A.gold : A.text2 }} strokeWidth={1.6} />
+                      {!collapsed && (
+                        <>
+                          <span className="flex-1 truncate">{it.label}</span>
+                          {isActive && <ChevronRight className="w-3.5 h-3.5" style={{ color: A.gold }} />}
+                        </>
+                      )}
                     </Link>
                   );
                 })}
@@ -110,17 +152,31 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
+        {/* Collapse toggle (desktop only) */}
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          className="hidden lg:flex items-center justify-center gap-2 mx-2 mb-2 px-3 py-2 rounded-xl text-xs font-display font-semibold transition-colors focus-ring"
+          style={{ backgroundColor: A.surface, color: A.text2, border: `1px solid ${A.border}` }}
+          aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+        >
+          {collapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <><PanelLeftClose className="w-3.5 h-3.5" /> Colapsar</>}
+        </button>
+
         {/* User */}
-        <div className="px-3 py-3 border-t" style={{ borderColor: A.border }}>
-          <div className="flex items-center gap-3 px-2 py-2 rounded-xl" style={{ backgroundColor: A.surface, border: `1px solid ${A.border}` }}>
-            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: `linear-gradient(135deg, ${A.gold}, ${A.violet})`, color: A.bg }}>JL</span>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-display font-semibold truncate" style={{ color: A.text }}>Juan L.</div>
-              <div className="text-[10px] truncate" style={{ color: A.textDim }}>Owner · Aureon</div>
-            </div>
-            <button onClick={logout} className="p-1.5 rounded focus-ring transition-colors hover:bg-white/5" style={{ color: A.text2 }} aria-label="Cerrar sesión" title="Cerrar sesión">
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
+        <div className="px-2 py-3 border-t" style={{ borderColor: A.border }}>
+          <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3"} px-2 py-2 rounded-xl`} style={{ backgroundColor: A.surface, border: `1px solid ${A.border}` }}>
+            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: `linear-gradient(135deg, ${A.gold}, ${A.violet})`, color: A.bg }}>JL</span>
+            {!collapsed && (
+              <>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-display font-semibold truncate" style={{ color: A.text }}>Juan L.</div>
+                  <div className="text-[10px] truncate" style={{ color: A.textDim }}>Owner · Aureon</div>
+                </div>
+                <button onClick={logout} className="p-1.5 rounded focus-ring transition-colors hover:bg-white/5" style={{ color: A.text2 }} aria-label="Cerrar sesión" title="Cerrar sesión">
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
           </div>
         </div>
       </aside>
@@ -135,12 +191,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <button onClick={() => setOpen(true)} className="lg:hidden p-1.5 rounded focus-ring" style={{ color: A.text2 }} aria-label="Abrir menú">
               <Menu className="w-5 h-5" />
             </button>
+
+            {/* Active section indicator */}
+            <div className="hidden sm:flex items-center gap-2 shrink-0">
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: A.gold }}>{currentLabel(pathname)}</span>
+            </div>
+
             <div className="flex-1 relative max-w-xl">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: A.textDim }} />
               <input
                 type="search"
                 placeholder="Buscar clientes, proyectos, leads, facturas…"
-                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none transition-colors"
+                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none focus:border-[rgba(214,180,106,0.55)]"
                 style={{ backgroundColor: A.surface, border: `1px solid ${A.border}`, color: A.text }}
               />
             </div>
