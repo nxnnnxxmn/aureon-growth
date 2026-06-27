@@ -129,8 +129,8 @@ export default function Navbar({ dark = true }: { dark?: boolean }) {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="block px-0 py-3 text-sm font-medium border-b"
-                  style={{ color: A.text, borderColor: A.border }}
+                  className="flex items-center w-full px-3 py-3.5 -mx-3 text-sm font-medium border-b rounded-lg focus-ring touch-target"
+                  style={{ color: A.text, borderColor: A.border, minHeight: 44 }}
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}

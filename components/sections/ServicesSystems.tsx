@@ -6,6 +6,15 @@ import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { GROWTH_SYSTEMS } from "@/lib/growth";
 import { A } from "@/lib/ui";
 
+// Per-system color identity — gives each card its own visual code
+const SYSTEM_COLORS: Record<string, { primary: string; secondary: string; tag: string; tagBg: string }> = {
+  "branding-estrategico":             { primary: A.gold,   secondary: A.goldBright, tag: A.gold,   tagBg: "rgba(214,180,106,0.14)" },
+  "performance-marketing":            { primary: A.violet, secondary: "#9F84D0",    tag: "#C7B8E8", tagBg: "rgba(124,92,191,0.16)" },
+  "automatizacion-crm-ia":            { primary: A.blue,   secondary: A.cyan,       tag: A.cyan,   tagBg: "rgba(79,182,199,0.14)" },
+  "analitica-growth-intelligence":    { primary: A.cyan,   secondary: A.blue,       tag: A.cyan,   tagBg: "rgba(79,182,199,0.14)" },
+};
+const colorsFor = (slug: string) => SYSTEM_COLORS[slug] || SYSTEM_COLORS["branding-estrategico"];
+
 /** Bespoke mini-mockup per system — gives each card its own identity. */
 function SystemViz({ slug }: { slug: string }) {
   if (slug === "branding-estrategico") {
@@ -91,45 +100,51 @@ export default function ServicesSystems() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
-          {GROWTH_SYSTEMS.map((s, i) => (
-            <motion.div
-              key={s.slug}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Link href={`/servicios/${s.slug}`} className="card-3d surface group relative flex flex-col h-full p-7 lg:p-8 focus-ring" style={{ backgroundColor: A.surface }}>
-                {/* mini mockup */}
-                <div className="rounded-2xl mb-6 p-4" style={{ backgroundColor: A.bg, border: `1px solid ${A.border}` }}>
-                  <SystemViz slug={s.slug} />
-                </div>
+          {GROWTH_SYSTEMS.map((s, i) => {
+            const c = colorsFor(s.slug);
+            return (
+              <motion.div
+                key={s.slug}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Link href={`/servicios/${s.slug}`} className="card-3d surface group relative flex flex-col h-full p-7 lg:p-8 focus-ring overflow-hidden" style={{ backgroundColor: A.surface }}>
+                  {/* per-system glow accent — esquina superior derecha */}
+                  <div aria-hidden className="absolute -top-16 -right-16 w-48 h-48 rounded-full pointer-events-none opacity-60" style={{ background: `radial-gradient(circle, ${c.primary}26 0%, transparent 70%)` }} />
 
-                <div className="flex items-start justify-between mb-2">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: A.gold }}>{s.short}</span>
-                  <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" style={{ color: A.textDim }} />
-                </div>
-                <h3 className="font-display font-semibold text-xl lg:text-2xl leading-tight mb-3" style={{ color: A.text }}>{s.name}</h3>
-                <p className="text-sm leading-relaxed mb-5" style={{ color: A.text2 }}>{s.summary}</p>
-
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {s.highlights.map((h) => (
-                    <span key={h} className="px-2.5 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: "rgba(124,92,191,0.14)", color: "#C7B8E8" }}>{h}</span>
-                  ))}
-                </div>
-
-                <div className="mt-auto pt-5 border-t flex items-center justify-between gap-3" style={{ borderColor: A.border }}>
-                  <div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] mb-0.5" style={{ color: A.textDim }}>Resultado</div>
-                    <div className="text-sm font-medium" style={{ color: A.text }}>{s.outcome}</div>
+                  {/* mini mockup */}
+                  <div className="relative rounded-2xl mb-6 p-4" style={{ backgroundColor: A.bg, border: `1px solid ${A.border}` }}>
+                    <SystemViz slug={s.slug} />
                   </div>
-                  <span className="shrink-0 inline-flex items-center gap-1 text-xs font-display font-semibold" style={{ color: A.gold }}>
-                    Explorar <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+
+                  <div className="relative flex items-start justify-between mb-2">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: c.primary }}>{s.short}</span>
+                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" style={{ color: A.textDim }} />
+                  </div>
+                  <h3 className="relative font-display font-semibold text-xl lg:text-2xl leading-tight mb-3" style={{ color: A.text }}>{s.name}</h3>
+                  <p className="relative text-sm leading-relaxed mb-5" style={{ color: A.text2 }}>{s.summary}</p>
+
+                  <div className="relative flex flex-wrap gap-1.5 mb-6">
+                    {s.highlights.map((h) => (
+                      <span key={h} className="px-2.5 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: c.tagBg, color: c.tag }}>{h}</span>
+                    ))}
+                  </div>
+
+                  <div className="relative mt-auto pt-5 border-t flex items-center justify-between gap-3" style={{ borderColor: A.border }}>
+                    <div>
+                      <div className="font-mono text-[10px] uppercase tracking-[0.18em] mb-0.5" style={{ color: A.textDim }}>Resultado</div>
+                      <div className="text-sm font-medium" style={{ color: A.text }}>{s.outcome}</div>
+                    </div>
+                    <span className="shrink-0 inline-flex items-center gap-1 text-xs font-display font-semibold" style={{ color: c.primary }}>
+                      Explorar <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
         <div className="mt-12 text-center">

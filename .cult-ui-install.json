@@ -1,0 +1,152 @@
+{
+  "installed": 18,
+  "deps": [
+    "@radix-ui/react-slot",
+    "motion",
+    "border-beam",
+    "react-use-measure"
+  ],
+  "registryDeps": [
+    "button"
+  ],
+  "summary": [
+    {
+      "name": "texture-card",
+      "files": 1,
+      "deps": [],
+      "registryDeps": []
+    },
+    {
+      "name": "texture-button",
+      "files": 1,
+      "deps": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "minimal-card",
+      "files": 1,
+      "deps": [],
+      "registryDeps": []
+    },
+    {
+      "name": "animated-number",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "gradient-heading",
+      "files": 1,
+      "deps": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "shift-card",
+      "files": 1,
+      "deps": [],
+      "registryDeps": []
+    },
+    {
+      "name": "border-beam-button",
+      "files": 1,
+      "deps": [
+        "border-beam"
+      ],
+      "registryDeps": [
+        "button"
+      ]
+    },
+    {
+      "name": "bg-animated-gradient",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "bg-animated-fractal-dot-grid",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "direction-aware-tabs",
+      "files": 1,
+      "deps": [
+        "motion",
+        "react-use-measure"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "family-button",
+      "files": 1,
+      "deps": [],
+      "registryDeps": []
+    },
+    {
+      "name": "side-panel",
+      "files": 1,
+      "deps": [],
+      "registryDeps": []
+    },
+    {
+      "name": "popover",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "floating-panel",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "sortable-list",
+      "files": 1,
+      "deps": [
+        "motion",
+        "react-use-measure"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "dock",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "typewriter",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    },
+    {
+      "name": "text-animate",
+      "files": 1,
+      "deps": [
+        "motion"
+      ],
+      "registryDeps": []
+    }
+  ]
+}

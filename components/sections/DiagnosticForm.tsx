@@ -110,14 +110,14 @@ export default function DiagnosticForm() {
       </div>
 
       {status === "error" && (
-        <div className="mt-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(240,99,71,0.1)", color: "#F0A36A" }} role="alert">
+        <div id="form-error" className="mt-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(240,99,71,0.1)", color: "#F0A36A" }} role="alert" aria-live="polite">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
-        <button type="submit" disabled={status === "loading"} className="btn-premium focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm disabled:opacity-60" style={{ backgroundColor: A.gold, color: A.bg, boxShadow: "0 14px 36px -10px rgba(214,180,106,0.45)" }}>
+        <button type="submit" disabled={status === "loading"} aria-describedby={status === "error" ? "form-error" : undefined} className="btn-premium focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm disabled:opacity-60" style={{ backgroundColor: A.gold, color: A.bg, boxShadow: "0 14px 36px -10px rgba(214,180,106,0.45)" }}>
           {status === "loading" ? (<><Loader2 className="w-4 h-4 animate-spin" /> Enviando…</>) : (<>Solicitar diagnóstico estratégico <ArrowRight className="w-4 h-4" /></>)}
         </button>
         <a href={waLink("default")} target="_blank" rel="noopener noreferrer" className="focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-display font-semibold text-sm border transition-colors" style={{ borderColor: A.border, color: A.text }}>

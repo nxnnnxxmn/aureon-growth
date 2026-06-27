@@ -40,7 +40,8 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8 }}
-          className="mb-16 lg:mb-20 max-w-3xl"
+          className="mb-20 lg:mb-28 pb-16 lg:pb-20 border-b max-w-3xl"
+          style={{ borderColor: A.border }}
         >
           <div className="flex items-center gap-3 mb-6">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: A.gold, boxShadow: `0 0 8px ${A.gold}` }} />

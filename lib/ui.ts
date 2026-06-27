@@ -1,24 +1,39 @@
 /**
- * AUREON — engineering-grade dark palette tokens.
- * Single source of truth so no component improvises colors.
+ * Legacy palette accessor — mantenido por compatibilidad con componentes ya
+ * escritos. Para nuevo código, usar `Tk` de design-tokens.ts.
+ *
+ * Cambios v2 (Fase 2 — accesibilidad):
+ *  - text2 #A8B4C8 → #B5BFCF  (8.6:1 → 9.4:1)
+ *  - textDim #6F7890 → #8892A6 (4.1:1 FAIL → 6.0:1 AA)
+ *  + cyan (color de apoyo para datos/IA)
+ *  + surfaceElev (superficie elevada)
+ *  + borderHover (estado hover de borders)
  */
+import { Tk } from "./design-tokens";
+
 export const A = {
-  bg: "#08070D",
-  bg2: "#0D0B18",
-  surface: "#11101A",
-  surfaceSolid: "#13121E",
-  glass: "rgba(255,255,255,0.045)",
-  border: "rgba(255,255,255,0.10)",
-  borderActive: "rgba(214,180,106,0.55)",
-  gold: "#D6B46A",
-  goldMetal: "#C9A961",
-  violet: "#7C5CBF",
-  violetDark: "#3E2A69",
-  blue: "#3B6FD4",
-  blueDeep: "#102A5C",
-  text: "#F0EDF8",
-  text2: "#A8B4C8",
-  textDim: "#6F7890",
-  positive: "#7EE2A8",
-  alert: "#F0C36A",
+  bg: Tk.color.bg,
+  bg2: Tk.color.bg2,
+  surface: Tk.color.surface,
+  surfaceSolid: Tk.color.surfaceElev,
+  surfaceElev: Tk.color.surfaceElev,
+  glass: Tk.color.glass,
+  border: Tk.color.border,
+  borderHover: Tk.color.borderHover,
+  borderActive: Tk.color.borderActive,
+  gold: Tk.color.gold,
+  goldMetal: Tk.color.goldMetal,
+  goldBright: Tk.color.goldBright,
+  violet: Tk.color.violet,
+  violetDark: Tk.color.violetDark,
+  blue: Tk.color.blue,
+  blueDeep: Tk.color.blueDeep,
+  cyan: Tk.color.cyan,
+  text: Tk.color.text,
+  text2: Tk.color.text2,
+  textDim: Tk.color.textDim,
+  textMute: Tk.color.textMute,
+  positive: Tk.color.positive,
+  alert: Tk.color.alert,
+  danger: Tk.color.danger,
 } as const;

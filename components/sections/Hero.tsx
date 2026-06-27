@@ -29,13 +29,22 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.from(".hero-line", { yPercent: 115, duration: 1.1, ease: "power4.out", stagger: 0.09, delay: 0.2 });
-        gsap.from(".hero-fade", { opacity: 0, y: 22, duration: 0.9, stagger: 0.1, delay: 0.85, ease: "power2.out" });
-        gsap.from(".hero-viz", { opacity: 0, scale: 0.92, duration: 1.2, delay: 0.4, ease: "power3.out" });
+        // CLS-safe: opacity + small translateY (no yPercent 115%)
+        gsap.set(".hero-line, .hero-fade, .hero-viz", { opacity: 0 });
+        gsap.to(".hero-line", { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.15 });
+        gsap.from(".hero-line", { y: 14, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.15 });
+        gsap.to(".hero-fade", { opacity: 1, y: 0, duration: 0.7, stagger: 0.08, delay: 0.7, ease: "power2.out" });
+        gsap.from(".hero-fade", { y: 12, duration: 0.7, stagger: 0.08, delay: 0.7, ease: "power2.out" });
+        gsap.to(".hero-viz", { opacity: 1, scale: 1, duration: 1, delay: 0.4, ease: "power2.out" });
+        gsap.from(".hero-viz", { scale: 0.96, duration: 1, delay: 0.4, ease: "power2.out" });
         gsap.to(".hero-bg-glow", {
           yPercent: -12, ease: "none",
           scrollTrigger: { trigger: ref.current, start: "top top", end: "bottom top", scrub: 1 },
         });
+      });
+      // Fallback for reduced-motion: ensure everything is visible
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(".hero-line, .hero-fade, .hero-viz", { opacity: 1, y: 0, scale: 1 });
       });
     }, ref);
     return () => ctx.revert();
