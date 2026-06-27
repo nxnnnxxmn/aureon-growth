@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { waLink } from "@/lib/whatsapp";
 import { A } from "@/lib/ui";
+import { Button } from "@/components/ds";
 
 export default function DiagnosticCTA() {
   return (
@@ -31,24 +32,12 @@ export default function DiagnosticCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href="/diagnostico"
-              className="btn-premium focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm"
-              style={{ backgroundColor: A.gold, color: A.bg, boxShadow: "0 16px 40px -12px rgba(214,180,106,0.5)" }}
-            >
+            <Button href="/diagnostico" size="lg" iconRight={<ArrowRight className="w-4 h-4" />} className="w-full sm:w-auto">
               Solicitar diagnóstico estratégico
-              <ArrowRight className="w-4 h-4" />
-            </a>
-            <a
-              href={waLink("default")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-display font-semibold text-sm border transition-colors"
-              style={{ borderColor: A.border, color: A.text }}
-            >
-              <MessageCircle className="w-4 h-4" />
+            </Button>
+            <Button href={waLink("default")} external variant="outline" size="lg" icon={<MessageCircle className="w-4 h-4" />} className="w-full sm:w-auto">
               Hablar por WhatsApp
-            </a>
+            </Button>
           </div>
           <p className="mt-6 text-sm" style={{ color: A.textDim }}>
             Diagnóstico inicial sin compromiso · respuesta en menos de 24 horas hábiles.

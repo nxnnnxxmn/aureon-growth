@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { GROWTH_SYSTEMS } from "@/lib/growth";
 import { A } from "@/lib/ui";
+import { Button } from "@/components/ds";
 
 // Per-system color identity — gives each card its own visual code
 const SYSTEM_COLORS: Record<string, { primary: string; secondary: string; tag: string; tagBg: string }> = {
@@ -148,9 +149,9 @@ export default function ServicesSystems() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/servicios" className="btn-premium focus-ring inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-display font-semibold text-sm" style={{ backgroundColor: A.gold, color: A.bg }}>
-            Ver todos los servicios <ArrowRight className="w-4 h-4" />
-          </Link>
+          <Button href="/servicios" iconRight={<ArrowRight className="w-4 h-4" />}>
+            Ver todos los servicios
+          </Button>
         </div>
       </div>
     </section>

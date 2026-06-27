@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Compass, Crosshair, Workflow, LineChart } from "lucide-react";
 import { A } from "@/lib/ui";
+import { Button } from "@/components/ds";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -93,21 +94,12 @@ export default function Hero() {
           </p>
 
           <div className="hero-fade flex flex-wrap items-center gap-3 mt-9">
-            <a
-              href="/diagnostico"
-              className="btn-premium focus-ring inline-flex items-center gap-2 px-8 py-4 font-display font-semibold text-sm rounded-full"
-              style={{ backgroundColor: A.gold, color: A.bg, boxShadow: "0 16px 40px -12px rgba(214,180,106,0.45)" }}
-            >
+            <Button href="/diagnostico" size="lg" iconRight={<ArrowRight className="w-4 h-4" />}>
               Solicitar diagnóstico estratégico
-              <ArrowRight className="w-4 h-4" />
-            </a>
-            <a
-              href="#sistemas"
-              className="focus-ring inline-flex items-center gap-2 px-8 py-4 font-display font-semibold text-sm rounded-full border transition-colors"
-              style={{ borderColor: A.border, color: A.text }}
-            >
+            </Button>
+            <Button href="#sistemas" variant="outline" size="lg">
               Ver el sistema
-            </a>
+            </Button>
           </div>
 
           <p className="hero-fade mt-6 text-sm flex items-center gap-2" style={{ color: A.textDim }}>
