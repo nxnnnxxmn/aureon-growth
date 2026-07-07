@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, MessageCircle, Compass, Crosshair, Workflow, LineChart } from "lucide-react";
 import { A } from "@/lib/ui";
@@ -10,7 +11,7 @@ import { Button } from "@/components/ds";
 import NeuralParticles from "@/components/fx/NeuralParticles";
 import Magnetic from "@/components/fx/Magnetic";
 
-if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const MODULES = [
   { icon: Compass, label: "Brand Module", sub: "Positioning", pos: "top-[2%] left-[6%]", float: "aureon-float", color: A.gold, depth: 30 },
@@ -61,10 +62,26 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // CLS-safe: opacity + small translateY (no yPercent 115%)
         gsap.set(".hero-line, .hero-fade, .hero-viz", { opacity: 0 });
-        gsap.to(".hero-line", { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.15 });
-        gsap.from(".hero-line", { y: 14, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.15 });
+
+        /* H1 por caracteres — cada letra emerge desde la máscara de su línea.
+           Se espera fonts.ready para no medir con la fuente fallback (evita
+           que el split quede desalineado tras el swap de Space Grotesk). */
+        let split: SplitText | null = null;
+        let cancelled = false;
+        document.fonts.ready.then(() => {
+          if (cancelled) return;
+          split = new SplitText(".hero-line", { type: "chars" });
+          gsap.set(".hero-line", { opacity: 1 });
+          gsap.from(split.chars, {
+            yPercent: 115,
+            duration: 0.9,
+            ease: "power4.out",
+            stagger: 0.016,
+            delay: 0.12,
+          });
+        });
+
         gsap.to(".hero-fade", { opacity: 1, y: 0, duration: 0.7, stagger: 0.08, delay: 0.7, ease: "power2.out" });
         gsap.from(".hero-fade", { y: 12, duration: 0.7, stagger: 0.08, delay: 0.7, ease: "power2.out" });
         gsap.to(".hero-viz", { opacity: 1, scale: 1, duration: 1, delay: 0.4, ease: "power2.out" });
@@ -78,6 +95,11 @@ export default function Hero() {
           scale: 0.96, opacity: 0.55, ease: "none",
           scrollTrigger: { trigger: ref.current, start: "top top", end: "bottom 30%", scrub: 0.8 },
         });
+
+        return () => {
+          cancelled = true;
+          split?.revert();
+        };
       });
       // Fallback for reduced-motion: ensure everything is visible
       mm.add("(prefers-reduced-motion: reduce)", () => {
