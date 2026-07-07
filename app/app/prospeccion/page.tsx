@@ -234,6 +234,35 @@ Aureon Growth Services`,
   };
 }
 
+/* ── Conexión directa con los medios de envío ─────────────────────
+   Outlook Web: deeplink de redacción con asunto y cuerpo ya escritos
+   (abre la cuenta Outlook del usuario en el navegador, listo para enviar).
+   WhatsApp: wa.me abre la app; web.whatsapp.com fuerza WhatsApp Web. */
+function outlookComposeUrl(p: Prospect): string {
+  const { subject, body } = buildEmail(p);
+  const params = new URLSearchParams();
+  if (p.email) params.set("to", p.email);
+  params.set("subject", subject);
+  params.set("body", body);
+  return `https://outlook.live.com/mail/0/deeplink/compose?${params.toString()}`;
+}
+
+/* Google Maps: busca el NOMBRE del negocio con el mapa centrado en sus
+   coordenadas exactas — así aparece la ficha real del negocio (reseñas,
+   horario, teléfono), no un simple pin de coordenadas. */
+function googleMapsUrl(p: Prospect): string {
+  return `https://www.google.com/maps/search/${encodeURIComponent(p.name)}/@${p.lat},${p.lon},18z`;
+}
+
+/* Cuando OSM no trae canales, SIEMPRE hay un camino: buscadores
+   dirigidos para encontrar el WhatsApp/Instagram/teléfono del negocio. */
+function googleContactUrl(p: Prospect, zoneLabel: string): string {
+  return `https://www.google.com/search?q=${encodeURIComponent(`"${p.name}" ${zoneLabel} Bogotá teléfono WhatsApp contacto`)}`;
+}
+function instagramSearchUrl(p: Prospect): string {
+  return `https://www.google.com/search?q=${encodeURIComponent(`"${p.name}" Bogotá site:instagram.com`)}`;
+}
+
 function buildWebMessage(p: Prospect): string {
   const pitch = pitchFor(p.category);
   return `Hola, equipo de ${p.name}. Soy [Tu nombre], de Aureon Growth Services. Les escribo por su formulario porque ${pitch.hook}. ¿Les interesa una demo de 10 minutos? Mi WhatsApp: [tu número]. Gracias.`;
@@ -682,15 +711,26 @@ export default function ProspeccionPage() {
                 <div className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: A.textDim }}>Contactar por los canales disponibles</div>
 
                 {waNumber(selected.phone) && (
-                  <a
-                    href={`https://wa.me/${waNumber(selected.phone)}?text=${encodeURIComponent(draft)}`}
-                    target="_blank" rel="noopener noreferrer"
-                    onClick={() => markContacted(selected.id)}
-                    className="btn-premium focus-ring w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-display font-semibold text-sm"
-                    style={{ backgroundColor: "#22C15E", color: "#06130A" }}
-                  >
-                    <MessageCircle className="w-4 h-4" /> Enviar WhatsApp con este mensaje
-                  </a>
+                  <>
+                    <a
+                      href={`https://wa.me/${waNumber(selected.phone)}?text=${encodeURIComponent(draft)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      onClick={() => markContacted(selected.id)}
+                      className="btn-premium focus-ring w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-display font-semibold text-sm"
+                      style={{ backgroundColor: "#22C15E", color: "#06130A" }}
+                    >
+                      <MessageCircle className="w-4 h-4" /> Enviar por WhatsApp (mensaje listo)
+                    </a>
+                    <a
+                      href={`https://web.whatsapp.com/send?phone=${waNumber(selected.phone)}&text=${encodeURIComponent(draft)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      onClick={() => markContacted(selected.id)}
+                      className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-[11px] border transition-colors hover:bg-white/5"
+                      style={{ borderColor: "rgba(34,193,94,0.35)", color: "#7EE2A8" }}
+                    >
+                      <Globe className="w-3 h-3" /> Abrir en WhatsApp Web (navegador)
+                    </a>
+                  </>
                 )}
 
                 {selected.phone && (
@@ -714,16 +754,30 @@ export default function ProspeccionPage() {
                   </div>
                 )}
 
-                {selected.email && (
+                {/* Outlook Web — correo redactado directo en tu cuenta */}
+                <div className="flex gap-2">
                   <a
-                    href={`mailto:${selected.email}?subject=${encodeURIComponent(buildEmail(selected).subject)}&body=${encodeURIComponent(buildEmail(selected).body)}`}
-                    onClick={() => markContacted(selected.id)}
-                    className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
-                    style={{ borderColor: A.border, color: A.text }}
+                    href={outlookComposeUrl(selected)}
+                    target="_blank" rel="noopener noreferrer"
+                    onClick={() => { if (selected.email) markContacted(selected.id); }}
+                    className="focus-ring flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
+                    style={{ borderColor: "rgba(77,124,254,0.4)", color: "#8FAEFF" }}
                   >
-                    <Mail className="w-3.5 h-3.5" style={{ color: A.gold }} /> Email con mensaje predeterminado
+                    <Mail className="w-3.5 h-3.5" />
+                    {selected.email ? `Redactar en Outlook → ${selected.email}` : "Redactar en Outlook (pega el destinatario)"}
                   </a>
-                )}
+                  {selected.email && (
+                    <a
+                      href={`mailto:${selected.email}?subject=${encodeURIComponent(buildEmail(selected).subject)}&body=${encodeURIComponent(buildEmail(selected).body)}`}
+                      onClick={() => markContacted(selected.id)}
+                      className="focus-ring flex items-center px-3 py-2.5 rounded-full text-xs border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: A.text2 }}
+                      title="Abrir en tu cliente de correo predeterminado"
+                    >
+                      App
+                    </a>
+                  )}
+                </div>
 
                 {selected.website && (
                   <div className="flex gap-2">
@@ -747,19 +801,43 @@ export default function ProspeccionPage() {
                 )}
 
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lon}`}
+                  href={googleMapsUrl(selected)}
                   target="_blank" rel="noopener noreferrer"
                   className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
                   style={{ borderColor: A.border, color: A.text2 }}
                 >
-                  <ExternalLink className="w-3.5 h-3.5" /> Ver en Google Maps (reseñas, horario, fotos)
+                  <ExternalLink className="w-3.5 h-3.5" /> Ver el negocio en Google Maps (ficha, reseñas, teléfono)
                 </a>
 
-                {!selected.phone && !selected.website && !selected.email && (
-                  <p className="text-xs leading-relaxed" style={{ color: A.textDim }}>
-                    OSM no registra canales de contacto para este negocio. Búscalo en Google Maps (botón de arriba) para obtener teléfono o Instagram, o visítalo en persona.
+                {/* Buscador de canales — SIEMPRE hay un camino para llegarles */}
+                <div className="pt-2">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] mb-2" style={{ color: !selected.phone && !selected.website && !selected.email ? A.gold : A.textDim }}>
+                    {!selected.phone && !selected.website && !selected.email
+                      ? "OSM no trae canales — encuéntralos aquí"
+                      : "Encontrar más canales"}
+                  </div>
+                  <div className="flex gap-2">
+                    <a
+                      href={googleContactUrl(selected, zone.label)}
+                      target="_blank" rel="noopener noreferrer"
+                      className="focus-ring flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full font-display font-semibold text-[11px] border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: A.text }}
+                    >
+                      <Search className="w-3 h-3" style={{ color: A.gold }} /> Teléfono / WhatsApp en Google
+                    </a>
+                    <a
+                      href={instagramSearchUrl(selected)}
+                      target="_blank" rel="noopener noreferrer"
+                      className="focus-ring flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full font-display font-semibold text-[11px] border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: A.text }}
+                    >
+                      <ExternalLink className="w-3 h-3" style={{ color: "#F0A3C4" }} /> Instagram del negocio
+                    </a>
+                  </div>
+                  <p className="mt-2 text-[10px] leading-relaxed" style={{ color: A.textDim }}>
+                    Encontraste el número o el correo → cópialo, vuelve aquí y usa los botones de arriba con el mensaje ya listo.
                   </p>
-                )}
+                </div>
               </div>
 
               {/* Convertir en lead */}
