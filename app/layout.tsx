@@ -6,8 +6,7 @@ import CustomCursor from "@/components/common/CustomCursor";
 import SmoothScroll from "@/components/common/SmoothScroll";
 import MouseSpotlight from "@/components/fx/MouseSpotlight";
 import Analytics from "@/components/common/Analytics";
-import CookieBanner from "@/components/common/CookieBanner";
-import SoundToggle from "@/components/common/SoundToggle";
+import DeferredExtras from "@/components/common/DeferredExtras";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -167,8 +166,7 @@ export default function RootLayout({
         <MouseSpotlight />
         {children}
         <div className="noise-global" aria-hidden />
-        <CookieBanner />
-        <SoundToggle />
+        <DeferredExtras />
         <Analytics />
       </body>
     </html>
