@@ -5,6 +5,8 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { waLink } from "@/lib/whatsapp";
 import { A } from "@/lib/ui";
 import { Button } from "@/components/ds";
+import Magnetic from "@/components/fx/Magnetic";
+import MaskReveal from "@/components/fx/MaskReveal";
 
 export default function DiagnosticCTA() {
   return (
@@ -22,19 +24,23 @@ export default function DiagnosticCTA() {
           <span className="inline-block font-mono text-xs uppercase tracking-[0.28em] mb-6" style={{ color: A.gold }}>
             Siguiente paso
           </span>
-          <h2 className="font-display font-semibold text-[clamp(2rem,5.5vw,3.75rem)] leading-[1.05] tracking-[-0.02em] mb-6" style={{ color: A.text }}>
-            Tu empresa no necesita más tácticas aisladas. Necesita un{" "}
-            <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: A.gold }}>sistema de crecimiento</span>.
-          </h2>
+          <MaskReveal>
+            <h2 className="font-display font-semibold text-[clamp(2rem,5.5vw,3.75rem)] leading-[1.05] tracking-[-0.02em] mb-6" style={{ color: A.text }}>
+              Tu empresa no necesita más tácticas aisladas. Necesita un{" "}
+              <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: A.gold }}>sistema de crecimiento</span>.
+            </h2>
+          </MaskReveal>
           <p className="text-lg leading-relaxed max-w-2xl mx-auto mb-10" style={{ color: A.text2 }}>
             Un diagnóstico estratégico para revisar cómo conectar marca,
             adquisición, automatización y ventas en un solo sistema medible.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button href="/diagnostico" size="lg" iconRight={<ArrowRight className="w-4 h-4" />} className="w-full sm:w-auto">
-              Solicitar diagnóstico estratégico
-            </Button>
+            <Magnetic className="w-full sm:w-auto">
+              <Button href="/diagnostico" size="lg" iconRight={<ArrowRight className="w-4 h-4" />} className="w-full sm:w-auto">
+                Solicitar diagnóstico estratégico
+              </Button>
+            </Magnetic>
             <Button href={waLink("default")} external variant="outline" size="lg" icon={<MessageCircle className="w-4 h-4" />} className="w-full sm:w-auto">
               Hablar por WhatsApp
             </Button>

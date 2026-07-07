@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
+/* Fonts: cargadas via next/font en layout.tsx (self-hosted, zero render-blocking).
+   El @import de Google Fonts fue eliminado — duplicaba Inter/Space Grotesk y bloqueaba el primer render. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,7 +19,9 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior nativo desactivado: Lenis maneja el easing del scroll.
+     Con ambos activos los anchors sufren doble-easing. */
+  scroll-behavior: auto;
   overflow-x: hidden;
 }
 
@@ -896,6 +898,46 @@ body {
 }
 
 .tilt-wrapper:hover .tilt-shine { opacity: 1; }
+
+/* ==========================================
+   HERO v3 — energía y órbitas
+   ========================================== */
+/* Energía fluyendo por los conectores del sistema (dash en movimiento) */
+@keyframes neuralFlow {
+  to { stroke-dashoffset: -64; }
+}
+.neural-flow line {
+  animation: neuralFlow 5s linear infinite;
+}
+
+/* Órbitas girando lentamente alrededor del core */
+@keyframes orbitSpin {
+  to { transform: rotate(360deg); }
+}
+.orbit-slow { animation: orbitSpin 60s linear infinite; }
+.orbit-slow-rev { animation: orbitSpin 45s linear infinite reverse; }
+
+/* Scroll hint — línea que respira */
+@keyframes scrollHint {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.scroll-hint-line {
+  display: block;
+  width: 1px;
+  height: 42px;
+  background: linear-gradient(to bottom, rgba(214, 180, 106, 0.7), transparent);
+  animation: scrollHint 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neural-flow line,
+  .orbit-slow,
+  .orbit-slow-rev,
+  .scroll-hint-line { animation: none; }
+}
 
 /* ==========================================
    SECTION DEPTH — differentiated backgrounds

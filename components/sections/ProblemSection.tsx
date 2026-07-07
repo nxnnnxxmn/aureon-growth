@@ -12,6 +12,7 @@ import {
   FileQuestion,
 } from "lucide-react";
 import { A } from "@/lib/ui";
+import MaskReveal from "@/components/fx/MaskReveal";
 
 const problems = [
   { icon: Target, title: "Campañas sin estrategia comercial", body: "Inversión activa pero desconectada del pipeline real de oportunidades." },
@@ -33,12 +34,14 @@ export default function ProblemSection() {
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="mb-16 max-w-3xl">
           <Eyebrow>El problema</Eyebrow>
-          <h2 className="font-display font-semibold text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] tracking-[-0.02em] mb-6" style={{ color: A.text }}>
-            El problema no es hacer más marketing.{" "}
-            <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: A.gold }}>
-              Es no tener un sistema de crecimiento.
-            </span>
-          </h2>
+          <MaskReveal>
+            <h2 className="font-display font-semibold text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] tracking-[-0.02em] mb-6" style={{ color: A.text }}>
+              El problema no es hacer más marketing.{" "}
+              <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: A.gold }}>
+                Es no tener un sistema de crecimiento.
+              </span>
+            </h2>
+          </MaskReveal>
           <p className="text-base lg:text-lg leading-relaxed" style={{ color: A.text2 }}>
             Piezas sueltas — campañas, posts, herramientas — que no se conectan
             entre sí. El resultado es esfuerzo disperso sin un sistema comercial
