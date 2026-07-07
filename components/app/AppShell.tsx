@@ -8,7 +8,7 @@ import {
   Calendar, Layers, Bot, Settings2, FileText, ShieldCheck, Receipt,
   Calculator, LineChart, CreditCard, BarChart3, Folder, Sliders,
   HelpCircle, Search, Menu, X, ChevronRight, LogOut,
-  PanelLeftClose, PanelLeftOpen,
+  PanelLeftClose, PanelLeftOpen, MapPin, Zap,
 } from "lucide-react";
 import { A } from "@/lib/ui";
 
@@ -17,6 +17,7 @@ const NAV = [
     { href: "/app", label: "Dashboard", icon: LayoutDashboard },
     { href: "/app/solicitudes", label: "Solicitudes", icon: Inbox },
     { href: "/app/crm", label: "CRM", icon: Workflow },
+    { href: "/app/automatizacion", label: "Automatización", icon: Zap },
     { href: "/app/clientes", label: "Clientes", icon: Users },
     { href: "/app/proyectos", label: "Proyectos", icon: FolderKanban },
     { href: "/app/tareas", label: "Tareas", icon: CheckSquare },
@@ -28,6 +29,7 @@ const NAV = [
     { href: "/app/operaciones", label: "Operaciones", icon: Settings2 },
   ]},
   { group: "Comercial", items: [
+    { href: "/app/prospeccion", label: "Prospección", icon: MapPin },
     { href: "/app/propuestas", label: "Propuestas", icon: FileText },
     { href: "/app/contratos", label: "Contratos", icon: ShieldCheck },
   ]},
@@ -186,7 +188,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main */}
       <div className="flex-1 min-w-0">
         {/* Topbar */}
-        <header className="sticky top-0 z-20 backdrop-blur-md border-b" style={{ backgroundColor: "rgba(13,11,24,0.85)", borderColor: A.border }}>
+        <header className="sticky top-0 z-20 liquid-glass border-b" style={{ backgroundColor: "rgba(13,11,24,0.78)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderColor: A.border }}>
           <div className="flex items-center gap-3 px-4 lg:px-8 h-14">
             <button onClick={() => setOpen(true)} className="lg:hidden p-1.5 rounded focus-ring" style={{ color: A.text2 }} aria-label="Abrir menú">
               <Menu className="w-5 h-5" />
