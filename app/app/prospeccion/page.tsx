@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import "leaflet/dist/leaflet.css";
 import type { Map as LeafletMap, CircleMarker, FeatureGroup } from "leaflet";
-import { MapPin, Search, Download, Copy, Phone, Globe, Loader2, Info } from "lucide-react";
+import {
+  MapPin, Search, Download, Copy, Phone, Globe, Loader2, Info,
+  X, MessageCircle, PhoneCall, ExternalLink, UserPlus, Check, Sparkles, Mail,
+} from "lucide-react";
 import { AppPageHeader, StatCard, Panel, Button, SourceTag } from "@/components/app/primitives";
 import { A } from "@/lib/ui";
 
@@ -48,6 +51,7 @@ type Prospect = {
   lon: number;
   phone?: string;
   website?: string;
+  email?: string;
   street?: string;
 };
 
@@ -118,6 +122,123 @@ function writeCache(key: string, elements: OverpassElement[]) {
   try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), elements })); } catch {}
 }
 
+/* ── Ángulos comerciales por categoría ────────────────────────────
+   Cada pitch ATACA una necesidad concreta del sector y ofrece la
+   solución Aureon: recepcionista con IA + automatización comercial.
+   Los mensajes son borradores editables — [Tu nombre] lo pone el humano. */
+const PITCHES: Record<string, { need: string; hook: string }> = {
+  restaurant: {
+    need: "Pierden reservas y pedidos cuando el teléfono suena ocupado o el WhatsApp queda sin responder en horas pico.",
+    hook: "vemos un patrón en restaurantes: se pierden reservas y pedidos cuando el teléfono está ocupado o el WhatsApp queda sin responder en hora pico. Implementamos una recepcionista con IA que responde 24/7, toma reservas y las confirma por WhatsApp automáticamente",
+  },
+  cafe: {
+    need: "Clientes de una sola visita: sin base de datos ni forma de traerlos de vuelta.",
+    hook: "trabajamos con cafés que venden bien pero no tienen forma de hacer volver a sus clientes. Montamos un sistema simple: pedidos y reservas por WhatsApp con IA + base de clientes con campañas automáticas de recompra",
+  },
+  dentist: {
+    need: "Citas que no se confirman, no-shows que dejan huecos en la agenda y pacientes que escriben fuera de horario sin respuesta.",
+    hook: "en odontologías vemos siempre lo mismo: no-shows que dejan huecos en la agenda y pacientes que escriben de noche y no reciben respuesta hasta el otro día (cuando ya llamaron a otra clínica). Nuestra recepcionista con IA agenda, confirma y recuerda citas por WhatsApp 24/7",
+  },
+  clinic: {
+    need: "Pacientes que llegan por recomendación pero se pierden por falta de respuesta y seguimiento.",
+    hook: "las clínicas pierden pacientes nuevos por algo evitable: demora en responder y cero seguimiento después de la primera consulta. Implementamos recepcionista con IA para agendar 24/7 + recordatorios y seguimiento automático por WhatsApp",
+  },
+  gym: {
+    need: "Leads que preguntan precios, no reciben seguimiento y nunca se convierten en membresías.",
+    hook: "los gimnasios reciben decenas de personas preguntando precios por WhatsApp e Instagram… y la mayoría se enfría sin seguimiento. Montamos un sistema con IA que responde al instante, agenda la clase de prueba y hace el seguimiento hasta la inscripción",
+  },
+  hotel: {
+    need: "Dependencia de OTAs (Booking, Expedia) que se quedan con la comisión de reservas que podrían ser directas.",
+    hook: "los hoteles pagan comisiones enormes a las OTAs por reservas que podrían ser directas. Implementamos una recepcionista con IA en WhatsApp y web que cotiza, responde 24/7 en varios idiomas y convierte consultas en reservas directas",
+  },
+  beauty: {
+    need: "Agenda con huecos por no-shows y clientas que escriben por Instagram sin recibir respuesta a tiempo.",
+    hook: "en salones y spas la agenda pierde plata dos veces: no-shows y clientas que escriben por Instagram o WhatsApp y no reciben respuesta a tiempo. Nuestra IA agenda, confirma y recuerda citas sola, y reactiva clientas inactivas",
+  },
+  realestate: {
+    need: "Leads de portales inmobiliarios que se enfrían porque nadie responde en los primeros 5 minutos.",
+    hook: "en finca raíz el lead que no se contacta en 5 minutos se enfría. Conectamos sus portales y su WhatsApp a una IA que responde al instante, califica al interesado (presupuesto, zona, crédito) y le agenda la visita al asesor",
+  },
+  lawyer: {
+    need: "Consultas que llegan fuera de horario o por formularios que nadie revisa a tiempo.",
+    hook: "las firmas pierden casos porque la consulta llega un sábado por la noche y la respuesta sale el lunes. Implementamos una recepcionista con IA que atiende 24/7, hace la pre-consulta con las preguntas correctas y agenda la cita con el abogado indicado",
+  },
+  car: {
+    need: "Leads digitales que preguntan por un vehículo y reciben respuesta horas después, cuando ya visitaron otro concesionario.",
+    hook: "en el sector automotor el comprador escribe a 4 concesionarios a la vez — gana el que responde primero. Nuestra IA responde al instante con ficha y fotos del vehículo, califica al comprador y agenda el test drive",
+  },
+  vet: {
+    need: "Citas y controles que se olvidan, y dueños de mascotas que escriben a toda hora sin respuesta.",
+    hook: "en veterinarias los controles y vacunas se pierden porque nadie los recuerda. Montamos recordatorios automáticos por WhatsApp + una recepcionista con IA que agenda citas y responde dudas frecuentes 24/7",
+  },
+};
+const DEFAULT_PITCH = {
+  need: "Mensajes y llamadas de clientes potenciales que quedan sin respuesta oportuna, y cero seguimiento sistemático.",
+  hook: "trabajamos con negocios de la zona y el patrón se repite: clientes que escriben o llaman, no reciben respuesta a tiempo y se van con la competencia. Implementamos una recepcionista con IA que atiende 24/7 por WhatsApp y automatizamos el seguimiento comercial",
+};
+
+const pitchFor = (categoryId: string) => PITCHES[categoryId] || DEFAULT_PITCH;
+
+/* Normaliza teléfono colombiano a formato wa.me — solo celulares */
+function waNumber(phone?: string): string | null {
+  if (!phone) return null;
+  let d = phone.replace(/\D/g, "");
+  if (d.startsWith("57")) d = d;
+  else if (d.length === 10 && d.startsWith("3")) d = "57" + d;
+  else return null; // fijos u otros formatos: mejor llamar
+  return d.length === 12 ? d : null;
+}
+
+function buildWhatsApp(p: Prospect): string {
+  const pitch = pitchFor(p.category);
+  return `Hola, ¿hablo con el equipo de ${p.name}? 👋
+
+Soy [Tu nombre], de Aureon Growth Services (Bogotá). Les escribo porque ${pitch.hook} — sin que cambien su forma de trabajar.
+
+¿Les interesa verlo en una demo de 10 minutos esta semana? Sin compromiso.`;
+}
+
+function buildCallScript(p: Prospect): string {
+  const pitch = pitchFor(p.category);
+  return `Guion de llamada — ${p.name}
+
+1. Apertura: "Buenos días, ¿me comunica con la persona encargada de ${p.name}? Le habla [Tu nombre], de Aureon Growth Services."
+2. Permiso: "¿Tiene 40 segundos? Le cuento a qué le llamo y usted decide si le interesa."
+3. Necesidad: "${pitch.need}"
+4. Solución: "Nosotros implementamos una recepcionista con inteligencia artificial que atiende WhatsApp y llamadas 24/7, agenda y hace seguimiento automático."
+5. Cierre: "¿Le parece si le muestro cómo funciona en una demo de 10 minutos esta semana? ¿Qué día le queda mejor?"
+
+Objeción "ya tenemos quien conteste": "Perfecto — esto no reemplaza a su equipo, atiende lo que hoy se queda sin responder: la noche, los fines de semana y las horas pico."`;
+}
+
+function buildEmail(p: Prospect): { subject: string; body: string } {
+  const pitch = pitchFor(p.category);
+  return {
+    subject: `${p.name} — atender 24/7 sin contratar más personal`,
+    body: `Hola, equipo de ${p.name}:
+
+Soy [Tu nombre], de Aureon Growth Services (Bogotá).
+
+Les escribo porque ${pitch.hook}.
+
+En concreto, implementamos:
+• Recepcionista con IA: responde WhatsApp y llamadas 24/7, agenda y confirma citas
+• Automatización comercial: seguimiento de cada cliente potencial sin trabajo manual
+• Panel de resultados: saben exactamente cuántos clientes entran y de dónde
+
+¿Les interesa una demo de 10 minutos esta semana? Respondan este correo o escríbannos por WhatsApp y coordinamos.
+
+Saludos,
+[Tu nombre]
+Aureon Growth Services`,
+  };
+}
+
+function buildWebMessage(p: Prospect): string {
+  const pitch = pitchFor(p.category);
+  return `Hola, equipo de ${p.name}. Soy [Tu nombre], de Aureon Growth Services. Les escribo por su formulario porque ${pitch.hook}. ¿Les interesa una demo de 10 minutos? Mi WhatsApp: [tu número]. Gracias.`;
+}
+
 export default function ProspeccionPage() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<LeafletMap | null>(null);
@@ -131,6 +252,74 @@ export default function ProspeccionPage() {
   const [status, setStatus] = useState("");
   const [source, setSource] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+
+  /* ── Camino prospecto → lead ── */
+  const [selected, setSelected] = useState<Prospect | null>(null);
+  const [draft, setDraft] = useState("");
+  const [contacted, setContacted] = useState<Record<string, true>>({});
+  const [savedLeads, setSavedLeads] = useState<Record<string, true>>({});
+  const [savingLead, setSavingLead] = useState(false);
+  const [leadMsg, setLeadMsg] = useState("");
+
+  // Estados persistentes entre sesiones
+  useEffect(() => {
+    try {
+      setContacted(JSON.parse(localStorage.getItem("aureon:prospeccion:contactados") || "{}"));
+      setSavedLeads(JSON.parse(localStorage.getItem("aureon:prospeccion:leads") || "{}"));
+    } catch {}
+  }, []);
+  const markContacted = (id: string) => {
+    setContacted((prev) => {
+      const next = { ...prev, [id]: true as const };
+      try { localStorage.setItem("aureon:prospeccion:contactados", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+  const markLead = (id: string) => {
+    setSavedLeads((prev) => {
+      const next = { ...prev, [id]: true as const };
+      try { localStorage.setItem("aureon:prospeccion:leads", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  // Al abrir un prospecto, el borrador arranca con el mensaje del mejor canal
+  useEffect(() => {
+    if (!selected) return;
+    setLeadMsg("");
+    setDraft(waNumber(selected.phone) ? buildWhatsApp(selected) : selected.website ? buildWebMessage(selected) : buildWhatsApp(selected));
+  }, [selected]);
+
+  const saveLead = async (p: Prospect) => {
+    setSavingLead(true);
+    setLeadMsg("");
+    try {
+      const r = await fetch("/api/prospeccion/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: p.name,
+          category: p.categoryLabel,
+          zone: zone.label,
+          phone: p.phone,
+          website: p.website,
+          address: p.street,
+          notes: `Necesidad detectada (${p.categoryLabel}): ${pitchFor(p.category).need}`,
+        }),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        markLead(p.id);
+        setLeadMsg(j.duplicated ? "Ya existía como lead — no se duplicó." : "Lead creado en el CRM ✓");
+      } else {
+        setLeadMsg(j.error || "No se pudo guardar el lead.");
+      }
+    } catch {
+      setLeadMsg("Error de red al guardar el lead.");
+    } finally {
+      setSavingLead(false);
+    }
+  };
 
   /* ── Inicializar mapa (Leaflet importado en cliente, tiles dark de CARTO) ── */
   useEffect(() => {
@@ -200,6 +389,7 @@ export default function ProspeccionPage() {
           lat, lon,
           phone: tags.phone || tags["contact:phone"],
           website: tags.website || tags["contact:website"],
+          email: tags.email || tags["contact:email"],
           street: [tags["addr:street"], tags["addr:housenumber"]].filter(Boolean).join(" "),
         });
       }
@@ -218,6 +408,7 @@ export default function ProspeccionPage() {
           (p.phone ? `<br/>📞 ${p.phone}` : "") +
           (p.website ? `<br/><a href="${p.website}" target="_blank" rel="noopener">Sitio web</a>` : ""),
         );
+        m.on("click", () => setSelected(p));
         markersRef.current?.addLayer(m);
       });
       // Encuadrar el mapa a los resultados encontrados
@@ -247,8 +438,8 @@ export default function ProspeccionPage() {
 
   const exportCSV = () => {
     const rows = [
-      ["Nombre", "Categoría", "Dirección", "Teléfono", "Sitio web", "Lat", "Lon"],
-      ...prospects.map((p) => [p.name, p.categoryLabel, p.street || "", p.phone || "", p.website || "", p.lat, p.lon]),
+      ["Nombre", "Categoría", "Dirección", "Teléfono", "Email", "Sitio web", "Lat", "Lon"],
+      ...prospects.map((p) => [p.name, p.categoryLabel, p.street || "", p.phone || "", p.email || "", p.website || "", p.lat, p.lon]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
@@ -257,6 +448,12 @@ export default function ProspeccionPage() {
     a.download = `prospectos-${zone.id}-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
+  };
+
+  const copyText = async (id: string, text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 1600);
   };
 
   const copyProspect = async (p: Prospect) => {
@@ -376,14 +573,22 @@ export default function ProspeccionPage() {
             ) : (
               <ul className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                 {prospects.map((p) => (
-                  <li key={p.id} className="flex items-start gap-3 p-3 rounded-xl" style={{ backgroundColor: "rgba(255,255,255,0.03)", border: `1px solid ${A.border}` }}>
+                  <li key={p.id} className="flex items-start gap-3 p-3 rounded-xl transition-colors hover:bg-white/[0.05]" style={{ backgroundColor: "rgba(255,255,255,0.03)", border: `1px solid ${selected?.id === p.id ? A.borderActive : A.border}` }}>
                     <span className="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: p.color }} />
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium truncate" style={{ color: A.text }}>{p.name}</div>
+                    <button onClick={() => setSelected(p)} className="min-w-0 flex-1 text-left focus-ring rounded cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium truncate" style={{ color: A.text }}>{p.name}</span>
+                        {savedLeads[p.id] && (
+                          <span className="shrink-0 px-1.5 py-0.5 rounded-full font-mono text-[8px] uppercase tracking-[0.1em]" style={{ backgroundColor: "rgba(126,226,168,0.14)", color: A.positive }}>Lead ✓</span>
+                        )}
+                        {!savedLeads[p.id] && contacted[p.id] && (
+                          <span className="shrink-0 px-1.5 py-0.5 rounded-full font-mono text-[8px] uppercase tracking-[0.1em]" style={{ backgroundColor: "rgba(59,111,212,0.16)", color: A.blue }}>Contactado</span>
+                        )}
+                      </div>
                       <div className="text-[11px] truncate" style={{ color: A.textDim }}>
                         {p.categoryLabel}{p.street ? ` · ${p.street}` : ""}{p.phone ? ` · ${p.phone}` : ""}
                       </div>
-                    </div>
+                    </button>
                     <button
                       onClick={() => copyProspect(p)}
                       className="p-1.5 rounded-lg focus-ring transition-colors hover:bg-white/5 shrink-0"
@@ -410,6 +615,176 @@ export default function ProspeccionPage() {
           </div>
         </div>
       </div>
+
+      {/* ══════════ DRAWER: dossier del prospecto → contacto → lead ══════════ */}
+      {selected && (
+        <>
+          <div className="fixed inset-0 z-[1150] bg-black/50" onClick={() => setSelected(null)} aria-hidden />
+          <aside
+            className="fixed inset-y-0 right-0 z-[1200] w-full sm:w-[440px] overflow-y-auto liquid-glass"
+            style={{ backgroundColor: "rgba(10,9,16,0.96)", borderLeft: `1px solid ${A.border}` }}
+            role="dialog"
+            aria-label={`Detalle del prospecto ${selected.name}`}
+          >
+            <div className="p-6 space-y-5">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: selected.color }} />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: selected.color }}>{selected.categoryLabel}</span>
+                  </div>
+                  <h2 className="font-display font-semibold text-xl leading-tight" style={{ color: A.text }}>{selected.name}</h2>
+                  <div className="text-xs mt-1" style={{ color: A.textDim }}>
+                    {zone.label}{selected.street ? ` · ${selected.street}` : ""}
+                  </div>
+                </div>
+                <button onClick={() => setSelected(null)} className="p-2 rounded-lg focus-ring hover:bg-white/5 shrink-0" style={{ color: A.text2 }} aria-label="Cerrar detalle">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Estado */}
+              <div className="flex flex-wrap gap-1.5">
+                {savedLeads[selected.id] && <span className="px-2 py-1 rounded-full font-mono text-[9px] uppercase tracking-[0.12em]" style={{ backgroundColor: "rgba(126,226,168,0.14)", color: A.positive }}>Lead en CRM ✓</span>}
+                {contacted[selected.id] && <span className="px-2 py-1 rounded-full font-mono text-[9px] uppercase tracking-[0.12em]" style={{ backgroundColor: "rgba(59,111,212,0.16)", color: A.blue }}>Contactado</span>}
+                <span className="px-2 py-1 rounded-full font-mono text-[9px] uppercase tracking-[0.12em]" style={{ backgroundColor: "rgba(255,255,255,0.05)", color: A.textDim }}>Fuente: OpenStreetMap</span>
+              </div>
+
+              {/* Ángulo comercial — la necesidad que atacamos */}
+              <div className="rounded-2xl p-4" style={{ backgroundColor: "rgba(214,180,106,0.07)", border: `1px solid rgba(214,180,106,0.22)` }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-3.5 h-3.5" style={{ color: A.gold }} />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: A.gold }}>Necesidad típica del sector</span>
+                </div>
+                <p className="text-sm leading-relaxed" style={{ color: A.text2 }}>{pitchFor(selected.category).need}</p>
+                <p className="text-xs mt-2 leading-relaxed" style={{ color: A.textDim }}>
+                  Oferta: recepcionista con IA (atiende 24/7, agenda y confirma) + automatización del seguimiento comercial.
+                </p>
+              </div>
+
+              {/* Mensaje editable */}
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em] mb-2" style={{ color: A.textDim }}>
+                  Mensaje de presentación (editable — reemplaza [Tu nombre])
+                </div>
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  rows={9}
+                  className="w-full rounded-xl px-3.5 py-3 text-[13px] leading-relaxed outline-none transition-colors focus:border-[rgba(214,180,106,0.55)]"
+                  style={{ backgroundColor: A.bg, border: `1px solid ${A.border}`, color: A.text, resize: "vertical" }}
+                />
+              </div>
+
+              {/* Canales disponibles */}
+              <div className="space-y-2">
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: A.textDim }}>Contactar por los canales disponibles</div>
+
+                {waNumber(selected.phone) && (
+                  <a
+                    href={`https://wa.me/${waNumber(selected.phone)}?text=${encodeURIComponent(draft)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    onClick={() => markContacted(selected.id)}
+                    className="btn-premium focus-ring w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-display font-semibold text-sm"
+                    style={{ backgroundColor: "#22C15E", color: "#06130A" }}
+                  >
+                    <MessageCircle className="w-4 h-4" /> Enviar WhatsApp con este mensaje
+                  </a>
+                )}
+
+                {selected.phone && (
+                  <div className="flex gap-2">
+                    <a
+                      href={`tel:${selected.phone.replace(/[^\d+]/g, "")}`}
+                      onClick={() => markContacted(selected.id)}
+                      className="focus-ring flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: A.text }}
+                    >
+                      <PhoneCall className="w-3.5 h-3.5" style={{ color: A.gold }} /> Llamar {selected.phone}
+                    </a>
+                    <button
+                      onClick={() => copyText(`script-${selected.id}`, buildCallScript(selected))}
+                      className="focus-ring flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: copied === `script-${selected.id}` ? A.positive : A.text2 }}
+                      title="Copiar guion de llamada"
+                    >
+                      {copied === `script-${selected.id}` ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />} Guion
+                    </button>
+                  </div>
+                )}
+
+                {selected.email && (
+                  <a
+                    href={`mailto:${selected.email}?subject=${encodeURIComponent(buildEmail(selected).subject)}&body=${encodeURIComponent(buildEmail(selected).body)}`}
+                    onClick={() => markContacted(selected.id)}
+                    className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
+                    style={{ borderColor: A.border, color: A.text }}
+                  >
+                    <Mail className="w-3.5 h-3.5" style={{ color: A.gold }} /> Email con mensaje predeterminado
+                  </a>
+                )}
+
+                {selected.website && (
+                  <div className="flex gap-2">
+                    <a
+                      href={selected.website}
+                      target="_blank" rel="noopener noreferrer"
+                      className="focus-ring flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: A.text }}
+                    >
+                      <Globe className="w-3.5 h-3.5" style={{ color: A.blue }} /> Abrir sitio web
+                    </a>
+                    <button
+                      onClick={() => { copyText(`web-${selected.id}`, buildWebMessage(selected)); markContacted(selected.id); }}
+                      className="focus-ring flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs border transition-colors hover:bg-white/5"
+                      style={{ borderColor: A.border, color: copied === `web-${selected.id}` ? A.positive : A.text2 }}
+                      title="Copiar mensaje para su formulario de contacto"
+                    >
+                      {copied === `web-${selected.id}` ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />} Msj
+                    </button>
+                  </div>
+                )}
+
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lon}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
+                  style={{ borderColor: A.border, color: A.text2 }}
+                >
+                  <ExternalLink className="w-3.5 h-3.5" /> Ver en Google Maps (reseñas, horario, fotos)
+                </a>
+
+                {!selected.phone && !selected.website && !selected.email && (
+                  <p className="text-xs leading-relaxed" style={{ color: A.textDim }}>
+                    OSM no registra canales de contacto para este negocio. Búscalo en Google Maps (botón de arriba) para obtener teléfono o Instagram, o visítalo en persona.
+                  </p>
+                )}
+              </div>
+
+              {/* Convertir en lead */}
+              <div className="pt-4 border-t" style={{ borderColor: A.border }}>
+                <Button
+                  onClick={() => saveLead(selected)}
+                  disabled={savingLead || !!savedLeads[selected.id]}
+                  className="w-full justify-center"
+                >
+                  {savingLead ? <Loader2 className="w-4 h-4 animate-spin" /> : savedLeads[selected.id] ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                  {savedLeads[selected.id] ? "Ya es lead en el CRM" : "Guardar como lead en el CRM"}
+                </Button>
+                {leadMsg && (
+                  <p className="mt-2 text-xs text-center" style={{ color: /✓|existía/.test(leadMsg) ? A.positive : A.alert }} role="status">
+                    {leadMsg}{/✓/.test(leadMsg) && <> · <a href="/app/solicitudes" className="underline" style={{ color: A.gold }}>Ver en Solicitudes</a></>}
+                  </p>
+                )}
+                <p className="mt-3 text-[10px] leading-relaxed" style={{ color: A.textDim }}>
+                  Verifica los datos antes del primer contacto y respeta la normativa de contacto comercial (Habeas Data, Ley 1581 de 2012). Los mensajes son borradores: personalízalos.
+                </p>
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
     </>
   );
 }
