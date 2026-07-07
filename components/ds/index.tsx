@@ -1,17 +1,52 @@
 /**
  * Aureon Design System — primitivas canónicas para la web pública.
- * Todo componente acá usa Tk de design-tokens. Cero colores ad-hoc.
- *
- * Coexiste con components/app/* (DS interno del Command Center).
- * Para nuevo código público, importar siempre desde "@/components/ds".
+ * Fase 4: "use client" para magnetic buttons + card reactive glow.
+ * Todo componente usa Tk de design-tokens. Cero colores ad-hoc.
  */
+"use client";
+
+import { useRef, useCallback } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import Link from "next/link";
 import type React from "react";
 import { Tk } from "@/lib/design-tokens";
 
 /* ─────────────────────────────────────────────────────────────────
+ * MAGNETIC HOOK — spring-based cursor attraction for desktop hover.
+ * Guard: (hover: hover) and (pointer: fine) — never fires on touch.
+ * ───────────────────────────────────────────────────────────────── */
+function useMagnetic(strength = 0.28) {
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const x = useSpring(rawX, { stiffness: 250, damping: 20, mass: 0.8 });
+  const y = useSpring(rawY, { stiffness: 250, damping: 20, mass: 0.8 });
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (typeof window === "undefined") return;
+      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      rawX.set((e.clientX - rect.left - rect.width / 2) * strength);
+      rawY.set((e.clientY - rect.top - rect.height / 2) * strength);
+    },
+    [rawX, rawY, strength],
+  );
+
+  const onMouseLeave = useCallback(() => {
+    rawX.set(0);
+    rawY.set(0);
+  }, [rawX, rawY]);
+
+  return { x, y, onMouseMove, onMouseLeave };
+}
+
+// Motion-wrapped Next.js Link
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MotionLink = motion(Link) as any;
+
+/* ─────────────────────────────────────────────────────────────────
  * SECTION — wrapper canónico para ritmo vertical consistente.
- * Define padding, ancho máximo y opcionalmente background variant.
  * ───────────────────────────────────────────────────────────────── */
 export function Section({
   children, id, size = "md", bg = "default", className = "",
@@ -32,7 +67,7 @@ export function Section({
 }
 
 /* ─────────────────────────────────────────────────────────────────
- * EYEBROW + HEADING — wrappers para jerarquía tipográfica consistente
+ * EYEBROW + HEADING + LEAD — jerarquía tipográfica consistente
  * ───────────────────────────────────────────────────────────────── */
 export function Eyebrow({ children, color = Tk.color.gold }: { children: React.ReactNode; color?: string }) {
   return (
@@ -54,7 +89,6 @@ export function Heading({
 }) {
   const Tag = as;
   const cls = `${Tk.type[level]} font-display ${className}`;
-  // If italic prop, split the children string and wrap the italic word
   if (italic && typeof children === "string" && children.includes(italic.word)) {
     const parts = children.split(italic.word);
     return (
@@ -76,7 +110,8 @@ export function Lead({ children, className = "" }: { children: React.ReactNode; 
  * BUTTON — variants: primary, secondary, ghost, outline, link
  *   sizes: sm, md, lg
  *   props: icon (leading), iconRight, loading, fullWidth
- *   polymorphic: si pasas `href`, renderiza como Link
+ *   polymorphic: href → Link/a; otherwise → button
+ *   Fase 4: spring magnetic on desktop hover (pointer: fine)
  * ───────────────────────────────────────────────────────────────── */
 type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "link";
 type ButtonSize = "sm" | "md" | "lg";
@@ -126,12 +161,15 @@ interface ButtonElementProps extends CommonButtonProps, Omit<React.ButtonHTMLAtt
   href?: never;
   external?: never;
 }
-type ButtonProps = ButtonAnchorProps | ButtonElementProps;
+export type ButtonProps = ButtonAnchorProps | ButtonElementProps;
 
 export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", icon, iconRight, loading, fullWidth, className = "", children, ...rest } = props;
   const cls = `${BTN_BASE} ${variant === "link" ? "" : BTN_SIZE[size]} ${fullWidth ? "w-full" : ""} ${className}`;
-  const style = variantStyle(variant);
+  const vstyle = variantStyle(variant);
+  const { x, y, onMouseMove, onMouseLeave } = useMagnetic();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mstyle: any = { ...vstyle, x, y };
 
   const content = (
     <>
@@ -148,17 +186,55 @@ export function Button(props: ButtonProps) {
   if ("href" in props && props.href) {
     const { href, external } = props as ButtonAnchorProps;
     if (external) {
-      return <a href={href} target="_blank" rel="noopener noreferrer" className={cls} style={style}>{content}</a>;
+      return (
+        <motion.a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cls}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          style={mstyle as any}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+        >
+          {content}
+        </motion.a>
+      );
     }
-    return <Link href={href} className={cls} style={style}>{content}</Link>;
+    return (
+      <MotionLink
+        href={href}
+        className={cls}
+        style={mstyle}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+      >
+        {content}
+      </MotionLink>
+    );
   }
-  return <button {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)} className={cls} style={style}>{content}</button>;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { href: _h, external: _e, ...btnRest } = rest as any;
+  return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <motion.button
+      {...(btnRest as any)}
+      className={cls}
+      style={mstyle}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+    >
+      {content}
+    </motion.button>
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────────
- * CARD — base reutilizable. variants: surface, glass, gradient
- *   hover: bool → habilita card-3d
- *   featured: bool → glow + escala
+ * CARD — base reutilizable.
+ *   Fase 4: reactive radial glow que sigue el cursor (pointer: fine).
+ *   El glow se actualiza via DOM ref sin re-renders.
  * ───────────────────────────────────────────────────────────────── */
 export function Card({
   variant = "surface", hover = false, featured = false, padded = true, className = "", children, accentColor,
@@ -171,17 +247,43 @@ export function Card({
   children: React.ReactNode;
   accentColor?: string;
 }) {
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!glowRef.current) return;
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    glowRef.current.style.background = `radial-gradient(380px circle at ${px}px ${py}px, rgba(214,180,106,0.10), transparent 65%)`;
+    glowRef.current.style.opacity = "1";
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (glowRef.current) glowRef.current.style.opacity = "0";
+  }, []);
+
   const base = variant === "glass" ? "glass" : variant === "gradient" ? "border-grad" : "surface";
   const cls = `${base} relative ${hover ? "card-3d" : ""} ${padded ? "p-6 lg:p-8" : ""} ${featured ? "lg:-mt-2" : ""} ${className}`;
   const style: React.CSSProperties = featured
     ? { backgroundColor: Tk.color.surfaceElev, borderColor: Tk.color.borderActive, boxShadow: "var(--elev-6)" }
     : { backgroundColor: variant === "surface" ? Tk.color.surface : undefined };
+
   return (
-    <div className={cls} style={style}>
+    <div className={cls} style={style} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+      {/* Reactive glow overlay — below content, updated via ref (no re-renders) */}
+      <div
+        ref={glowRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-[inherit]"
+        style={{ opacity: 0, transition: "opacity 0.45s cubic-bezier(0.16,1,0.3,1)", zIndex: 0 }}
+      />
       {featured && accentColor && (
-        <div aria-hidden className="absolute -top-20 -right-20 w-56 h-56 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${accentColor}26 0%, transparent 70%)` }} />
+        <div aria-hidden className="absolute -top-20 -right-20 w-56 h-56 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${accentColor}26 0%, transparent 70%)`, zIndex: 0 }} />
       )}
-      <div className="relative">{children}</div>
+      <div className="relative" style={{ zIndex: 1 }}>{children}</div>
     </div>
   );
 }
@@ -219,7 +321,7 @@ export function Badge({
 }
 
 /* ─────────────────────────────────────────────────────────────────
- * INPUT / TEXTAREA / SELECT — controlados desde fuera
+ * INPUT / TEXTAREA / SELECT / FIELD — controlados desde fuera
  * ───────────────────────────────────────────────────────────────── */
 const INPUT_BASE = "w-full rounded-xl px-4 py-3 text-sm outline-none transition-colors";
 const INPUT_STYLE: React.CSSProperties = {

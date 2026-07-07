@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, AlertCircle, ArrowRight, MessageCircle } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { CheckCircle2, AlertCircle, ArrowRight, MessageCircle } from "lucide-react";
 import { SERVICE_OPTIONS, STAGE_OPTIONS } from "@/lib/validation";
 import { waLink } from "@/lib/whatsapp";
 import { A } from "@/lib/ui";
+import { Button } from "@/components/ds";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -13,6 +14,69 @@ const initial = {
   name: "", company: "", email: "", phone: "", channel: "",
   service: "", stage: "", challenge: "", message: "", website: "",
 };
+
+function SuccessState() {
+  const reducedMotion = useReducedMotion();
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      className="rounded-3xl p-8 lg:p-12 text-center glass border-grad"
+      role="status"
+    >
+      {/* Icon with radiating rings */}
+      <div className="relative w-20 h-20 mx-auto mb-8">
+        {!reducedMotion && (
+          <>
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{ backgroundColor: "rgba(214,180,106,0.22)" }}
+              initial={{ scale: 1, opacity: 0.7 }}
+              animate={{ scale: 2.4, opacity: 0 }}
+              transition={{ duration: 1.5, ease: "easeOut", repeat: Infinity, delay: 0.45 }}
+            />
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{ backgroundColor: "rgba(214,180,106,0.12)" }}
+              initial={{ scale: 1, opacity: 0.5 }}
+              animate={{ scale: 3.2, opacity: 0 }}
+              transition={{ duration: 2.0, ease: "easeOut", repeat: Infinity, delay: 0.9 }}
+            />
+          </>
+        )}
+        <motion.div
+          initial={{ scale: 0, rotate: -20 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 16, delay: 0.1 }}
+          className="relative w-20 h-20 rounded-2xl flex items-center justify-center"
+          style={{ backgroundColor: A.gold }}
+        >
+          <CheckCircle2 className="w-10 h-10" style={{ color: A.bg }} />
+        </motion.div>
+      </div>
+
+      <motion.h3
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        className="font-display font-semibold text-2xl mb-3"
+        style={{ color: A.text }}
+      >
+        Recibimos tu solicitud
+      </motion.h3>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        className="text-base leading-relaxed max-w-md mx-auto"
+        style={{ color: A.text2 }}
+      >
+        Revisaremos tu caso y te contactaremos en menos de 24 horas para coordinar el diagnóstico estratégico.
+      </motion.p>
+    </motion.div>
+  );
+}
 
 export default function DiagnosticForm() {
   const [form, setForm] = useState(initial);
@@ -52,25 +116,14 @@ export default function DiagnosticForm() {
     }
   }
 
-  if (status === "success") {
-    return (
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl p-8 lg:p-12 text-center glass border-grad" role="status">
-        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: A.gold }}>
-          <CheckCircle2 className="w-8 h-8" style={{ color: A.bg }} />
-        </div>
-        <h3 className="font-display font-semibold text-2xl mb-3" style={{ color: A.text }}>Recibimos tu solicitud</h3>
-        <p className="text-base leading-relaxed max-w-md mx-auto" style={{ color: A.text2 }}>
-          Revisaremos tu caso y te contactaremos en menos de 24 horas para coordinar el diagnóstico estratégico.
-        </p>
-      </motion.div>
-    );
-  }
+  if (status === "success") return <SuccessState />;
 
   const inputBase = "w-full rounded-xl px-4 py-3 text-sm transition-colors outline-none focus:border-[rgba(214,180,106,0.55)]";
   const inputStyle = { backgroundColor: A.bg, border: `1px solid ${A.border}`, color: A.text };
 
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl p-7 lg:p-9 surface" style={{ backgroundColor: A.surface }} noValidate>
+      {/* Honeypot */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden value={form.website} onChange={(e) => set("website", e.target.value)} style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -117,12 +170,27 @@ export default function DiagnosticForm() {
       )}
 
       <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
-        <button type="submit" disabled={status === "loading"} aria-describedby={status === "error" ? "form-error" : undefined} className="btn-premium focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-display font-semibold text-sm disabled:opacity-60" style={{ backgroundColor: A.gold, color: A.bg, boxShadow: "0 14px 36px -10px rgba(214,180,106,0.45)" }}>
-          {status === "loading" ? (<><Loader2 className="w-4 h-4 animate-spin" /> Enviando…</>) : (<>Solicitar diagnóstico estratégico <ArrowRight className="w-4 h-4" /></>)}
-        </button>
-        <a href={waLink("default")} target="_blank" rel="noopener noreferrer" className="focus-ring w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-display font-semibold text-sm border transition-colors" style={{ borderColor: A.border, color: A.text }}>
-          <MessageCircle className="w-4 h-4" /> Prefiero WhatsApp
-        </a>
+        <Button
+          type="submit"
+          disabled={status === "loading"}
+          loading={status === "loading"}
+          size="lg"
+          iconRight={status !== "loading" ? <ArrowRight className="w-4 h-4" /> : undefined}
+          aria-describedby={status === "error" ? "form-error" : undefined}
+          className="w-full sm:w-auto"
+        >
+          {status === "loading" ? "Enviando…" : "Solicitar diagnóstico estratégico"}
+        </Button>
+        <Button
+          href={waLink("default")}
+          external
+          variant="outline"
+          size="lg"
+          icon={<MessageCircle className="w-4 h-4" />}
+          className="w-full sm:w-auto"
+        >
+          Prefiero WhatsApp
+        </Button>
       </div>
 
       <p className="mt-4 text-xs" style={{ color: A.textDim }}>
