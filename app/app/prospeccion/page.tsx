@@ -190,7 +190,7 @@ export default function ProspeccionPage() {
         const lon = el.lon ?? el.center?.lon;
         if (lat == null || lon == null) continue;
         const cat =
-          cats.find((c) => c.query.includes(tags.amenity || " ") || c.query.includes(tags.shop || " ") || c.query.includes(tags.leisure || " ") || c.query.includes(tags.tourism || " ") || c.query.includes(tags.office || " ")) || cats[0];
+          cats.find((c) => c.query.includes(tags.amenity || " ") || c.query.includes(tags.shop || " ") || c.query.includes(tags.leisure || " ") || c.query.includes(tags.tourism || " ") || c.query.includes(tags.office || " ")) || cats[0];
         found.push({
           id: `${el.type}-${el.id}`,
           name: tags.name,
