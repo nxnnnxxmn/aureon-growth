@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { CheckCircle2, AlertCircle, ArrowRight, MessageCircle } from "lucide-react";
+import { AlertCircle, ArrowRight, MessageCircle } from "lucide-react";
 import { SERVICE_OPTIONS, STAGE_OPTIONS } from "@/lib/validation";
 import { waLink } from "@/lib/whatsapp";
 import { A } from "@/lib/ui";
@@ -50,9 +50,17 @@ function SuccessState() {
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 16, delay: 0.1 }}
           className="relative w-20 h-20 rounded-2xl flex items-center justify-center"
-          style={{ backgroundColor: A.gold }}
+          style={{ backgroundColor: A.gold, boxShadow: "0 18px 44px -12px rgba(214,180,106,0.55)" }}
         >
-          <CheckCircle2 className="w-10 h-10" style={{ color: A.bg }} />
+          {/* Checkmark que se dibuja trazo a trazo tras aterrizar el badge */}
+          <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke={A.bg} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <motion.path
+              d="M4.5 12.5l5 5L19.5 7"
+              initial={reducedMotion ? undefined : { pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.45, delay: 0.42, ease: "easeOut" }}
+            />
+          </svg>
         </motion.div>
       </div>
 
