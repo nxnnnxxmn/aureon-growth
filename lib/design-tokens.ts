@@ -37,6 +37,11 @@ export const Tk = {
     blueDeep: "#102A5C",
     cyan: "#4FB6C7",        // nuevo: para enlaces de datos y badges técnicos
 
+    // Paleta secundaria (dirección: plateado, cristal, azul eléctrico, blanco humo)
+    silver: "#C9CFDA",      // plateado — spotlight, detalles metálicos
+    electric: "#4D7CFE",    // azul eléctrico elegante — acentos interactivos
+    smoke: "#F2F3F5",       // blanco humo — texto sobre video
+
     // Estados semánticos
     positive: "#7EE2A8",
     alert: "#F0C36A",

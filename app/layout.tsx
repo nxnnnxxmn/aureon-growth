@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk, Cormorant_Garamond, JetBrains_Mono } from "next/f
 import "./globals.css";
 import CustomCursor from "@/components/common/CustomCursor";
 import SmoothScroll from "@/components/common/SmoothScroll";
+import MouseSpotlight from "@/components/fx/MouseSpotlight";
 import Analytics from "@/components/common/Analytics";
 import CookieBanner from "@/components/common/CookieBanner";
 import SoundToggle from "@/components/common/SoundToggle";
@@ -163,6 +164,7 @@ export default function RootLayout({
       <body className="antialiased bg-[#08070D] text-[#F0EDF8]">
         <SmoothScroll />
         <CustomCursor />
+        <MouseSpotlight />
         {children}
         <div className="noise-global" aria-hidden />
         <CookieBanner />

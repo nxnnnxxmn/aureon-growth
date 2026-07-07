@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Instagram, Linkedin, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Instagram, Linkedin, Mail, MapPin, MessageCircle, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ds";
 import { waLink, WHATSAPP_PRETTY } from "@/lib/whatsapp";
 import { GROWTH_SYSTEMS } from "@/lib/growth";
 import { A } from "@/lib/ui";
@@ -51,6 +52,14 @@ export default function Footer() {
             Estrategia, tecnología y performance para{" "}
             <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: A.gold }}>crecimiento medible</span>.
           </h3>
+          <div className="flex flex-wrap items-center gap-3 mt-8">
+            <Button href="/diagnostico" size="lg" iconRight={<ArrowRight className="w-4 h-4" />}>
+              Solicitar diagnóstico estratégico
+            </Button>
+            <Button href={waLink("default")} external variant="outline" size="lg" icon={<MessageCircle className="w-4 h-4" />}>
+              Hablar por WhatsApp
+            </Button>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12 mb-16 lg:mb-20">

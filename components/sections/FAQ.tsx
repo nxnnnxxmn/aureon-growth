@@ -40,7 +40,7 @@ export default function FAQ({ limit }: { limit?: number }) {
           {items.map((item, i) => {
             const isOpen = open === i;
             return (
-              <div key={item.q} className="surface overflow-hidden" style={{ backgroundColor: A.surface }}>
+              <div key={item.q} className="liquid-glass rounded-2xl overflow-hidden" style={{ backgroundColor: "rgba(15,14,22,0.55)" }}>
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
                   className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left focus-ring"
