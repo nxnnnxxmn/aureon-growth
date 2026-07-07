@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Link as TransitionLink } from "next-view-transitions";
 import { ArrowUpRight, ArrowRight, Check } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/sections/Footer";
@@ -46,11 +47,11 @@ export default function ServiciosPage() {
                     </div>
                     <span className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: A.gold }}>0{i + 1} · {s.short}</span>
                   </div>
-                  <h2 className="font-display font-semibold text-2xl lg:text-3xl leading-tight mb-3" style={{ color: A.text }}>{s.name}</h2>
+                  <h2 className="font-display font-semibold text-2xl lg:text-3xl leading-tight mb-3" style={{ color: A.text, viewTransitionName: `system-title-${s.slug}` }}>{s.name}</h2>
                   <p className="text-sm lg:text-base leading-relaxed mb-6" style={{ color: A.text2 }}>{s.summary}</p>
-                  <Link href={`/servicios/${s.slug}`} className="btn-premium focus-ring inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-semibold text-sm" style={{ backgroundColor: A.gold, color: A.bg }}>
+                  <TransitionLink href={`/servicios/${s.slug}`} className="btn-premium focus-ring inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-semibold text-sm" style={{ backgroundColor: A.gold, color: A.bg }}>
                     Explorar sistema <ArrowUpRight className="w-4 h-4" />
-                  </Link>
+                  </TransitionLink>
                 </div>
 
                 <div className="lg:col-span-7 lg:border-l lg:pl-10" style={{ borderColor: A.border }}>

@@ -11,11 +11,14 @@ export default function PageHeader({
   title,
   description,
   crumbs,
+  titleTransitionName,
 }: {
   eyebrow: string;
   title: React.ReactNode;
   description?: string;
   crumbs?: Crumb[];
+  /** view-transition-name para morphing shared-element entre páginas */
+  titleTransitionName?: string;
 }) {
   return (
     <header className="relative w-full overflow-hidden pt-32 pb-16 lg:pt-40 lg:pb-20" style={{ backgroundColor: A.bg, color: A.text }}>
@@ -47,7 +50,10 @@ export default function PageHeader({
           <span className="font-mono text-xs uppercase tracking-[0.28em]" style={{ color: A.gold }}>{eyebrow}</span>
         </div>
 
-        <h1 className="font-display font-semibold text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.04] tracking-[-0.02em] max-w-[20ch]" style={{ color: A.text }}>
+        <h1
+          className="font-display font-semibold text-[clamp(2.25rem,5.5vw,4rem)] leading-[1.04] tracking-[-0.02em] max-w-[20ch]"
+          style={{ color: A.text, ...(titleTransitionName ? { viewTransitionName: titleTransitionName } : {}) }}
+        >
           {title}
         </h1>
 

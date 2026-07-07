@@ -174,7 +174,7 @@ export default function BrandingEstrategicoPage() {
                   <Sparkles className="w-3 h-3" />
                   Servicio estratégico · Brand Authority System
                 </span>
-                <h1 className="font-display font-semibold text-[clamp(2.25rem,5.5vw,4.25rem)] leading-[1.02] tracking-[-0.02em] mb-6" style={{ color: C.text }}>
+                <h1 className="font-display font-semibold text-[clamp(2.25rem,5.5vw,4.25rem)] leading-[1.02] tracking-[-0.02em] mb-6" style={{ color: C.text, viewTransitionName: "system-title-branding-estrategico" }}>
                   Branding estratégico para marcas más{" "}
                   <span style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", color: C.gold }}>
                     claras, confiables

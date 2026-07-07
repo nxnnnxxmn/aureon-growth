@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Link as TransitionLink } from "next-view-transitions";
 import { ArrowRight, ArrowLeft, Check, Sparkles } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/sections/Footer";
@@ -42,7 +43,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Navbar dark />
-      <PageHeader eyebrow={s.short} title={s.name} description={s.intro} crumbs={[{ label: "Inicio", href: "/" }, { label: "Servicios", href: "/servicios" }, { label: s.short }]} />
+      <PageHeader eyebrow={s.short} title={s.name} description={s.intro} titleTransitionName={`system-title-${s.slug}`} crumbs={[{ label: "Inicio", href: "/" }, { label: "Servicios", href: "/servicios" }, { label: s.short }]} />
 
       <main className="relative overflow-hidden" style={{ backgroundColor: A.bg, color: A.text }}>
         <div aria-hidden className="absolute inset-0 -z-0 tech-grid opacity-30" />
@@ -110,13 +111,13 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {others.map((o) => (
-                <Link key={o.slug} href={`/servicios/${o.slug}`} className="card-3d surface group p-6" style={{ backgroundColor: A.surface }}>
+                <TransitionLink key={o.slug} href={`/servicios/${o.slug}`} className="card-3d surface group p-6" style={{ backgroundColor: A.surface }}>
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(124,92,191,0.14)" }}>
                     <o.icon className="w-5 h-5" style={{ color: A.violet }} strokeWidth={1.6} />
                   </div>
-                  <h3 className="font-display font-semibold text-base mb-1.5" style={{ color: A.text }}>{o.name}</h3>
+                  <h3 className="font-display font-semibold text-base mb-1.5" style={{ color: A.text, viewTransitionName: `system-title-${o.slug}` }}>{o.name}</h3>
                   <p className="text-sm leading-relaxed" style={{ color: A.text2 }}>{o.outcome}</p>
-                </Link>
+                </TransitionLink>
               ))}
             </div>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
@@ -111,7 +111,7 @@ function SystemCard({ s, index, wide = false }: { s: (typeof GROWTH_SYSTEMS)[num
         <span className="font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: c.primary }}>{s.short}</span>
         <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" style={{ color: A.textDim }} />
       </div>
-      <h3 className="relative font-display font-semibold text-xl lg:text-2xl leading-tight mb-3" style={{ color: A.text }}>{s.name}</h3>
+      <h3 className="relative font-display font-semibold text-xl lg:text-2xl leading-tight mb-3" style={{ color: A.text, viewTransitionName: wide ? `system-title-${s.slug}` : undefined }}>{s.name}</h3>
       <p className="relative text-sm leading-relaxed mb-5" style={{ color: A.text2 }}>{s.summary}</p>
 
       <div className="relative flex flex-wrap gap-1.5 mb-6">

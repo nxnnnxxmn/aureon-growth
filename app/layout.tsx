@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ViewTransitions } from "next-view-transitions";
 import { Inter, Space_Grotesk, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import CustomCursor from "@/components/common/CustomCursor";
@@ -142,6 +143,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    <ViewTransitions>
     <html
       lang="es"
       className={`${inter.variable} ${spaceGrotesk.variable} ${cormorant.variable} ${jetBrainsMono.variable}`}
@@ -168,5 +170,6 @@ export default function RootLayout({
         <Analytics />
       </body>
     </html>
+    </ViewTransitions>
   );
 }
