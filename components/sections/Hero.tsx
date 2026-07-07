@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { A } from "@/lib/ui";
@@ -8,25 +7,13 @@ import { Button } from "@/components/ds";
 import Magnetic from "@/components/fx/Magnetic";
 import ShinyText from "@/components/fx/ShinyText";
 
-/* Video cinematográfico de fondo (referencia provista).
-   Cambiar aquí para usar un asset propio de marca. */
-const HERO_VIDEO_URL =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4";
+/* El video de fondo vive en GlobalBackdrop (fijo, detrás de toda la página).
+   El Hero es una capa transparente sobre él: solo overlays de legibilidad. */
 
 const easeOut: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoFailed, setVideoFailed] = useState(false);
   const reduced = useReducedMotion();
-
-  /* Con reduced-motion el video se pausa en su primer frame:
-     sigue siendo un fondo cinematográfico, solo que quieto. */
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (reduced) v.pause();
-  }, [reduced]);
 
   const fadeUp = (delay: number) =>
     reduced
@@ -41,34 +28,10 @@ export default function Hero() {
     <section
       id="inicio"
       className="relative isolate flex flex-col h-[100svh] min-h-[640px] w-full overflow-hidden"
-      style={{ backgroundColor: "#000000", color: A.text }}
+      style={{ backgroundColor: "transparent", color: A.text }}
     >
-      {/* ── Capa 0: video cinematográfico fullscreen ── */}
-      {!videoFailed && (
-        <video
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover"
-          src={HERO_VIDEO_URL}
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-hidden
-          onError={() => setVideoFailed(true)}
-        />
-      )}
-      {/* Fallback / atmósfera si el video no carga */}
-      {videoFailed && (
-        <div aria-hidden className="absolute inset-0">
-          <div className="absolute inset-0 tech-grid opacity-50" />
-          <div className="absolute -top-40 right-[-10%] w-[760px] h-[760px] rounded-full glow-gold" />
-          <div className="absolute bottom-[-20%] left-[-12%] w-[680px] h-[680px] rounded-full glow-violet" />
-        </div>
-      )}
-
-      {/* ── Capa 1: overlays de legibilidad y marca ── */}
-      <div aria-hidden className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.52)" }} />
-      <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 38%, rgba(0,0,0,0.25) 70%, #08070D 100%)" }} />
+      {/* Overlays de legibilidad sobre el video global */}
+      <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.08) 40%, rgba(0,0,0,0.18) 68%, rgba(10,9,16,0.88) 100%)" }} />
       <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 55% at 50% 42%, rgba(214,180,106,0.10) 0%, transparent 65%)" }} />
 
       {/* ── Contenido ── */}

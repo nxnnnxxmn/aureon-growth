@@ -10,6 +10,7 @@ import { GROWTH_SYSTEMS } from "@/lib/growth";
 import { A } from "@/lib/ui";
 import { Button } from "@/components/ds";
 import MaskReveal from "@/components/fx/MaskReveal";
+import Tilt3D from "@/components/fx/Tilt3D";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -86,11 +87,10 @@ function SystemViz({ slug }: { slug: string }) {
 /** Card de sistema — compartida entre el track horizontal (wide) y el grid móvil. */
 function SystemCard({ s, index, wide = false }: { s: (typeof GROWTH_SYSTEMS)[number]; index: number; wide?: boolean }) {
   const c = colorsFor(s.slug);
-  return (
+  const card = (
     <Link
       href={`/servicios/${s.slug}`}
-      className={`card-3d surface group relative flex flex-col h-full focus-ring overflow-hidden ${wide ? "w-[clamp(440px,38vw,580px)] shrink-0 p-8 lg:p-10" : "p-7 lg:p-8"}`}
-      style={{ backgroundColor: A.surface }}
+      className={`liquid-glass bg-[rgba(15,14,22,0.55)] rounded-2xl group relative flex flex-col h-full focus-ring overflow-hidden ${wide ? "p-8 lg:p-10" : "p-7 lg:p-8"}`}
     >
       {/* per-system glow accent — esquina superior derecha */}
       <div aria-hidden className="absolute -top-16 -right-16 w-48 h-48 rounded-full pointer-events-none opacity-60" style={{ background: `radial-gradient(circle, ${c.primary}26 0%, transparent 70%)` }} />
@@ -131,6 +131,15 @@ function SystemCard({ s, index, wide = false }: { s: (typeof GROWTH_SYSTEMS)[num
       </div>
     </Link>
   );
+  // wide: el ancho vive en el wrapper para que Tilt3D no lo pise en el track
+  if (wide) {
+    return (
+      <div className="w-[clamp(440px,38vw,580px)] shrink-0">
+        <Tilt3D className="h-full rounded-2xl" maxTilt={4}>{card}</Tilt3D>
+      </div>
+    );
+  }
+  return <Tilt3D className="h-full rounded-2xl" maxTilt={4}>{card}</Tilt3D>;
 }
 
 function SectionHeader({ compact = false }: { compact?: boolean }) {

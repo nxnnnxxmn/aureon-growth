@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { A } from "@/lib/ui";
 import MaskReveal from "@/components/fx/MaskReveal";
+import Tilt3D from "@/components/fx/Tilt3D";
 
 const problems = [
   { icon: Target, title: "Campañas sin estrategia comercial", body: "Inversión activa pero desconectada del pipeline real de oportunidades." },
@@ -57,16 +58,16 @@ export default function ProblemSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.5, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
-              className="card-3d surface relative p-6"
-              style={{ backgroundColor: A.surface }}
             >
-              {/* "disconnected" node marker */}
-              <span aria-hidden className="absolute top-5 right-5 w-2 h-2 rounded-full" style={{ backgroundColor: A.textDim, opacity: 0.5 }} />
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(124,92,191,0.14)" }}>
-                <p.icon className="w-5 h-5" style={{ color: A.violet }} strokeWidth={1.5} />
-              </div>
-              <h3 className="font-display font-semibold text-base leading-snug mb-2" style={{ color: A.text }}>{p.title}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: A.text2 }}>{p.body}</p>
+              <Tilt3D className="liquid-glass bg-[rgba(15,14,22,0.55)] relative p-6 rounded-2xl h-full" maxTilt={4}>
+                {/* "disconnected" node marker */}
+                <span aria-hidden className="absolute top-5 right-5 w-2 h-2 rounded-full" style={{ backgroundColor: A.textDim, opacity: 0.5 }} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "rgba(124,92,191,0.14)" }}>
+                  <p.icon className="w-5 h-5" style={{ color: A.violet }} strokeWidth={1.5} />
+                </div>
+                <h3 className="font-display font-semibold text-base leading-snug mb-2" style={{ color: A.text }}>{p.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: A.text2 }}>{p.body}</p>
+              </Tilt3D>
             </motion.div>
           ))}
         </div>

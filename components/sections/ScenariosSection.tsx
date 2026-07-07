@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Sparkles, PhoneOff, PenLine, MousePointer, Layers3, ArrowRight, Workflow } from "lucide-react";
 import { A } from "@/lib/ui";
+import Tilt3D from "@/components/fx/Tilt3D";
 
 const scenarios = [
   { icon: Sparkles, label: "Producto fuerte · Pipeline débil", problem: "Producto sólido pero pocos leads o leads desalineados con la propuesta.", intervention: "Posicionamiento, narrativa comercial y campañas a buyer persona real.", system: "Brand Authority + Acquisition Engine", outcome: "Pipeline más calificado y conversaciones con mejor encaje." },
@@ -45,9 +46,8 @@ export default function ScenariosSection({ limit }: { limit?: number }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.55, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className="card-3d surface p-7 lg:p-8 flex flex-col"
-              style={{ backgroundColor: A.surface }}
             >
+              <Tilt3D className="liquid-glass bg-[rgba(15,14,22,0.55)] rounded-2xl p-7 lg:p-8 flex flex-col h-full" maxTilt={4}>
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(124,92,191,0.14)" }}>
                   <s.icon className="w-5 h-5" style={{ color: A.violet }} strokeWidth={1.5} />
@@ -66,6 +66,7 @@ export default function ScenariosSection({ limit }: { limit?: number }) {
                 </div>
                 <Block label="Resultado esperado" value={s.outcome} color={A.text} bold />
               </div>
+              </Tilt3D>
             </motion.div>
           ))}
         </div>
