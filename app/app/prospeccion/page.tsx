@@ -9,6 +9,12 @@ import {
 } from "lucide-react";
 import { AppPageHeader, StatCard, Panel, Button, SourceTag } from "@/components/app/primitives";
 import { A } from "@/lib/ui";
+import {
+  type Prospect, CATEGORIES, pitchFor, waNumber,
+  buildWhatsApp, buildCallScript, buildEmail, buildWebMessage,
+  outlookComposeUrl, googleMapsUrl, googleContactUrl, instagramSearchUrl,
+  addToPool, scheduleFollowUps,
+} from "@/lib/prospeccion";
 
 /* ─────────────────────────────────────────────────────────────────
  * PROSPECCIÓN — descubrimiento automático de clientes potenciales
@@ -27,33 +33,8 @@ const ZONES = [
   { id: "kennedy", label: "Kennedy", lat: 4.6097, lon: -74.1469, radius: 3200 },
 ] as const;
 
-const CATEGORIES = [
-  { id: "restaurant", label: "Restaurantes", query: `nwr["amenity"="restaurant"]`, color: "#D6B46A" },
-  { id: "cafe", label: "Cafés", query: `nwr["amenity"="cafe"]`, color: "#E2C58A" },
-  { id: "dentist", label: "Odontologías", query: `nwr["amenity"="dentist"]`, color: "#4FB6C7" },
-  { id: "clinic", label: "Clínicas", query: `nwr["amenity"="clinic"]`, color: "#7EE2A8" },
-  { id: "gym", label: "Gimnasios", query: `nwr["leisure"="fitness_centre"]`, color: "#4D7CFE" },
-  { id: "hotel", label: "Hoteles", query: `nwr["tourism"="hotel"]`, color: "#9F84D0" },
-  { id: "beauty", label: "Belleza · Spa", query: `nwr["shop"~"beauty|hairdresser"]`, color: "#F0A3C4" },
-  { id: "realestate", label: "Inmobiliarias", query: `nwr["office"="estate_agent"]`, color: "#F0C36A" },
-  { id: "lawyer", label: "Abogados", query: `nwr["office"="lawyer"]`, color: "#C9CFDA" },
-  { id: "car", label: "Concesionarios", query: `nwr["shop"="car"]`, color: "#E08577" },
-  { id: "vet", label: "Veterinarias", query: `nwr["amenity"="veterinary"]`, color: "#7C5CBF" },
-] as const;
-
-type Prospect = {
-  id: string;
-  name: string;
-  category: string;
-  categoryLabel: string;
-  color: string;
-  lat: number;
-  lon: number;
-  phone?: string;
-  website?: string;
-  email?: string;
-  street?: string;
-};
+/* CATEGORIES, Prospect y los builders de mensajes viven en lib/prospeccion
+   (compartidos con la Cola del día). */
 
 /* ── Motor Overpass resiliente ────────────────────────────────────
    4 mirrors públicos rotados con timeout por intento y backoff.
@@ -122,152 +103,6 @@ function writeCache(key: string, elements: OverpassElement[]) {
   try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), elements })); } catch {}
 }
 
-/* ── Ángulos comerciales por categoría ────────────────────────────
-   Cada pitch ATACA una necesidad concreta del sector y ofrece la
-   solución Aureon: recepcionista con IA + automatización comercial.
-   Los mensajes son borradores editables — [Tu nombre] lo pone el humano. */
-const PITCHES: Record<string, { need: string; hook: string }> = {
-  restaurant: {
-    need: "Pierden reservas y pedidos cuando el teléfono suena ocupado o el WhatsApp queda sin responder en horas pico.",
-    hook: "vemos un patrón en restaurantes: se pierden reservas y pedidos cuando el teléfono está ocupado o el WhatsApp queda sin responder en hora pico. Implementamos una recepcionista con IA que responde 24/7, toma reservas y las confirma por WhatsApp automáticamente",
-  },
-  cafe: {
-    need: "Clientes de una sola visita: sin base de datos ni forma de traerlos de vuelta.",
-    hook: "trabajamos con cafés que venden bien pero no tienen forma de hacer volver a sus clientes. Montamos un sistema simple: pedidos y reservas por WhatsApp con IA + base de clientes con campañas automáticas de recompra",
-  },
-  dentist: {
-    need: "Citas que no se confirman, no-shows que dejan huecos en la agenda y pacientes que escriben fuera de horario sin respuesta.",
-    hook: "en odontologías vemos siempre lo mismo: no-shows que dejan huecos en la agenda y pacientes que escriben de noche y no reciben respuesta hasta el otro día (cuando ya llamaron a otra clínica). Nuestra recepcionista con IA agenda, confirma y recuerda citas por WhatsApp 24/7",
-  },
-  clinic: {
-    need: "Pacientes que llegan por recomendación pero se pierden por falta de respuesta y seguimiento.",
-    hook: "las clínicas pierden pacientes nuevos por algo evitable: demora en responder y cero seguimiento después de la primera consulta. Implementamos recepcionista con IA para agendar 24/7 + recordatorios y seguimiento automático por WhatsApp",
-  },
-  gym: {
-    need: "Leads que preguntan precios, no reciben seguimiento y nunca se convierten en membresías.",
-    hook: "los gimnasios reciben decenas de personas preguntando precios por WhatsApp e Instagram… y la mayoría se enfría sin seguimiento. Montamos un sistema con IA que responde al instante, agenda la clase de prueba y hace el seguimiento hasta la inscripción",
-  },
-  hotel: {
-    need: "Dependencia de OTAs (Booking, Expedia) que se quedan con la comisión de reservas que podrían ser directas.",
-    hook: "los hoteles pagan comisiones enormes a las OTAs por reservas que podrían ser directas. Implementamos una recepcionista con IA en WhatsApp y web que cotiza, responde 24/7 en varios idiomas y convierte consultas en reservas directas",
-  },
-  beauty: {
-    need: "Agenda con huecos por no-shows y clientas que escriben por Instagram sin recibir respuesta a tiempo.",
-    hook: "en salones y spas la agenda pierde plata dos veces: no-shows y clientas que escriben por Instagram o WhatsApp y no reciben respuesta a tiempo. Nuestra IA agenda, confirma y recuerda citas sola, y reactiva clientas inactivas",
-  },
-  realestate: {
-    need: "Leads de portales inmobiliarios que se enfrían porque nadie responde en los primeros 5 minutos.",
-    hook: "en finca raíz el lead que no se contacta en 5 minutos se enfría. Conectamos sus portales y su WhatsApp a una IA que responde al instante, califica al interesado (presupuesto, zona, crédito) y le agenda la visita al asesor",
-  },
-  lawyer: {
-    need: "Consultas que llegan fuera de horario o por formularios que nadie revisa a tiempo.",
-    hook: "las firmas pierden casos porque la consulta llega un sábado por la noche y la respuesta sale el lunes. Implementamos una recepcionista con IA que atiende 24/7, hace la pre-consulta con las preguntas correctas y agenda la cita con el abogado indicado",
-  },
-  car: {
-    need: "Leads digitales que preguntan por un vehículo y reciben respuesta horas después, cuando ya visitaron otro concesionario.",
-    hook: "en el sector automotor el comprador escribe a 4 concesionarios a la vez — gana el que responde primero. Nuestra IA responde al instante con ficha y fotos del vehículo, califica al comprador y agenda el test drive",
-  },
-  vet: {
-    need: "Citas y controles que se olvidan, y dueños de mascotas que escriben a toda hora sin respuesta.",
-    hook: "en veterinarias los controles y vacunas se pierden porque nadie los recuerda. Montamos recordatorios automáticos por WhatsApp + una recepcionista con IA que agenda citas y responde dudas frecuentes 24/7",
-  },
-};
-const DEFAULT_PITCH = {
-  need: "Mensajes y llamadas de clientes potenciales que quedan sin respuesta oportuna, y cero seguimiento sistemático.",
-  hook: "trabajamos con negocios de la zona y el patrón se repite: clientes que escriben o llaman, no reciben respuesta a tiempo y se van con la competencia. Implementamos una recepcionista con IA que atiende 24/7 por WhatsApp y automatizamos el seguimiento comercial",
-};
-
-const pitchFor = (categoryId: string) => PITCHES[categoryId] || DEFAULT_PITCH;
-
-/* Normaliza teléfono colombiano a formato wa.me — solo celulares */
-function waNumber(phone?: string): string | null {
-  if (!phone) return null;
-  let d = phone.replace(/\D/g, "");
-  if (d.startsWith("57")) d = d;
-  else if (d.length === 10 && d.startsWith("3")) d = "57" + d;
-  else return null; // fijos u otros formatos: mejor llamar
-  return d.length === 12 ? d : null;
-}
-
-function buildWhatsApp(p: Prospect): string {
-  const pitch = pitchFor(p.category);
-  return `Hola, ¿hablo con el equipo de ${p.name}? 👋
-
-Soy [Tu nombre], de Aureon Growth Services (Bogotá). Les escribo porque ${pitch.hook} — sin que cambien su forma de trabajar.
-
-¿Les interesa verlo en una demo de 10 minutos esta semana? Sin compromiso.`;
-}
-
-function buildCallScript(p: Prospect): string {
-  const pitch = pitchFor(p.category);
-  return `Guion de llamada — ${p.name}
-
-1. Apertura: "Buenos días, ¿me comunica con la persona encargada de ${p.name}? Le habla [Tu nombre], de Aureon Growth Services."
-2. Permiso: "¿Tiene 40 segundos? Le cuento a qué le llamo y usted decide si le interesa."
-3. Necesidad: "${pitch.need}"
-4. Solución: "Nosotros implementamos una recepcionista con inteligencia artificial que atiende WhatsApp y llamadas 24/7, agenda y hace seguimiento automático."
-5. Cierre: "¿Le parece si le muestro cómo funciona en una demo de 10 minutos esta semana? ¿Qué día le queda mejor?"
-
-Objeción "ya tenemos quien conteste": "Perfecto — esto no reemplaza a su equipo, atiende lo que hoy se queda sin responder: la noche, los fines de semana y las horas pico."`;
-}
-
-function buildEmail(p: Prospect): { subject: string; body: string } {
-  const pitch = pitchFor(p.category);
-  return {
-    subject: `${p.name} — atender 24/7 sin contratar más personal`,
-    body: `Hola, equipo de ${p.name}:
-
-Soy [Tu nombre], de Aureon Growth Services (Bogotá).
-
-Les escribo porque ${pitch.hook}.
-
-En concreto, implementamos:
-• Recepcionista con IA: responde WhatsApp y llamadas 24/7, agenda y confirma citas
-• Automatización comercial: seguimiento de cada cliente potencial sin trabajo manual
-• Panel de resultados: saben exactamente cuántos clientes entran y de dónde
-
-¿Les interesa una demo de 10 minutos esta semana? Respondan este correo o escríbannos por WhatsApp y coordinamos.
-
-Saludos,
-[Tu nombre]
-Aureon Growth Services`,
-  };
-}
-
-/* ── Conexión directa con los medios de envío ─────────────────────
-   Outlook Web: deeplink de redacción con asunto y cuerpo ya escritos
-   (abre la cuenta Outlook del usuario en el navegador, listo para enviar).
-   WhatsApp: wa.me abre la app; web.whatsapp.com fuerza WhatsApp Web. */
-function outlookComposeUrl(p: Prospect): string {
-  const { subject, body } = buildEmail(p);
-  const params = new URLSearchParams();
-  if (p.email) params.set("to", p.email);
-  params.set("subject", subject);
-  params.set("body", body);
-  return `https://outlook.live.com/mail/0/deeplink/compose?${params.toString()}`;
-}
-
-/* Google Maps: busca el NOMBRE del negocio con el mapa centrado en sus
-   coordenadas exactas — así aparece la ficha real del negocio (reseñas,
-   horario, teléfono), no un simple pin de coordenadas. */
-function googleMapsUrl(p: Prospect): string {
-  return `https://www.google.com/maps/search/${encodeURIComponent(p.name)}/@${p.lat},${p.lon},18z`;
-}
-
-/* Cuando OSM no trae canales, SIEMPRE hay un camino: buscadores
-   dirigidos para encontrar el WhatsApp/Instagram/teléfono del negocio. */
-function googleContactUrl(p: Prospect, zoneLabel: string): string {
-  return `https://www.google.com/search?q=${encodeURIComponent(`"${p.name}" ${zoneLabel} Bogotá teléfono WhatsApp contacto`)}`;
-}
-function instagramSearchUrl(p: Prospect): string {
-  return `https://www.google.com/search?q=${encodeURIComponent(`"${p.name}" Bogotá site:instagram.com`)}`;
-}
-
-function buildWebMessage(p: Prospect): string {
-  const pitch = pitchFor(p.category);
-  return `Hola, equipo de ${p.name}. Soy [Tu nombre], de Aureon Growth Services. Les escribo por su formulario porque ${pitch.hook}. ¿Les interesa una demo de 10 minutos? Mi WhatsApp: [tu número]. Gracias.`;
-}
-
 export default function ProspeccionPage() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<LeafletMap | null>(null);
@@ -297,9 +132,11 @@ export default function ProspeccionPage() {
       setSavedLeads(JSON.parse(localStorage.getItem("aureon:prospeccion:leads") || "{}"));
     } catch {}
   }, []);
-  const markContacted = (id: string) => {
+  const markContacted = (p: Prospect) => {
+    // Al primer contacto se programan seguimientos día 3 y día 7 en Tareas
+    scheduleFollowUps(p, zone.label);
     setContacted((prev) => {
-      const next = { ...prev, [id]: true as const };
+      const next = { ...prev, [p.id]: true as const };
       try { localStorage.setItem("aureon:prospeccion:contactados", JSON.stringify(next)); } catch {}
       return next;
     });
@@ -423,6 +260,8 @@ export default function ProspeccionPage() {
         });
       }
       setProspects(found);
+      // Cada búsqueda alimenta el pool de outreach (para la Cola del día)
+      addToPool(found, zone.label);
 
       /* pintar marcadores */
       const L = (await import("leaflet")).default;
@@ -715,7 +554,7 @@ export default function ProspeccionPage() {
                     <a
                       href={`https://wa.me/${waNumber(selected.phone)}?text=${encodeURIComponent(draft)}`}
                       target="_blank" rel="noopener noreferrer"
-                      onClick={() => markContacted(selected.id)}
+                      onClick={() => markContacted(selected)}
                       className="btn-premium focus-ring w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-display font-semibold text-sm"
                       style={{ backgroundColor: "#22C15E", color: "#06130A" }}
                     >
@@ -724,7 +563,7 @@ export default function ProspeccionPage() {
                     <a
                       href={`https://web.whatsapp.com/send?phone=${waNumber(selected.phone)}&text=${encodeURIComponent(draft)}`}
                       target="_blank" rel="noopener noreferrer"
-                      onClick={() => markContacted(selected.id)}
+                      onClick={() => markContacted(selected)}
                       className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-[11px] border transition-colors hover:bg-white/5"
                       style={{ borderColor: "rgba(34,193,94,0.35)", color: "#7EE2A8" }}
                     >
@@ -737,7 +576,7 @@ export default function ProspeccionPage() {
                   <div className="flex gap-2">
                     <a
                       href={`tel:${selected.phone.replace(/[^\d+]/g, "")}`}
-                      onClick={() => markContacted(selected.id)}
+                      onClick={() => markContacted(selected)}
                       className="focus-ring flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
                       style={{ borderColor: A.border, color: A.text }}
                     >
@@ -759,7 +598,7 @@ export default function ProspeccionPage() {
                   <a
                     href={outlookComposeUrl(selected)}
                     target="_blank" rel="noopener noreferrer"
-                    onClick={() => { if (selected.email) markContacted(selected.id); }}
+                    onClick={() => { if (selected.email) markContacted(selected); }}
                     className="focus-ring flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-display font-semibold text-xs border transition-colors hover:bg-white/5"
                     style={{ borderColor: "rgba(77,124,254,0.4)", color: "#8FAEFF" }}
                   >
@@ -769,7 +608,7 @@ export default function ProspeccionPage() {
                   {selected.email && (
                     <a
                       href={`mailto:${selected.email}?subject=${encodeURIComponent(buildEmail(selected).subject)}&body=${encodeURIComponent(buildEmail(selected).body)}`}
-                      onClick={() => markContacted(selected.id)}
+                      onClick={() => markContacted(selected)}
                       className="focus-ring flex items-center px-3 py-2.5 rounded-full text-xs border transition-colors hover:bg-white/5"
                       style={{ borderColor: A.border, color: A.text2 }}
                       title="Abrir en tu cliente de correo predeterminado"
@@ -790,7 +629,7 @@ export default function ProspeccionPage() {
                       <Globe className="w-3.5 h-3.5" style={{ color: A.blue }} /> Abrir sitio web
                     </a>
                     <button
-                      onClick={() => { copyText(`web-${selected.id}`, buildWebMessage(selected)); markContacted(selected.id); }}
+                      onClick={() => { copyText(`web-${selected.id}`, buildWebMessage(selected)); markContacted(selected); }}
                       className="focus-ring flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs border transition-colors hover:bg-white/5"
                       style={{ borderColor: A.border, color: copied === `web-${selected.id}` ? A.positive : A.text2 }}
                       title="Copiar mensaje para su formulario de contacto"

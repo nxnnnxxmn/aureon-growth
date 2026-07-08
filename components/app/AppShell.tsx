@@ -8,7 +8,7 @@ import {
   Calendar, Layers, Bot, Settings2, FileText, ShieldCheck, Receipt,
   Calculator, LineChart, CreditCard, BarChart3, Folder, Sliders,
   HelpCircle, Search, Menu, X, ChevronRight, LogOut,
-  PanelLeftClose, PanelLeftOpen, MapPin, Zap,
+  PanelLeftClose, PanelLeftOpen, MapPin, Zap, ListChecks,
 } from "lucide-react";
 import { A } from "@/lib/ui";
 
@@ -29,6 +29,7 @@ const NAV = [
     { href: "/app/operaciones", label: "Operaciones", icon: Settings2 },
   ]},
   { group: "Comercial", items: [
+    { href: "/app/cola", label: "Cola del día", icon: ListChecks },
     { href: "/app/prospeccion", label: "Prospección", icon: MapPin },
     { href: "/app/propuestas", label: "Propuestas", icon: FileText },
     { href: "/app/contratos", label: "Contratos", icon: ShieldCheck },
