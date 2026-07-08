@@ -9,15 +9,20 @@ import {
   Calculator, LineChart, CreditCard, BarChart3, Folder, Sliders,
   HelpCircle, Search, Menu, X, ChevronRight, LogOut,
   PanelLeftClose, PanelLeftOpen, MapPin, Zap, ListChecks,
+  MessagesSquare, Contact2, KanbanSquare, Megaphone, GitBranch,
 } from "lucide-react";
 import { A } from "@/lib/ui";
+import { useCfg, CFG, DEFAULTS, applyAppearance } from "@/lib/internal/settings";
+import { useRole } from "@/lib/internal/role";
 
 const NAV = [
   { group: "Operación", items: [
     { href: "/app", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/app/inbox", label: "Inbox", icon: MessagesSquare },
     { href: "/app/solicitudes", label: "Solicitudes", icon: Inbox },
     { href: "/app/crm", label: "CRM", icon: Workflow },
     { href: "/app/automatizacion", label: "Automatización", icon: Zap },
+    { href: "/app/flows", label: "Flows", icon: GitBranch },
     { href: "/app/clientes", label: "Clientes", icon: Users },
     { href: "/app/proyectos", label: "Proyectos", icon: FolderKanban },
     { href: "/app/tareas", label: "Tareas", icon: CheckSquare },
@@ -31,6 +36,9 @@ const NAV = [
   { group: "Comercial", items: [
     { href: "/app/cola", label: "Cola del día", icon: ListChecks },
     { href: "/app/prospeccion", label: "Prospección", icon: MapPin },
+    { href: "/app/contactos", label: "Contactos", icon: Contact2 },
+    { href: "/app/pipelines", label: "Pipelines", icon: KanbanSquare },
+    { href: "/app/broadcasts", label: "Broadcasts", icon: Megaphone },
     { href: "/app/propuestas", label: "Propuestas", icon: FileText },
     { href: "/app/contratos", label: "Contratos", icon: ShieldCheck },
   ]},
@@ -62,6 +70,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [open, setOpen] = useState(false); // mobile drawer
   const [collapsed, setCollapsed] = useState(false); // desktop collapsed
+  const [profile] = useCfg(CFG.profile, DEFAULTS.profile);
+  const [appearance] = useCfg(CFG.appearance, DEFAULTS.appearance);
+  const { role } = useRole();
+
+  // Apariencia elegida en Ajustes (acento, densidad, motion)
+  useEffect(() => { applyAppearance(appearance); }, [appearance]);
+
+  const initials = profile.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase() || "JL";
 
   // Persist collapsed state across navigations
   useEffect(() => {
@@ -168,12 +184,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {/* User */}
         <div className="px-2 py-3 border-t" style={{ borderColor: A.border }}>
           <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3"} px-2 py-2 rounded-xl`} style={{ backgroundColor: A.surface, border: `1px solid ${A.border}` }}>
-            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: `linear-gradient(135deg, ${A.gold}, ${A.violet})`, color: A.bg }}>JL</span>
+            <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: `linear-gradient(135deg, ${A.gold}, ${A.violet})`, color: A.bg }}>{initials}</span>
             {!collapsed && (
               <>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-display font-semibold truncate" style={{ color: A.text }}>Juan L.</div>
-                  <div className="text-[10px] truncate" style={{ color: A.textDim }}>Owner · Aureon</div>
+                  <div className="text-xs font-display font-semibold truncate" style={{ color: A.text }}>{profile.name}</div>
+                  <div className="text-[10px] truncate" style={{ color: A.textDim }}>{role === "owner" ? "Owner" : "Miembro"} · Aureon</div>
                 </div>
                 <button onClick={logout} className="p-1.5 rounded focus-ring transition-colors hover:bg-white/5" style={{ color: A.text2 }} aria-label="Cerrar sesión" title="Cerrar sesión">
                   <LogOut className="w-3.5 h-3.5" />

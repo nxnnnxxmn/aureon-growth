@@ -1009,6 +1009,23 @@ body {
 }
 
 /* ==========================================
+   AJUSTES DE APARIENCIA (Command Center)
+   ========================================== */
+/* Motion reducido elegido por el usuario en Ajustes (además del media query) */
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+/* Densidad compacta: tablas y paneles más apretados */
+html[data-density="compact"] table td,
+html[data-density="compact"] table th {
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
+/* ==========================================
    VIEW TRANSITIONS — shared element morphing
    ========================================== */
 /* Cross-fade de página sobrio y rápido */

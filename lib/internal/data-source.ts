@@ -31,6 +31,18 @@ export const STORE_KEYS = {
   subscriptions: "aureon_subscriptions_v1",
   timeentries: "aureon_time_v1",
   audit: "aureon_audit_v1",
+  // Suite omnicanal / settings
+  conversations: "aureon_conversations_v1",
+  contacts: "aureon_contacts_v1",
+  msgTemplates: "aureon_msg_templates_v1",
+  fields: "aureon_fields_v1",
+  tags: "aureon_tags_v1",
+  deals: "aureon_deals_v1",
+  broadcasts: "aureon_broadcasts_v1",
+  flows: "aureon_flows_v1",
+  autoRules: "aureon_auto_rules_v1",
+  team: "aureon_team_v1",
+  apikeys: "aureon_apikeys_v1",
 } as const;
 
 export const DEMO_FLAG = "aureon_demo_mode";
