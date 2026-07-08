@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Database, FlaskConical, Save, Trash2, Building2 } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel, Button, StatusBadge } from "@/components/app/primitives";
 import DataStatus from "@/components/app/DataStatus";
 import { enableDemo, disableDemo, isDemoActive } from "@/lib/internal/data-source";
@@ -35,7 +34,7 @@ export default function SetupPage() {
   function turnOffDemo() { disableDemo(); setDemo(false); setFlash("Modo demo desactivado · datos de muestra eliminados"); setTimeout(() => setFlash(""), 2600); }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Configuración inicial"
         subtitle="Prepara los datos base de Aureon Command Center y controla el modo demo."
@@ -101,6 +100,6 @@ export default function SetupPage() {
           </Panel>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

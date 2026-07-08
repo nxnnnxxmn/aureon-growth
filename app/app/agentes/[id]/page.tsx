@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Bot, Plus, FolderPlus } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel, StatusBadge } from "@/components/app/primitives";
 import AgentWorkspace from "@/components/app/AgentWorkspace";
 import { AGENTS, getAgent } from "@/lib/internal/agents";
@@ -17,7 +16,7 @@ export default async function AgentDetail({ params }: { params: Promise<{ id: st
   if (!agent) notFound();
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title={agent.name}
         subtitle={agent.description}
@@ -73,6 +72,6 @@ export default async function AgentDetail({ params }: { params: Promise<{ id: st
       <div className="mt-4">
         <AgentWorkspace agent={agent} />
       </div>
-    </AppShell>
+    </>
   );
 }

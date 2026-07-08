@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Plus, LayoutGrid, Table2, Check, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel, PriorityBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { PROJECTS, CLIENTS } from "@/lib/internal/mock-data";
@@ -61,7 +60,7 @@ export default function ProyectosPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Proyectos"
         subtitle="Trabajos activos por etapa, drag & drop entre columnas, checklist editable."
@@ -173,6 +172,6 @@ export default function ProyectosPage() {
           </div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

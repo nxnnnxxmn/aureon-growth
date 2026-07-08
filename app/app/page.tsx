@@ -5,7 +5,6 @@ import {
   Inbox, Workflow, Users, FolderKanban, AlertTriangle, Receipt, TrendingUp,
   CreditCard, Banknote, Calendar, Plus, Database, BellRing,
 } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, StatCard, Panel, Button, EmptyState } from "@/components/app/primitives";
 import DataStatus from "@/components/app/DataStatus";
 import { useStore, STORE_KEYS, useDemoMode } from "@/lib/internal/data-source";
@@ -55,7 +54,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Command Center"
         subtitle="Resumen ejecutivo de la operación. Los KPIs muestran datos reales registrados; 0 si aún no hay datos."
@@ -146,6 +145,6 @@ export default function Dashboard() {
           ))}
         </div>
       </Panel>
-    </AppShell>
+    </>
   );
 }

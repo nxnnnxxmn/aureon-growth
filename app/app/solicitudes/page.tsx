@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Plus, MessageSquare, Calendar, ArrowRightCircle, X, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, FilterChips, Button, PriorityBadge, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { REQUESTS } from "@/lib/internal/mock-data";
@@ -60,7 +59,7 @@ export default function SolicitudesPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Solicitudes"
         subtitle="Entradas desde el diagnóstico, WhatsApp, email y campañas. Persisten en localStorage."
@@ -206,7 +205,7 @@ export default function SolicitudesPage() {
           </div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }
 

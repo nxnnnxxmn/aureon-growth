@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, DataTable, StatusBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { CONTRACTS, CLIENTS } from "@/lib/internal/mock-data";
@@ -35,7 +34,7 @@ export default function ContratosPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Contratos"
         subtitle="Acuerdos comerciales, estados y vencimientos. La firma legal real se integra con un proveedor externo."
@@ -69,6 +68,6 @@ export default function ContratosPage() {
           <div className="sm:col-span-2"><FormField label="Notas"><textarea rows={2} className={inputClass} style={{ ...inputStyle, resize: "vertical" }} value={draft.notes || ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></FormField></div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

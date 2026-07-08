@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowDownLeft, ArrowUpRight, Calculator } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, StatCard, Panel, EmptyState } from "@/components/app/primitives";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Invoice, Expense, Client } from "@/lib/internal/types";
@@ -27,7 +26,7 @@ export default function ContabilidadPage() {
   const src = hasData ? "manual" : "sin-datos";
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Contabilidad"
         subtitle="Contabilidad administrativa interna. Validar con contador antes de usar para declaraciones, reportes tributarios o decisiones legales."
@@ -73,6 +72,6 @@ export default function ContabilidadPage() {
           </div>
         </>
       )}
-    </AppShell>
+    </>
   );
 }

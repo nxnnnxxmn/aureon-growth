@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus, Repeat, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, DataTable, StatusBadge, FilterChips, StatCard } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { EXPENSES } from "@/lib/internal/mock-data";
@@ -38,7 +37,7 @@ export default function GastosPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Gastos"
         subtitle="Gastos operativos, proveedores y suscripciones recurrentes."
@@ -86,6 +85,6 @@ export default function GastosPage() {
           <div className="sm:col-span-2"><FormField label="Notas"><textarea rows={2} className={inputClass} style={{ ...inputStyle, resize: "vertical" }} value={draft.notes || ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></FormField></div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

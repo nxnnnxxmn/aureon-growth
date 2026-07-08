@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Plus, Check, ArrowUpRight } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, Panel, StatusBadge } from "@/components/app/primitives";
 import { INTERNAL_SERVICES } from "@/lib/internal/mock-data";
 import { SERVICES_CATALOG, SERVICE_CATEGORIES, SYSTEM_LABEL } from "@/lib/services-catalog";
@@ -8,7 +7,7 @@ import { A } from "@/lib/ui";
 
 export default function AppServiciosPage() {
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Servicios"
         subtitle="4 sistemas principales + 24 especialidades catalogadas."
@@ -70,6 +69,6 @@ export default function AppServiciosPage() {
           })}
         </div>
       </Panel>
-    </AppShell>
+    </>
   );
 }

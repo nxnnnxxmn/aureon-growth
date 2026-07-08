@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Plus, LayoutGrid, List, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, StatusBadge, PriorityBadge, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { TASKS, PROJECTS, CLIENTS } from "@/lib/internal/mock-data";
@@ -48,7 +47,7 @@ export default function TareasPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Tareas"
         subtitle="Trabajo operativo del equipo. Persistencia local."
@@ -125,6 +124,6 @@ export default function TareasPage() {
           <div className="sm:col-span-2"><FormField label="Descripción"><textarea rows={3} className={inputClass} style={{ ...inputStyle, resize: "vertical" }} value={draft.description || ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></FormField></div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

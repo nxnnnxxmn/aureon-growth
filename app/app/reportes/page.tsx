@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { FileText, TrendingUp, Activity, FolderKanban, Users, Layers, CheckSquare, DollarSign, Calendar, Download, BarChart3 } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel, StatCard, Button, DataTable, StatusBadge, PriorityBadge, EmptyState } from "@/components/app/primitives";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Invoice, Expense, Lead, Task, Project, Client } from "@/lib/internal/types";
@@ -56,7 +55,7 @@ export default function ReportesPage() {
   const overdue = tasks.filter((t) => t.status !== "Completada" && t.dueDate && t.dueDate < TODAY);
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Reportes"
         subtitle="Reportes ejecutivos construidos con datos reales del sistema. Sin datos, aparece vacío."
@@ -121,6 +120,6 @@ export default function ReportesPage() {
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3"><StatCard label="Leads" value={leads.length} accent="gold" source="manual" /><StatCard label="Proyectos" value={projects.length} accent="violet" source="manual" /><StatCard label="Ingresos" value={money(income)} accent="positive" source="manual" /><StatCard label="Clientes" value={clients.length} accent="blue" source="manual" /></section>
       )}
       <p className="text-xs mt-4 flex items-center gap-1.5" style={{ color: A.textDim }}><FileText className="w-3 h-3" /> Filtros aplicados: {period} · {clientFilter} · {serviceFilter}</p>
-    </AppShell>
+    </>
   );
 }

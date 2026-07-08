@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Plus, LayoutGrid, Table2, ArrowRight, GripVertical, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { LEADS } from "@/lib/internal/mock-data";
@@ -62,7 +61,7 @@ export default function CrmPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="CRM · Pipeline comercial"
         subtitle={`Valor en pipeline (excl. cerrados): ${money(pipelineValue)} · arrastra las cards entre columnas.`}
@@ -225,6 +224,6 @@ export default function CrmPage() {
           </div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

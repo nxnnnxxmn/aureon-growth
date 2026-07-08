@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, DataTable, StatusBadge, FilterChips } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { PROPOSALS, CLIENTS } from "@/lib/internal/mock-data";
@@ -36,7 +35,7 @@ export default function PropuestasPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Propuestas"
         subtitle="Propuestas comerciales por etapa."
@@ -73,6 +72,6 @@ export default function PropuestasPage() {
           <div className="sm:col-span-2"><FormField label="Notas"><textarea rows={2} className={inputClass} style={{ ...inputStyle, resize: "vertical" }} value={draft.notes || ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></FormField></div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

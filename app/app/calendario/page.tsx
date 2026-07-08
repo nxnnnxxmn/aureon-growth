@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { Plus, Calendar as CalIcon, ChevronLeft, ChevronRight, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { EVENTS } from "@/lib/internal/mock-data";
@@ -72,7 +71,7 @@ export default function CalendarioPage() {
   const eventsForSelected = selectedDate ? (byDate[selectedDate] || []) : [];
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Calendario"
         subtitle="Vista mensual interactiva. Click en un día para ver eventos o crear uno."
@@ -200,6 +199,6 @@ export default function CalendarioPage() {
           <FormField label="Responsable"><input className={inputClass} style={inputStyle} value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} /></FormField>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

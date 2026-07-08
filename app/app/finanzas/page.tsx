@@ -1,7 +1,6 @@
 "use client";
 
 import { LineChart } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, StatCard, Panel, EmptyState, MiniBars } from "@/components/app/primitives";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Invoice, Expense, Project, Client } from "@/lib/internal/types";
@@ -27,7 +26,7 @@ export default function FinanzasPage() {
   const src = hasData ? "manual" : "sin-datos";
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Finanzas"
         subtitle="Dashboard financiero interno basado en datos registrados en el sistema. Los KPIs aparecen cuando existan ingresos, gastos, facturas y pagos reales."
@@ -69,6 +68,6 @@ export default function FinanzasPage() {
           <p className="text-xs mt-4" style={{ color: A.textDim }}>Forecast y punto de equilibrio se habilitan cuando haya suficiente histórico de ingresos y gastos. Rentabilidad por cliente: {clients.length} clientes registrados.</p>
         </>
       )}
-    </AppShell>
+    </>
   );
 }

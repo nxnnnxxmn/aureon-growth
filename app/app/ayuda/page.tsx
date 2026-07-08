@@ -1,5 +1,4 @@
 import { BookOpen, Workflow, Users, FolderKanban, CheckSquare, Bot, Receipt, CreditCard, LineChart, BarChart3 } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel } from "@/components/app/primitives";
 import { A } from "@/lib/ui";
 
@@ -17,7 +16,7 @@ const TOPICS = [
 
 export default function AyudaPage() {
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Ayuda"
         subtitle="Guía interna del Aureon Command Center."
@@ -46,6 +45,6 @@ export default function AyudaPage() {
           <li className="flex items-start gap-2"><BookOpen className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: A.gold }} /> <code>robots.txt</code> bloquea /app, /admin y /command-center. /app no aparece en <code>sitemap.xml</code>.</li>
         </ul>
       </Panel>
-    </AppShell>
+    </>
   );
 }

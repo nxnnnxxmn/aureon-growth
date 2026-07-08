@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { Plus, FileText, Upload, Trash2 } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, Panel } from "@/components/app/primitives";
 import { FILES, CLIENTS } from "@/lib/internal/mock-data";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
@@ -57,7 +56,7 @@ export default function ArchivosPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Archivos"
         subtitle="Documentos, briefings y entregables. Subida visual mock (metadata local; sin storage real)."
@@ -116,6 +115,6 @@ export default function ArchivosPage() {
           ))}
         </div>
       </Panel>
-    </AppShell>
+    </>
   );
 }

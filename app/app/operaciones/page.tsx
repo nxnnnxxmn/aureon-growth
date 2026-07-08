@@ -1,5 +1,4 @@
 import { Plus, FileCheck, ListChecks, Workflow, Repeat, ClipboardCheck, Users } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, Panel } from "@/components/app/primitives";
 import { A } from "@/lib/ui";
 
@@ -19,7 +18,7 @@ const SECTIONS = ["SOPs", "Checklists", "Flujos de trabajo", "Plantillas", "Proc
 
 export default function OperacionesPage() {
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Operaciones"
         subtitle="SOPs, checklists, flujos de trabajo y procesos por servicio."
@@ -56,6 +55,6 @@ export default function OperacionesPage() {
           </Panel>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

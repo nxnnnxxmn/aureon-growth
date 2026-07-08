@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Plus, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, FilterChips, DataTable, StatusBadge, StatCard, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { INVOICES, CLIENTS } from "@/lib/internal/mock-data";
@@ -44,7 +43,7 @@ export default function FacturacionPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Facturación"
         subtitle="Control administrativo interno. No constituye facturación electrónica oficial."
@@ -110,6 +109,6 @@ export default function FacturacionPage() {
           <span className="font-mono tabular-nums" style={{ color: A.gold }}>{money((Number(draft.subtotal) || 0) + (Number(draft.taxes) || 0))}</span>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

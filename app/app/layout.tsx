@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AppShellGate from "@/components/app/AppShellGate";
 
 // Prevent indexing of the entire /app surface.
 export const metadata: Metadata = {
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <AppShellGate>{children}</AppShellGate>;
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type React from "react";
 import { A } from "@/lib/ui";
+import BackButton from "./BackButton";
 
 // Re-export the client-interactive primitives so module pages can import everything from this file.
 export { Button, FilterChips, DataTable } from "./primitives-client";
@@ -16,16 +17,19 @@ export function AppPageHeader({
 }) {
   return (
     <div className="mb-8">
-      {breadcrumbs && (
-        <ol className="flex flex-wrap items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] mb-3">
-          {breadcrumbs.map((c, i) => (
-            <li key={c.label} className="flex items-center gap-2">
-              {c.href ? <Link href={c.href} style={{ color: A.textDim }}>{c.label}</Link> : <span style={{ color: A.gold }}>{c.label}</span>}
-              {i < breadcrumbs.length - 1 && <span style={{ color: A.border }}>/</span>}
-            </li>
-          ))}
-        </ol>
-      )}
+      <div className="flex flex-wrap items-center gap-3 mb-3">
+        <BackButton />
+        {breadcrumbs && (
+          <ol className="flex flex-wrap items-center gap-2 text-xs font-mono uppercase tracking-[0.18em]">
+            {breadcrumbs.map((c, i) => (
+              <li key={c.label} className="flex items-center gap-2">
+                {c.href ? <Link href={c.href} style={{ color: A.textDim }}>{c.label}</Link> : <span style={{ color: A.gold }}>{c.label}</span>}
+                {i < breadcrumbs.length - 1 && <span style={{ color: A.border }}>/</span>}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display font-semibold text-2xl lg:text-3xl tracking-[-0.01em]" style={{ color: A.text }}>{title}</h1>

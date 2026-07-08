@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { CLIENTS, PROJECTS, INVOICES, TASKS, FILES } from "@/lib/internal/mock-data";
@@ -36,7 +35,7 @@ export default function ClientesPage() {
   }
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Clientes"
         subtitle="Cuentas activas, pausadas y potenciales. Persistencia local."
@@ -162,6 +161,6 @@ export default function ClientesPage() {
           </div>
         </div>
       </Modal>
-    </AppShell>
+    </>
   );
 }

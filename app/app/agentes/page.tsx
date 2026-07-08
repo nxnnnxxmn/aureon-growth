@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Bot, Search, Sparkles } from "lucide-react";
-import AppShell from "@/components/app/AppShell";
 import { AppPageHeader, Panel, StatusBadge } from "@/components/app/primitives";
 import { AGENTS } from "@/lib/internal/agents";
 import { A } from "@/lib/ui";
@@ -13,7 +12,7 @@ export default function AgentesPage() {
   const filtered = AGENTS.filter((a) => !q || [a.name, a.specialty, a.description].some((s) => s.toLowerCase().includes(q.toLowerCase())));
 
   return (
-    <AppShell>
+    <>
       <AppPageHeader
         title="Centro de Agentes"
         subtitle="24 agentes internos profesionales por servicio. Estructura preparada para conectar LLM."
@@ -47,6 +46,6 @@ export default function AgentesPage() {
           ))}
         </div>
       </Panel>
-    </AppShell>
+    </>
   );
 }
