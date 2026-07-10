@@ -7,7 +7,8 @@ import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import { useContacts, type Contact } from "@/lib/internal/contacts-store";
 import { A } from "@/lib/ui";
-import { readPool, waNumber } from "@/lib/prospeccion";
+import { waNumber } from "@/lib/prospeccion";
+import { usePool } from "@/lib/internal/pool-store";
 
 /* ─────────────────────────────────────────────────────────────────
  * CONTACTOS — libreta central, ahora con backend real (Prisma/API).
@@ -23,6 +24,7 @@ const emptyContact: Omit<Contact, "id"> = { name: "", company: "", phone: "", em
 
 export default function ContactosPage() {
   const { contacts, mode, create, update, remove, importMany } = useContacts();
+  const { pool } = usePool();
   const [tags] = useStore<TagDef>(STORE_KEYS.tags);
   const [fields] = useStore<FieldDef>(STORE_KEYS.fields);
   const [modalOpen, setModalOpen] = useState(false);
@@ -48,7 +50,6 @@ export default function ContactosPage() {
 
   /* Importar desde el pool de Prospección (dedup por nombre+teléfono) */
   const importFromPool = async () => {
-    const pool = readPool();
     const incoming = pool.map((p) => ({
       name: p.name, company: p.name, phone: p.phone, email: p.email,
       instagram: "", tags: [] as string[], fields: {}, source: `Prospección · ${p.categoryLabel}`,

@@ -13,8 +13,9 @@ import {
   type Prospect, CATEGORIES, pitchFor, waNumber,
   buildWhatsApp, buildCallScript, buildEmail, buildWebMessage,
   outlookComposeUrl, googleMapsUrl, googleContactUrl, instagramSearchUrl,
-  addToPool, scheduleFollowUps,
+  scheduleFollowUps,
 } from "@/lib/prospeccion";
+import { usePool } from "@/lib/internal/pool-store";
 
 /* ─────────────────────────────────────────────────────────────────
  * PROSPECCIÓN — descubrimiento automático de clientes potenciales
@@ -116,6 +117,7 @@ export default function ProspeccionPage() {
   const [status, setStatus] = useState("");
   const [source, setSource] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const { addBatch: addToPool, markContacted: markContactedDb, markLead: markLeadDb } = usePool();
 
   /* ── Camino prospecto → lead ── */
   const [selected, setSelected] = useState<Prospect | null>(null);
@@ -135,13 +137,16 @@ export default function ProspeccionPage() {
   const markContacted = (p: Prospect) => {
     // Al primer contacto se programan seguimientos día 3 y día 7 en Tareas
     scheduleFollowUps(p, zone.label);
+    // Persiste en DB (o en localStorage vía fallback del hook)
+    void markContactedDb(p.id);
     setContacted((prev) => {
       const next = { ...prev, [p.id]: true as const };
       try { localStorage.setItem("aureon:prospeccion:contactados", JSON.stringify(next)); } catch {}
       return next;
     });
   };
-  const markLead = (id: string) => {
+  const markLead = (id: string, leadId?: string) => {
+    void markLeadDb(id, leadId || "local");
     setSavedLeads((prev) => {
       const next = { ...prev, [id]: true as const };
       try { localStorage.setItem("aureon:prospeccion:leads", JSON.stringify(next)); } catch {}
@@ -175,7 +180,7 @@ export default function ProspeccionPage() {
       });
       const j = await r.json();
       if (j.ok) {
-        markLead(p.id);
+        markLead(p.id, j.id);
         setLeadMsg(j.duplicated ? "Ya existía como lead — no se duplicó." : "Lead creado en el CRM ✓");
       } else {
         setLeadMsg(j.error || "No se pudo guardar el lead.");

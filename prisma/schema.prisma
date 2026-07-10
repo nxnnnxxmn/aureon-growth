@@ -121,6 +121,36 @@ model Broadcast {
   @@index([createdAt])
 }
 
+// Pool de prospectos capturados desde el mapa (OpenStreetMap/Overpass).
+// osmId hace único cada negocio real; contacted + leadId unifican los dos
+// flags que hoy viven en localStorage (contactado / convertido a lead).
+model PoolItem {
+  id             String   @id @default(cuid())
+  osmId          String   @unique   // p.ej. "node-123456" — de OSM
+  name           String
+  category       String              // slug interno (restaurant, cafe, dentist…)
+  categoryLabel  String              // etiqueta visible
+  color          String   @default("#D6B46A")
+  lat            Float
+  lon            Float
+  phone          String?
+  website        String?
+  email          String?
+  street         String?
+  zoneLabel      String              // "Chapinero", "Chicó · Zona Rosa", etc.
+  country        String   @default("CO")
+  contacted      Boolean  @default(false)
+  leadId         String?             // enlace al Lead si ya se convirtió
+  createdBy      String?             // id de usuario (auth futura)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([category])
+  @@index([contacted])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Newsletter subscriptions
 model Subscriber {
   id          String   @id @default(cuid())

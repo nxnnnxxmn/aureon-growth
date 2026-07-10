@@ -11,10 +11,11 @@ import { A } from "@/lib/ui";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import type { Task } from "@/lib/internal/types";
 import {
-  type PoolItem, readPool, readFlags, writeFlag, scheduleFollowUps,
-  CONTACTED_KEY, LEADS_KEY, waNumber, buildWhatsApp, buildCallScript,
+  type PoolItem, scheduleFollowUps,
+  waNumber, buildWhatsApp, buildCallScript,
   outlookComposeUrl, googleMapsUrl, googleContactUrl, pitchFor,
 } from "@/lib/prospeccion";
+import { usePool, type PoolRow } from "@/lib/internal/pool-store";
 
 /* ─────────────────────────────────────────────────────────────────
  * COLA DEL DÍA — "hoy contacta estos 10".
@@ -37,10 +38,10 @@ function writeQueue(q: QueueItem[]) {
 }
 
 /** Round-robin por categoría (arranque rotado por día del año) → variedad diaria. */
-function pickDaily(pool: PoolItem[], exclude: Set<string>): QueueItem[] {
+function pickDaily(pool: PoolRow[], exclude: Set<string>): QueueItem[] {
   const candidates = pool.filter((p) => !exclude.has(p.id));
   if (candidates.length === 0) return [];
-  const byCat = new Map<string, PoolItem[]>();
+  const byCat = new Map<string, PoolRow[]>();
   for (const p of candidates) {
     if (!byCat.has(p.category)) byCat.set(p.category, []);
     byCat.get(p.category)!.push(p);
@@ -48,7 +49,7 @@ function pickDaily(pool: PoolItem[], exclude: Set<string>): QueueItem[] {
   const cats = [...byCat.keys()];
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const start = dayOfYear % cats.length;
-  const picked: PoolItem[] = [];
+  const picked: PoolRow[] = [];
   let round = 0;
   while (picked.length < QUEUE_SIZE && round < 200) {
     const cat = cats[(start + round) % cats.length];
@@ -61,29 +62,29 @@ function pickDaily(pool: PoolItem[], exclude: Set<string>): QueueItem[] {
 }
 
 export default function ColaPage() {
-  const [pool, setPool] = useState<PoolItem[]>([]);
+  const { pool, markContacted } = usePool();
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [tasks, setTasks] = useStore<Task>(STORE_KEYS.tasks);
 
-  /* Hidratar: pool + cola de hoy (autogenerar si no existe y hay pool) */
+  /* Hidratar: cola de hoy — se autogenera cuando el pool está listo */
   useEffect(() => {
-    const pl = readPool();
-    setPool(pl);
+    if (pool.length === 0) { setHydrated(true); return; }
     let q = readQueue();
-    if (q.length === 0 && pl.length > 0) {
-      const exclude = new Set([...Object.keys(readFlags(CONTACTED_KEY)), ...Object.keys(readFlags(LEADS_KEY))]);
-      q = pickDaily(pl, exclude);
+    if (q.length === 0) {
+      // Excluir ya contactados / convertidos a lead (flag en la fila DB o local)
+      const exclude = new Set(pool.filter((p) => p.contacted || p.leadId).map((p) => p.id));
+      q = pickDaily(pool, exclude);
       writeQueue(q);
     }
     setQueue(q);
     setHydrated(true);
-  }, []);
+  }, [pool]);
 
   const poolById = useMemo(() => new Map(pool.map((p) => [p.id, p])), [pool]);
   const items = useMemo(
-    () => queue.map((q) => ({ ...q, p: poolById.get(q.id) })).filter((x): x is QueueItem & { p: PoolItem } => !!x.p),
+    () => queue.map((q) => ({ ...q, p: poolById.get(q.id) })).filter((x): x is QueueItem & { p: PoolRow } => !!x.p),
     [queue, poolById],
   );
   const done = items.filter((i) => i.state === "contactado").length;
@@ -102,16 +103,16 @@ export default function ColaPage() {
     });
   };
 
-  const contact = (item: QueueItem & { p: PoolItem }) => {
-    writeFlag(CONTACTED_KEY, item.id);
-    scheduleFollowUps(item.p, item.p.zoneLabel);
+  const contact = (item: QueueItem & { p: PoolRow }) => {
+    // Marca en DB (o en localStorage vía fallback) + programa seguimientos + estado local
+    void markContacted(item.id);
+    scheduleFollowUps(item.p as PoolItem, item.p.zoneLabel);
     setState(item.id, "contactado");
   };
 
   const regenerate = () => {
     const exclude = new Set([
-      ...Object.keys(readFlags(CONTACTED_KEY)),
-      ...Object.keys(readFlags(LEADS_KEY)),
+      ...pool.filter((p) => p.contacted || p.leadId).map((p) => p.id),
       ...queue.filter((q) => q.state === "contactado").map((q) => q.id),
     ]);
     const kept = queue.filter((q) => q.state === "contactado");
