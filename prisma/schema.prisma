@@ -97,6 +97,30 @@ model Conversation {
   @@index([updatedAt])
 }
 
+// Broadcasts — campañas Meta Ads y difusiones WhatsApp por plantilla.
+// sent como JSON (string[] de ids de contacto ya enviados) — mismo criterio
+// que tags/fields/messages: portable y sin migración por tracking incremental.
+model Broadcast {
+  id           String   @id @default(cuid())
+  name         String
+  kind         String   // "whatsapp" | "meta-ads"
+  audienceTag  String   @default("")     // "" = todos
+  templateId   String?
+  objective    String?
+  budget       String?
+  status       String   @default("Borrador")  // Borrador | Activo | Cerrado
+  sent         String   @default("[]")   // JSON: string[]
+  country      String   @default("CO")
+  createdBy    String?                    // id de usuario (auth futura)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([kind])
+  @@index([status])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Newsletter subscriptions
 model Subscriber {
   id          String   @id @default(cuid())

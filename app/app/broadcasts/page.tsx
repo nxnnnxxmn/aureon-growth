@@ -1,14 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Megaphone, Plus, MessageCircle, ExternalLink, Copy, Check, Trash2, Send, Users } from "lucide-react";
+import { Megaphone, Plus, MessageCircle, ExternalLink, Copy, Check, Trash2, Send, Users, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Panel, Button, StatCard, StatusBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import { A } from "@/lib/ui";
 import { waNumber } from "@/lib/prospeccion";
-import { useContacts, type Contact } from "@/lib/internal/contacts-store";
+import { useContacts } from "@/lib/internal/contacts-store";
+import { useBroadcasts, type Broadcast } from "@/lib/internal/broadcasts-store";
 
 /* ─────────────────────────────────────────────────────────────────
  * BROADCASTS — campañas para Meta Ads y difusiones por WhatsApp.
@@ -21,24 +22,12 @@ import { useContacts, type Contact } from "@/lib/internal/contacts-store";
  * ───────────────────────────────────────────────────────────────── */
 
 type MsgTemplate = { id: string; name: string; body: string; intents: string[] };
-export type Broadcast = {
-  id: string;
-  name: string;
-  kind: "whatsapp" | "meta-ads";
-  audienceTag: string; // "" = todos
-  templateId?: string;
-  objective?: string;
-  budget?: string;
-  status: "Borrador" | "Activo" | "Cerrado";
-  sent: string[]; // ids de contactos ya contactados en esta difusión
-  createdAt: number;
-};
 type TagDef = { id: string; name: string; color: string };
 
-const uid = () => Math.random().toString(36).slice(2, 10);
+export type { Broadcast };
 
 export default function BroadcastsPage() {
-  const [broadcasts, setBroadcasts] = useStore<Broadcast>(STORE_KEYS.broadcasts);
+  const { broadcasts, mode, create: createBroadcast, setStatus, markSent, remove } = useBroadcasts();
   const { contacts } = useContacts();
   const [templates] = useStore<MsgTemplate>(STORE_KEYS.msgTemplates);
   const [tags] = useStore<TagDef>(STORE_KEYS.tags);
@@ -52,20 +41,18 @@ export default function BroadcastsPage() {
   const audienceOf = (b: Broadcast) =>
     contacts.filter((c) => (!b.audienceTag || c.tags.includes(b.audienceTag)));
 
-  const create = () => {
+  const create = async () => {
     if (!draft.name.trim()) return;
-    const b: Broadcast = { id: uid(), name: draft.name.trim(), kind: draft.kind, audienceTag: draft.audienceTag, templateId: draft.templateId || undefined, objective: draft.objective, budget: draft.budget, status: "Borrador", sent: [], createdAt: Date.now() };
-    setBroadcasts((arr) => [b, ...arr]);
+    const b = await createBroadcast({
+      name: draft.name.trim(), kind: draft.kind, audienceTag: draft.audienceTag,
+      templateId: draft.templateId || undefined,
+      objective: draft.objective || undefined,
+      budget: draft.budget || undefined,
+    });
+    if (b) setActiveId(b.id);
     setModalOpen(false);
-    setActiveId(b.id);
     setDraft({ name: "", kind: "whatsapp", audienceTag: "", templateId: "", objective: "Generar leads calificados", budget: "" });
   };
-
-  const markSent = (bId: string, contactId: string) =>
-    setBroadcasts((arr) => arr.map((b) => (b.id === bId ? { ...b, status: "Activo", sent: [...new Set([...b.sent, contactId])] } : b)));
-
-  const setStatus = (bId: string, status: Broadcast["status"]) =>
-    setBroadcasts((arr) => arr.map((b) => (b.id === bId ? { ...b, status } : b)));
 
   const metaBrief = (b: Broadcast) => {
     const aud = audienceOf(b);
@@ -97,6 +84,19 @@ Notas: destino WhatsApp (click-to-WhatsApp) para respuesta inmediata de agentes.
         breadcrumbs={[{ label: "Command Center", href: "/app" }, { label: "Broadcasts" }]}
         actions={<Button onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nueva campaña</Button>}
       />
+
+      {/* Modo de persistencia */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — campañas persisten
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : null}
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Campañas" value={broadcasts.length} icon={Megaphone} accent="gold" source="manual" />
@@ -156,7 +156,7 @@ Notas: destino WhatsApp (click-to-WhatsApp) para respuesta inmediata de agentes.
                     {s}
                   </button>
                 ))}
-                <button onClick={() => { setBroadcasts((arr) => arr.filter((x) => x.id !== active.id)); setActiveId(null); }} className="ml-auto p-2 rounded focus-ring hover:bg-white/5" style={{ color: A.danger }} aria-label="Eliminar campaña">
+                <button onClick={async () => { await remove(active.id); setActiveId(null); }} className="ml-auto p-2 rounded focus-ring hover:bg-white/5" style={{ color: A.danger }} aria-label="Eliminar campaña">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
