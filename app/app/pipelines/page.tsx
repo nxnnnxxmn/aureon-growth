@@ -1,30 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { KanbanSquare, Plus, ChevronLeft, ChevronRight, Trash2, DollarSign } from "lucide-react";
+import { KanbanSquare, Plus, ChevronLeft, ChevronRight, Trash2, DollarSign, Database, HardDrive } from "lucide-react";
 import Link from "next/link";
 import { AppPageHeader, Panel, Button, StatCard } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import { useCfg, CFG, DEFAULTS } from "@/lib/internal/settings";
+import { useDeals, type Deal } from "@/lib/internal/deals-store";
 import { A } from "@/lib/ui";
 
 /* ─────────────────────────────────────────────────────────────────
  * PIPELINES — tablero de deals por etapas configurables.
+ * Ahora con backend real (Prisma/API) y fallback a localStorage.
  * Etapas y moneda se definen en Ajustes → Deals y moneda.
  * ───────────────────────────────────────────────────────────────── */
 
-export type Deal = {
-  id: string;
-  name: string;
-  contact: string;
-  value: number;
-  stage: string;
-  notes?: string;
-  createdAt: number;
-};
+export type { Deal };
 
-const uid = () => Math.random().toString(36).slice(2, 10);
 const CURRENCY_FMT: Record<string, Intl.NumberFormat> = {};
 const fmt = (v: number, cur: string) => {
   if (!CURRENCY_FMT[cur]) CURRENCY_FMT[cur] = new Intl.NumberFormat("es-CO", { style: "currency", currency: cur, maximumFractionDigits: 0 });
@@ -32,7 +24,7 @@ const fmt = (v: number, cur: string) => {
 };
 
 export default function PipelinesPage() {
-  const [deals, setDeals] = useStore<Deal>(STORE_KEYS.deals);
+  const { deals, mode, create: createDeal, update, remove } = useDeals();
   const [commerce] = useCfg(CFG.commerce, DEFAULTS.commerce);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState({ name: "", contact: "", value: "", stage: "", notes: "" });
@@ -49,23 +41,24 @@ export default function PipelinesPage() {
   const totalOpen = deals.filter((d) => !/ganado|perdido/i.test(d.stage)).reduce((s, d) => s + d.value, 0);
   const totalWon = deals.filter((d) => /ganado/i.test(d.stage)).reduce((s, d) => s + d.value, 0);
 
-  const move = (id: string, dir: 1 | -1) => {
-    setDeals((arr) =>
-      arr.map((d) => {
-        if (d.id !== id) return d;
-        const i = stages.indexOf(d.stage);
-        const next = stages[Math.min(stages.length - 1, Math.max(0, i + dir))];
-        return { ...d, stage: next };
-      }),
-    );
+  const move = async (id: string, dir: 1 | -1) => {
+    const d = deals.find((x) => x.id === id);
+    if (!d) return;
+    const i = stages.indexOf(d.stage);
+    const next = stages[Math.min(stages.length - 1, Math.max(0, i + dir))];
+    if (next !== d.stage) await update(id, { stage: next });
   };
 
-  const create = () => {
+  const create = async () => {
     if (!draft.name.trim()) return;
-    setDeals((arr) => [
-      { id: uid(), name: draft.name.trim(), contact: draft.contact.trim(), value: Number(draft.value) || 0, stage: draft.stage || stages[0], notes: draft.notes, createdAt: Date.now() },
-      ...arr,
-    ]);
+    await createDeal({
+      name: draft.name.trim(),
+      contact: draft.contact.trim(),
+      value: Number(draft.value) || 0,
+      currency: commerce.currency,
+      stage: draft.stage || stages[0],
+      notes: draft.notes,
+    });
     setModalOpen(false);
     setDraft({ name: "", contact: "", value: "", stage: "", notes: "" });
   };
@@ -78,6 +71,23 @@ export default function PipelinesPage() {
         breadcrumbs={[{ label: "Command Center", href: "/app" }, { label: "Pipelines" }]}
         actions={<Button onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nuevo deal</Button>}
       />
+
+      {/* Modo de persistencia */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Deals abiertos" value={deals.filter((d) => !/ganado|perdido/i.test(d.stage)).length} icon={KanbanSquare} accent="gold" source="manual" />
@@ -113,11 +123,12 @@ export default function PipelinesPage() {
                             <div className="text-sm font-medium truncate" style={{ color: A.text }}>{d.name}</div>
                             <div className="text-[11px] truncate" style={{ color: A.textDim }}>{d.contact}</div>
                           </div>
-                          <button onClick={() => setDeals((arr) => arr.filter((x) => x.id !== d.id))} className="p-1 rounded focus-ring hover:bg-white/5 shrink-0" style={{ color: A.danger }} aria-label={`Eliminar ${d.name}`}>
+                          <button onClick={() => remove(d.id)} className="p-1 rounded focus-ring hover:bg-white/5 shrink-0" style={{ color: A.danger }} aria-label={`Eliminar ${d.name}`}>
                             <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
-                        <div className="font-display font-bold text-sm mt-1.5 tabular-nums" style={{ color: A.goldBright }}>{fmt(d.value, commerce.currency)}</div>
+                        {/* Moneda por deal — permite pipelines multi-país sin mezclar */}
+                        <div className="font-display font-bold text-sm mt-1.5 tabular-nums" style={{ color: A.goldBright }}>{fmt(d.value, d.currency || commerce.currency)}</div>
                         <div className="flex justify-between mt-2">
                           <button onClick={() => move(d.id, -1)} disabled={stages.indexOf(d.stage) === 0} className="p-1 rounded focus-ring hover:bg-white/5 disabled:opacity-30" style={{ color: A.text2 }} aria-label="Etapa anterior">
                             <ChevronLeft className="w-3.5 h-3.5" />

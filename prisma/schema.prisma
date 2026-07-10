@@ -52,6 +52,27 @@ model Contact {
   @@index([createdAt])
 }
 
+// Deals — pipeline comercial del Command Center.
+// value como Float (portable SQLite<->Postgres, precisión suficiente para
+// COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.
+model Deal {
+  id         String   @id @default(cuid())
+  name       String
+  contact    String   @default("")
+  value      Float    @default(0)
+  currency   String   @default("COP")     // COP | USD | EUR | MXN
+  stage      String   @default("Nuevo")
+  notes      String?
+  country    String   @default("CO")
+  createdBy  String?                       // id de usuario (auth futura)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([stage])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Newsletter subscriptions
 model Subscriber {
   id          String   @id @default(cuid())
