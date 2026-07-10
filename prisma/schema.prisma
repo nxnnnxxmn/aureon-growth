@@ -30,6 +30,28 @@ model Lead {
   @@index([createdAt])
 }
 
+// Contactos — libreta central del Command Center (migrado de localStorage a DB).
+// tags/fields como JSON serializado para portabilidad SQLite ↔ Postgres.
+// country/createdBy preparan la estructura multi-país y la auth por persona.
+model Contact {
+  id         String   @id @default(cuid())
+  name       String
+  company    String?
+  phone      String?
+  email      String?
+  instagram  String?
+  tags       String   @default("[]")   // JSON: string[]
+  fields     String   @default("{}")   // JSON: Record<string,string>
+  source     String   @default("Manual")
+  country    String   @default("CO")   // multi-país (CO, MX, ES, US…)
+  createdBy  String?                    // id de usuario (auth futura)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Newsletter subscriptions
 model Subscriber {
   id          String   @id @default(cuid())

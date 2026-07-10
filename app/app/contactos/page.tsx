@@ -1,38 +1,28 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Users, Plus, Pencil, Trash2, Tag, Download, MessageCircle, MapPinned } from "lucide-react";
+import { Users, Plus, Pencil, Trash2, Tag, Download, MessageCircle, MapPinned, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Panel, Button, StatCard, DataTable } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useContacts, type Contact } from "@/lib/internal/contacts-store";
 import { A } from "@/lib/ui";
 import { readPool, waNumber } from "@/lib/prospeccion";
 
 /* ─────────────────────────────────────────────────────────────────
- * CONTACTOS — libreta central. Se alimenta manualmente, desde el
- * pool de Prospección y desde los leads del CRM. Soporta etiquetas
- * y campos personalizados (definidos en Ajustes → Campos y etiquetas).
+ * CONTACTOS — libreta central, ahora con backend real (Prisma/API).
+ * En dev/Supabase persiste en base de datos; en prod sin Postgres cae
+ * a localStorage. Se alimenta de Prospección y de los leads del CRM.
  * ───────────────────────────────────────────────────────────────── */
 
-export type Contact = {
-  id: string;
-  name: string;
-  company?: string;
-  phone?: string;
-  email?: string;
-  instagram?: string;
-  tags: string[];
-  fields: Record<string, string>;
-  source: string;
-};
+export type { Contact };
 type TagDef = { id: string; name: string; color: string };
 type FieldDef = { id: string; name: string; type: "texto" | "número" | "fecha" };
 
-const uid = () => Math.random().toString(36).slice(2, 10);
 const emptyContact: Omit<Contact, "id"> = { name: "", company: "", phone: "", email: "", instagram: "", tags: [], fields: {}, source: "Manual" };
 
 export default function ContactosPage() {
-  const [contacts, setContacts] = useStore<Contact>(STORE_KEYS.contacts);
+  const { contacts, mode, create, update, remove, importMany } = useContacts();
   const [tags] = useStore<TagDef>(STORE_KEYS.tags);
   const [fields] = useStore<FieldDef>(STORE_KEYS.fields);
   const [modalOpen, setModalOpen] = useState(false);
@@ -49,26 +39,22 @@ export default function ContactosPage() {
   const openNew = () => { setEditing(null); setDraft(emptyContact); setModalOpen(true); };
   const openEdit = (c: Contact) => { setEditing(c.id); setDraft({ ...c }); setModalOpen(true); };
 
-  const save = () => {
+  const save = async () => {
     if (!draft.name.trim()) return;
-    if (editing) setContacts((arr) => arr.map((c) => (c.id === editing ? { ...c, ...draft } : c)));
-    else setContacts((arr) => [{ id: uid(), ...draft }, ...arr]);
+    if (editing) await update(editing, draft);
+    else await create(draft);
     setModalOpen(false);
   };
-  const remove = (id: string) => setContacts((arr) => arr.filter((c) => c.id !== id));
 
   /* Importar desde el pool de Prospección (dedup por nombre+teléfono) */
-  const importFromPool = () => {
+  const importFromPool = async () => {
     const pool = readPool();
-    const known = new Set(contacts.map((c) => `${c.name}|${c.phone || ""}`));
-    const nuevos: Contact[] = pool
-      .filter((p) => !known.has(`${p.name}|${p.phone || ""}`))
-      .map((p) => ({
-        id: uid(), name: p.name, company: p.name, phone: p.phone, email: p.email,
-        instagram: "", tags: [], fields: {}, source: `Prospección · ${p.categoryLabel}`,
-      }));
-    if (nuevos.length) setContacts((arr) => [...nuevos, ...arr]);
-    setImportMsg(nuevos.length ? `${nuevos.length} contactos importados del pool.` : "Nada nuevo que importar (todo ya existía).");
+    const incoming = pool.map((p) => ({
+      name: p.name, company: p.name, phone: p.phone, email: p.email,
+      instagram: "", tags: [] as string[], fields: {}, source: `Prospección · ${p.categoryLabel}`,
+    }));
+    const n = await importMany(incoming);
+    setImportMsg(n ? `${n} contactos importados del pool.` : "Nada nuevo que importar (todo ya existía).");
     setTimeout(() => setImportMsg(""), 3500);
   };
 
@@ -102,6 +88,23 @@ export default function ContactosPage() {
           </>
         }
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       {importMsg && <p className="mb-4 text-xs" style={{ color: A.positive }} role="status">{importMsg}</p>}
 

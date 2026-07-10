@@ -8,7 +8,7 @@ import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
 import { A } from "@/lib/ui";
 import { waNumber } from "@/lib/prospeccion";
-import type { Contact } from "@/app/app/contactos/page";
+import { useContacts, type Contact } from "@/lib/internal/contacts-store";
 
 /* ─────────────────────────────────────────────────────────────────
  * BROADCASTS — campañas para Meta Ads y difusiones por WhatsApp.
@@ -39,7 +39,7 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 
 export default function BroadcastsPage() {
   const [broadcasts, setBroadcasts] = useStore<Broadcast>(STORE_KEYS.broadcasts);
-  const [contacts] = useStore<Contact>(STORE_KEYS.contacts);
+  const { contacts } = useContacts();
   const [templates] = useStore<MsgTemplate>(STORE_KEYS.msgTemplates);
   const [tags] = useStore<TagDef>(STORE_KEYS.tags);
   const [modalOpen, setModalOpen] = useState(false);
