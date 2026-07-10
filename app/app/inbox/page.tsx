@@ -5,10 +5,12 @@ import Link from "next/link";
 import {
   Inbox as InboxIcon, MessageCircle, Instagram, Facebook, Mail, Globe,
   Send, Plus, Sparkles, Bot, X, Search, ArrowDownLeft, ArrowUpRight, Zap,
+  Database, HardDrive,
 } from "lucide-react";
 import { AppPageHeader, Panel, Button, StatCard } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
 import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useConversations, type Conversation, type Channel } from "@/lib/internal/conversations-store";
 import { useCfg, CFG, DEFAULTS } from "@/lib/internal/settings";
 import { A } from "@/lib/ui";
 import { waNumber } from "@/lib/prospeccion";
@@ -24,17 +26,10 @@ import { waNumber } from "@/lib/prospeccion";
  * la respuesta al instante y el envío se abre en el canal con un clic.
  * ───────────────────────────────────────────────────────────────── */
 
-export type Channel = "whatsapp" | "instagram" | "facebook" | "email" | "web";
+/* Channel, Msg y Conversation se re-exportan desde el hook para compatibilidad
+   con Broadcasts u otras páginas que importaban desde aquí. */
+export type { Channel, Conversation } from "@/lib/internal/conversations-store";
 export type Msg = { id: string; dir: "in" | "out"; text: string; at: number };
-export type Conversation = {
-  id: string;
-  name: string;
-  channel: Channel;
-  phone?: string;
-  handle?: string; // @instagram / página fb / email
-  messages: Msg[];
-  unread?: boolean;
-};
 
 const CHANNELS: Record<Channel, { label: string; icon: typeof MessageCircle; color: string }> = {
   whatsapp: { label: "WhatsApp", icon: MessageCircle, color: "#22C15E" },
@@ -68,10 +63,9 @@ function suggestReplies(lastIn: string | undefined, templates: MsgTemplate[]): M
   return (top.length ? top : templates).slice(0, 3);
 }
 
-const uid = () => Math.random().toString(36).slice(2, 10);
 
 export default function InboxPage() {
-  const [convos, setConvos] = useStore<Conversation>(STORE_KEYS.conversations);
+  const { conversations: convos, mode, create: createConv, addMessage, markRead: markReadHook } = useConversations();
   const [templates, setTemplates] = useStore<MsgTemplate>(STORE_KEYS.msgTemplates);
   const [wa] = useCfg(CFG.whatsapp, DEFAULTS.whatsapp);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -107,34 +101,26 @@ export default function InboxPage() {
   const waConnected = !!(wa.phoneNumberId && wa.token);
   const unreadCount = convos.filter((c) => c.unread).length;
 
-  const createConvo = () => {
+  const createConvo = async () => {
     if (!nc.name.trim() || !nc.firstMsg.trim()) return;
-    const c: Conversation = {
-      id: uid(), name: nc.name.trim(), channel: nc.channel,
+    const c = await createConv({
+      name: nc.name.trim(), channel: nc.channel,
       phone: nc.phone.trim() || undefined, handle: nc.handle.trim() || undefined,
-      messages: [{ id: uid(), dir: "in", text: nc.firstMsg.trim(), at: Date.now() }],
-      unread: true,
-    };
-    setConvos((arr) => [c, ...arr]);
-    setActiveId(c.id);
+      firstMsg: nc.firstMsg.trim(),
+    });
+    if (c) setActiveId(c.id);
     setModalOpen(false);
     setNc({ name: "", channel: "whatsapp", phone: "", handle: "", firstMsg: "" });
   };
 
-  const addMsg = (dir: "in" | "out", text: string) => {
+  const addMsg = async (dir: "in" | "out", text: string) => {
     if (!active || !text.trim()) return;
-    setConvos((arr) =>
-      arr.map((c) =>
-        c.id === active.id
-          ? { ...c, unread: dir === "in", messages: [...c.messages, { id: uid(), dir, text: text.trim(), at: Date.now() }] }
-          : c,
-      ),
-    );
+    await addMessage(active.id, dir, text);
   };
 
-  const sendReply = () => {
+  const sendReply = async () => {
     if (!active || !draft.trim()) return;
-    addMsg("out", draft);
+    await addMsg("out", draft);
     // Envío real por el canal disponible
     if (active.channel === "whatsapp" && waNumber(active.phone)) {
       window.open(`https://wa.me/${waNumber(active.phone)}?text=${encodeURIComponent(draft)}`, "_blank", "noopener");
@@ -146,7 +132,7 @@ export default function InboxPage() {
     setDraft("");
   };
 
-  const markRead = (id: string) => setConvos((arr) => arr.map((c) => (c.id === id ? { ...c, unread: false } : c)));
+  const markRead = (id: string) => { void markReadHook(id); };
 
   return (
     <>
@@ -157,8 +143,17 @@ export default function InboxPage() {
         actions={<Button onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nueva conversación</Button>}
       />
 
-      {/* Estado de conexión omnicanal */}
+      {/* Estado de conexión omnicanal + persistencia */}
       <div className="mb-5 flex flex-wrap items-center gap-2">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — mensajes persisten
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : null}
         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]"
           style={{ backgroundColor: waConnected ? "rgba(126,226,168,0.12)" : "rgba(240,195,106,0.10)", color: waConnected ? A.positive : A.alert, border: `1px solid ${A.border}` }}>
           <MessageCircle className="w-3 h-3" /> WhatsApp API: {waConnected ? "credenciales guardadas" : "no conectada"}

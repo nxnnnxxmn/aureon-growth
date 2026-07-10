@@ -73,6 +73,30 @@ model Deal {
   @@index([createdAt])
 }
 
+// Conversaciones del Inbox omnicanal (WhatsApp, IG, FB, Email, Web).
+// messages como JSON serializado (Msg[]): mismo criterio que tags/fields
+// — portable SQLite<->Postgres, sin migración por cada campo nuevo.
+// unread + createdAt indexados para listar rápido "sin responder / recientes".
+model Conversation {
+  id           String   @id @default(cuid())
+  name         String
+  channel      String   // whatsapp | instagram | facebook | email | web
+  phone        String?
+  handle       String?
+  messages     String   @default("[]")   // JSON: Msg[]
+  unread       Boolean  @default(false)
+  country      String   @default("CO")
+  createdBy    String?                    // id de usuario (auth futura)
+  assignedTo   String?                    // agente asignado (routing multi-país)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([channel])
+  @@index([unread])
+  @@index([country])
+  @@index([updatedAt])
+}
+
 // Newsletter subscriptions
 model Subscriber {
   id          String   @id @default(cuid())
