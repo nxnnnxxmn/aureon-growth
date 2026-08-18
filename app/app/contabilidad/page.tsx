@@ -2,8 +2,9 @@
 
 import { ArrowDownLeft, ArrowUpRight, Calculator } from "lucide-react";
 import { AppPageHeader, StatCard, Panel, EmptyState } from "@/components/app/primitives";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
-import type { Invoice, Expense, Client } from "@/lib/internal/types";
+import { useInvoices } from "@/lib/internal/invoices-store";
+import { useExpenses } from "@/lib/internal/expenses-store";
+import { useClients } from "@/lib/internal/clients-store";
 import { A } from "@/lib/ui";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
@@ -11,9 +12,9 @@ const INCOME_CATS = ["Retainers", "Proyectos únicos", "Diagnósticos", "Automat
 const EXPENSE_CATS = ["Software", "Publicidad interna", "Freelancers", "Nómina/equipo", "Herramientas IA", "Hosting", "Diseño", "Operación", "Transporte", "Impuestos por revisar", "Otros"];
 
 export default function ContabilidadPage() {
-  const [invoices] = useStore<Invoice>(STORE_KEYS.invoices);
-  const [expenses] = useStore<Expense>(STORE_KEYS.expenses);
-  const [clients] = useStore<Client>(STORE_KEYS.clients);
+  const { invoices } = useInvoices();
+  const { expenses } = useExpenses();
+  const { clients } = useClients();
   const clientName = (id: string) => clients.find((c) => c.id === id)?.company || id;
 
   const income = invoices.filter((i) => i.status === "Pagada").reduce((s, i) => s + i.total, 0);

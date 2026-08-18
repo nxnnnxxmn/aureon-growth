@@ -11,7 +11,9 @@ import { useStore, STORE_KEYS, useDemoMode } from "@/lib/internal/data-source";
 import { useClients } from "@/lib/internal/clients-store";
 import { useTasks } from "@/lib/internal/tasks-store";
 import { useProjects } from "@/lib/internal/projects-store";
-import type { IncomingRequest, Lead, Invoice, Expense, CalendarEvent } from "@/lib/internal/types";
+import { useInvoices } from "@/lib/internal/invoices-store";
+import { useExpenses } from "@/lib/internal/expenses-store";
+import type { IncomingRequest, Lead, CalendarEvent } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
@@ -24,8 +26,8 @@ export default function Dashboard() {
   const { clients } = useClients();
   const { projects } = useProjects();
   const { tasks } = useTasks();
-  const [invoices] = useStore<Invoice>(STORE_KEYS.invoices);
-  const [expenses] = useStore<Expense>(STORE_KEYS.expenses);
+  const { invoices } = useInvoices();
+  const { expenses } = useExpenses();
   const [events] = useStore<CalendarEvent>(STORE_KEYS.events);
 
   const newRequests = requests.filter((r) => r.status === "Nueva" || r.status === "En revisión").length;

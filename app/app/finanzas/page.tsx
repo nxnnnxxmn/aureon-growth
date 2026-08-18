@@ -2,17 +2,19 @@
 
 import { LineChart } from "lucide-react";
 import { AppPageHeader, StatCard, Panel, EmptyState, MiniBars } from "@/components/app/primitives";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
-import type { Invoice, Expense, Project, Client } from "@/lib/internal/types";
+import { useInvoices } from "@/lib/internal/invoices-store";
+import { useExpenses } from "@/lib/internal/expenses-store";
+import { useProjects } from "@/lib/internal/projects-store";
+import { useClients } from "@/lib/internal/clients-store";
 import { A } from "@/lib/ui";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 export default function FinanzasPage() {
-  const [invoices] = useStore<Invoice>(STORE_KEYS.invoices);
-  const [expenses] = useStore<Expense>(STORE_KEYS.expenses);
-  const [projects] = useStore<Project>(STORE_KEYS.projects);
-  const [clients] = useStore<Client>(STORE_KEYS.clients);
+  const { invoices } = useInvoices();
+  const { expenses } = useExpenses();
+  const { projects } = useProjects();
+  const { clients } = useClients();
   const clientName = (id: string) => clients.find((c) => c.id === id)?.company || id;
 
   const income = invoices.filter((i) => i.status === "Pagada").reduce((s, i) => s + i.total, 0);

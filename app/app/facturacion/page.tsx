@@ -1,43 +1,45 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, Save } from "lucide-react";
+import { Plus, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, FilterChips, DataTable, StatusBadge, StatCard, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { INVOICES, CLIENTS } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useInvoices } from "@/lib/internal/invoices-store";
+import { useClients } from "@/lib/internal/clients-store";
 import type { Invoice, InvoiceStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const STATUSES: (InvoiceStatus | "Todas")[] = ["Todas", "Borrador", "Emitida", "Enviada", "Pagada", "Vencida", "Anulada"];
 const PAYMENTS: Invoice["paymentMethod"][] = ["Transferencia", "PSE", "Tarjeta", "Wise", "Stripe", "Otro"];
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
-const clientName = (id: string) => CLIENTS.find((c) => c.id === id)?.company || id;
 
 const empty: Omit<Invoice, "id"> = {
-  number: "", clientId: CLIENTS[0]?.id || "", concept: "",
+  number: "", clientId: "", concept: "",
   issueDate: new Date().toISOString().slice(0, 10), dueDate: "",
   subtotal: 0, taxes: 0, total: 0, status: "Borrador", paymentMethod: "Transferencia",
 };
 
 export default function FacturacionPage() {
   const [filter, setFilter] = useState<InvoiceStatus | "Todas">("Todas");
-  const [items, setItems] = useStore<Invoice>(STORE_KEYS.invoices);
+  const { invoices: items, mode, create: createInvoice, update } = useInvoices();
+  const { clients } = useClients();
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Invoice, "id">>(empty);
+
+  const clientName = (id: string) => clients.find((c) => c.id === id)?.company || id;
 
   const filtered = useMemo(() => (filter === "Todas" ? items : items.filter((i) => i.status === filter)), [filter, items]);
   const total = items.reduce((s, i) => s + i.total, 0);
   const paid = items.filter((i) => i.status === "Pagada").reduce((s, i) => s + i.total, 0);
   const receivable = items.filter((i) => ["Enviada", "Vencida", "Emitida"].includes(i.status)).reduce((s, i) => s + i.total, 0);
 
-  function markPaid(id: string) { setItems((arr) => arr.map((i) => (i.id === id ? { ...i, status: "Pagada" } : i))); }
+  function markPaid(id: string) { update(id, { status: "Pagada" }); }
 
-  function create() {
-    const id = `I-${700 + items.length + 1}`;
+  async function create() {
     const number = draft.number || `INV-${String(items.length + 41).padStart(4, "0")}`;
     const total = (Number(draft.subtotal) || 0) + (Number(draft.taxes) || 0);
-    setItems((arr) => [{ id, ...draft, number, total }, ...arr]);
+    const ok = await createInvoice({ ...draft, number, total });
+    if (!ok) return;
     setModalOpen(false);
     setDraft(empty);
   }
@@ -50,6 +52,23 @@ export default function FacturacionPage() {
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Facturación" }]}
         actions={<Button variant="outline" onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nueva factura</Button>}
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <StatCard label="Total emitido" value={money(total)} sub={`${items.length} facturas`} accent="gold" />
@@ -94,7 +113,7 @@ export default function FacturacionPage() {
         footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={create}><Save className="w-3.5 h-3.5" /> Crear</Button></>}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label="Número interno" hint="Opcional, se autogenera si lo dejas vacío"><input className={inputClass} style={inputStyle} value={draft.number} onChange={(e) => setDraft({ ...draft, number: e.target.value })} placeholder="INV-0050" /></FormField>
-          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}>{CLIENTS.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
+          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}><option value="">—</option>{clients.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
           <div className="sm:col-span-2"><FormField label="Concepto" required><input className={inputClass} style={inputStyle} value={draft.concept} onChange={(e) => setDraft({ ...draft, concept: e.target.value })} required /></FormField></div>
           <FormField label="Fecha emisión"><input type="date" className={inputClass} style={inputStyle} value={draft.issueDate} onChange={(e) => setDraft({ ...draft, issueDate: e.target.value })} /></FormField>
           <FormField label="Fecha vencimiento"><input type="date" className={inputClass} style={inputStyle} value={draft.dueDate} onChange={(e) => setDraft({ ...draft, dueDate: e.target.value })} /></FormField>

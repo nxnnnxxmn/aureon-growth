@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Repeat, Save } from "lucide-react";
+import { Plus, Repeat, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, DataTable, StatusBadge, FilterChips, StatCard } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { EXPENSES } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useExpenses } from "@/lib/internal/expenses-store";
 import type { Expense, ExpenseStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -21,7 +20,7 @@ const empty: Omit<Expense, "id"> = {
 
 export default function GastosPage() {
   const [filter, setFilter] = useState<ExpenseStatus | "Todos">("Todos");
-  const [items, setItems] = useStore<Expense>(STORE_KEYS.expenses);
+  const { expenses: items, mode, create: createExpense } = useExpenses();
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Expense, "id">>(empty);
 
@@ -29,9 +28,9 @@ export default function GastosPage() {
   const total = items.reduce((s, e) => s + e.value, 0);
   const recurring = items.filter((e) => e.recurrent).reduce((s, e) => s + e.value, 0);
 
-  function create() {
-    const id = `E-${800 + items.length + 1}`;
-    setItems((arr) => [{ id, ...draft }, ...arr]);
+  async function create() {
+    const ok = await createExpense(draft);
+    if (!ok) return;
     setModalOpen(false);
     setDraft(empty);
   }
@@ -44,6 +43,23 @@ export default function GastosPage() {
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Gastos" }]}
         actions={<Button variant="outline" onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nuevo gasto</Button>}
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <StatCard label="Total mes" value={money(total)} sub={`${items.length} registros`} accent="gold" />

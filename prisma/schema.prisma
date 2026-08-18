@@ -136,6 +136,58 @@ model Project {
   @@index([createdAt])
 }
 
+// Facturación — control administrativo interno (no es facturación electrónica
+// oficial). clientId es referencia suelta, igual que en Task/Project.
+model Invoice {
+  id            String   @id @default(cuid())
+  number        String   @default("")
+  clientId      String   @default("")
+  concept       String   @default("")
+  issueDate     String   @default("")
+  dueDate       String   @default("")
+  subtotal      Float    @default(0)
+  taxes         Float    @default(0)
+  total         Float    @default(0)
+  status        String   @default("Borrador")
+  paymentMethod String?
+  receiptRef    String?
+  notes         String?
+  country       String   @default("CO")
+  createdBy     String?                    // id de usuario (auth futura)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([clientId])
+  @@index([country])
+  @@index([createdAt])
+}
+
+// Gastos — gastos operativos, proveedores y suscripciones recurrentes.
+model Expense {
+  id            String   @id @default(cuid())
+  date          String   @default("")
+  vendor        String   @default("")
+  category      String   @default("")
+  concept       String   @default("")
+  value         Float    @default(0)
+  paymentMethod String   @default("")
+  status        String   @default("Pendiente")
+  receiptRef    String?
+  recurrent     Boolean  @default(false)
+  notes         String?
+  country       String   @default("CO")
+  createdBy     String?                    // id de usuario (auth futura)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([recurrent])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Deals — pipeline comercial del Command Center.
 // value como Float (portable SQLite<->Postgres, precisión suficiente para
 // COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.

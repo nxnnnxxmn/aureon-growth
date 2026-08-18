@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { INVOICES, FILES } from "@/lib/internal/mock-data";
+import { FILES } from "@/lib/internal/mock-data";
 import { useClients } from "@/lib/internal/clients-store";
 import { useTasks } from "@/lib/internal/tasks-store";
 import { useProjects } from "@/lib/internal/projects-store";
+import { useInvoices } from "@/lib/internal/invoices-store";
 import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -24,6 +25,7 @@ export default function ClientesPage() {
   const { clients, mode, create: createClient } = useClients();
   const { tasks } = useTasks();
   const { projects } = useProjects();
+  const { invoices } = useInvoices();
   const [selected, setSelected] = useState<Client | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Client, "id">>(empty);
@@ -125,14 +127,14 @@ export default function ClientesPage() {
 
             <Panel title="Facturación" className="mt-4">
               <ul className="space-y-2">
-                {INVOICES.filter((i) => i.clientId === selected.id).map((i) => (
+                {invoices.filter((i) => i.clientId === selected.id).map((i) => (
                   <li key={i.id} className="flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: A.bg2, border: `1px solid ${A.border}` }}>
                     <span className="font-mono text-xs" style={{ color: A.gold }}>{i.number}</span>
                     <span className="text-xs" style={{ color: A.text }}>{money(i.total)}</span>
                     <StatusBadge status={i.status} />
                   </li>
                 ))}
-                {INVOICES.filter((i) => i.clientId === selected.id).length === 0 && <li className="text-xs" style={{ color: A.textDim }}>Sin facturas.</li>}
+                {invoices.filter((i) => i.clientId === selected.id).length === 0 && <li className="text-xs" style={{ color: A.textDim }}>Sin facturas.</li>}
               </ul>
             </Panel>
 
