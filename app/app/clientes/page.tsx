@@ -4,9 +4,10 @@ import { useState } from "react";
 import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { PROJECTS, INVOICES, FILES } from "@/lib/internal/mock-data";
+import { INVOICES, FILES } from "@/lib/internal/mock-data";
 import { useClients } from "@/lib/internal/clients-store";
 import { useTasks } from "@/lib/internal/tasks-store";
+import { useProjects } from "@/lib/internal/projects-store";
 import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -22,6 +23,7 @@ const empty: Omit<Client, "id"> = {
 export default function ClientesPage() {
   const { clients, mode, create: createClient } = useClients();
   const { tasks } = useTasks();
+  const { projects } = useProjects();
   const [selected, setSelected] = useState<Client | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Client, "id">>(empty);
@@ -72,7 +74,7 @@ export default function ClientesPage() {
           { key: "status", label: "Estado", render: (r) => <StatusBadge status={r.status} /> },
           { key: "monthlyValue", label: "Valor mensual", render: (r) => <span className="font-mono text-xs tabular-nums" style={{ color: A.gold }}>{money(r.monthlyValue)}</span> },
           { key: "startDate", label: "Inicio", render: (r) => <span className="font-mono text-xs">{r.startDate || "—"}</span> },
-          { key: "projects", label: "Proyectos", render: (r) => <span className="text-xs">{r.projects.length}</span> },
+          { key: "projects", label: "Proyectos", render: (r) => <span className="text-xs">{projects.filter((p) => p.clientId === r.id).length}</span> },
           { key: "pendingInvoices", label: "Facturas pend.", render: (r) => <span className="text-xs">{r.pendingInvoices}</span> },
         ]}
       />
@@ -111,13 +113,13 @@ export default function ClientesPage() {
 
             <Panel title="Proyectos vinculados" className="mt-4">
               <ul className="space-y-2">
-                {PROJECTS.filter((p) => p.clientId === selected.id).map((p) => (
+                {projects.filter((p) => p.clientId === selected.id).map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: A.bg2, border: `1px solid ${A.border}` }}>
                     <span className="text-sm" style={{ color: A.text }}>{p.name}</span>
                     <StatusBadge status={p.status} />
                   </li>
                 ))}
-                {PROJECTS.filter((p) => p.clientId === selected.id).length === 0 && <li className="text-xs" style={{ color: A.textDim }}>Sin proyectos asociados.</li>}
+                {projects.filter((p) => p.clientId === selected.id).length === 0 && <li className="text-xs" style={{ color: A.textDim }}>Sin proyectos asociados.</li>}
               </ul>
             </Panel>
 

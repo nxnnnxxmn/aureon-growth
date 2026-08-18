@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, LayoutGrid, Table2, Check, Save } from "lucide-react";
+import { Plus, LayoutGrid, Table2, Check, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel, PriorityBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { PROJECTS, CLIENTS } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useProjects } from "@/lib/internal/projects-store";
+import { useClients } from "@/lib/internal/clients-store";
 import type { Project, ProjectStatus, Priority } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -13,22 +13,24 @@ const STAGES: ProjectStatus[] = ["Backlog", "Planeación", "En progreso", "En re
 const PRIORITIES: Priority[] = ["low", "medium", "high", "critical"];
 const SERVICES = ["Brand Authority System", "Acquisition Engine", "Revenue Automation", "Growth Intelligence", "Sistema integral"];
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
-const clientName = (id: string) => CLIENTS.find((c) => c.id === id)?.company || id;
 
 const empty: Omit<Project, "id"> = {
-  name: "", clientId: CLIENTS[0]?.id || "", service: SERVICES[0], owner: "Juan L.",
+  name: "", clientId: "", service: SERVICES[0], owner: "Juan L.",
   startDate: new Date().toISOString().slice(0, 10), dueDate: "", priority: "medium", progress: 0,
   status: "Backlog", budget: 0, deliverables: [],
 };
 
 export default function ProyectosPage() {
   const [view, setView] = useState<"kanban" | "table">("kanban");
-  const [projects, setProjects] = useStore<Project>(STORE_KEYS.projects);
+  const { projects, mode, create: createProject, update } = useProjects();
+  const { clients } = useClients();
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Project, "id">>(empty);
   const [deliverablesText, setDeliverablesText] = useState("");
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<ProjectStatus | null>(null);
+
+  const clientName = (id: string) => clients.find((c) => c.id === id)?.company || id;
 
   const grouped = useMemo(() => {
     const map: Record<ProjectStatus, Project[]> = {} as Record<ProjectStatus, Project[]>;
@@ -38,22 +40,21 @@ export default function ProyectosPage() {
   }, [projects]);
 
   function toggleDeliverable(projectId: string, idx: number) {
-    setProjects((arr) => arr.map((p) => {
-      if (p.id !== projectId) return p;
-      const dels = p.deliverables.map((d, i) => (i === idx ? { ...d, done: !d.done } : d));
-      const progress = dels.length ? Math.round((dels.filter((d) => d.done).length / dels.length) * 100) : p.progress;
-      return { ...p, deliverables: dels, progress };
-    }));
+    const p = projects.find((x) => x.id === projectId);
+    if (!p) return;
+    const dels = p.deliverables.map((d, i) => (i === idx ? { ...d, done: !d.done } : d));
+    const progress = dels.length ? Math.round((dels.filter((d) => d.done).length / dels.length) * 100) : p.progress;
+    update(projectId, { deliverables: dels, progress });
   }
 
   function moveTo(id: string, status: ProjectStatus) {
-    setProjects((arr) => arr.map((p) => (p.id === id ? { ...p, status } : p)));
+    update(id, { status });
   }
 
-  function create() {
-    const id = `P-${300 + projects.length + 1}`;
+  async function create() {
     const deliverables = deliverablesText.split("\n").map((t) => t.trim()).filter(Boolean).map((title) => ({ title, done: false }));
-    setProjects((arr) => [{ id, ...draft, deliverables }, ...arr]);
+    const ok = await createProject({ ...draft, deliverables });
+    if (!ok) return;
     setModalOpen(false);
     setDraft(empty);
     setDeliverablesText("");
@@ -75,6 +76,23 @@ export default function ProyectosPage() {
           </>
         }
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       {view === "kanban" ? (
         <div className="overflow-x-auto pb-4">
@@ -156,7 +174,7 @@ export default function ProyectosPage() {
         footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={create}><Save className="w-3.5 h-3.5" /> Crear</Button></>}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label="Nombre" required><input className={inputClass} style={inputStyle} value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} required /></FormField>
-          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}>{CLIENTS.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
+          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}><option value="">—</option>{clients.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
           <FormField label="Servicio"><select className={inputClass} style={inputStyle} value={draft.service} onChange={(e) => setDraft({ ...draft, service: e.target.value })}>{SERVICES.map((s) => <option key={s}>{s}</option>)}</select></FormField>
           <FormField label="Responsable"><input className={inputClass} style={inputStyle} value={draft.owner} onChange={(e) => setDraft({ ...draft, owner: e.target.value })} /></FormField>
           <FormField label="Inicio"><input type="date" className={inputClass} style={inputStyle} value={draft.startDate} onChange={(e) => setDraft({ ...draft, startDate: e.target.value })} /></FormField>

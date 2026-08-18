@@ -109,6 +109,33 @@ model Task {
   @@index([createdAt])
 }
 
+// Proyectos — trabajos activos por etapa (kanban/tabla). deliverables como
+// JSON serializado (mismo criterio que tags/subtasks). clientId es referencia
+// suelta (sin relación Prisma), igual que en Task.
+model Project {
+  id           String   @id @default(cuid())
+  name         String
+  clientId     String   @default("")
+  service      String   @default("")
+  owner        String   @default("")
+  startDate    String   @default("")
+  dueDate      String   @default("")
+  priority     String   @default("medium")
+  progress     Int      @default(0)
+  status       String   @default("Backlog")
+  budget       Float    @default(0)
+  deliverables String   @default("[]")   // JSON: { title: string; done: boolean }[]
+  country      String   @default("CO")
+  createdBy    String?                    // id de usuario (auth futura)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status])
+  @@index([clientId])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Deals — pipeline comercial del Command Center.
 // value como Float (portable SQLite<->Postgres, precisión suficiente para
 // COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.
