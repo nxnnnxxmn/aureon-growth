@@ -79,6 +79,36 @@ model Client {
   @@index([createdAt])
 }
 
+// Tareas — trabajo operativo del equipo. tags/subtasks como JSON serializado
+// (mismo criterio que tags/fields en Contact). projectId/clientId son
+// referencias sueltas (sin relación Prisma) para no forzar el orden de
+// creación entre módulos — igual que projects en Client.
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  projectId   String?
+  clientId    String?
+  service     String?
+  owner       String   @default("")
+  dueDate     String   @default("")
+  priority    String   @default("medium")
+  status      String   @default("Pendiente")
+  tags        String   @default("[]")   // JSON: string[]
+  subtasks    String   @default("[]")   // JSON: { title: string; done: boolean }[]
+  country     String   @default("CO")
+  createdBy   String?                    // id de usuario (auth futura)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([priority])
+  @@index([clientId])
+  @@index([projectId])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Deals — pipeline comercial del Command Center.
 // value como Float (portable SQLite<->Postgres, precisión suficiente para
 // COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.

@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { PROJECTS, INVOICES, TASKS, FILES } from "@/lib/internal/mock-data";
+import { PROJECTS, INVOICES, FILES } from "@/lib/internal/mock-data";
 import { useClients } from "@/lib/internal/clients-store";
+import { useTasks } from "@/lib/internal/tasks-store";
 import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -20,6 +21,7 @@ const empty: Omit<Client, "id"> = {
 
 export default function ClientesPage() {
   const { clients, mode, create: createClient } = useClients();
+  const { tasks } = useTasks();
   const [selected, setSelected] = useState<Client | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Client, "id">>(empty);
@@ -134,7 +136,7 @@ export default function ClientesPage() {
 
             <Panel title="Tareas" className="mt-4">
               <ul className="space-y-2">
-                {TASKS.filter((t) => t.clientId === selected.id).slice(0, 5).map((t) => (
+                {tasks.filter((t) => t.clientId === selected.id).slice(0, 5).map((t) => (
                   <li key={t.id} className="flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: A.bg2, border: `1px solid ${A.border}` }}>
                     <span className="text-xs" style={{ color: A.text }}>{t.title}</span>
                     <StatusBadge status={t.status} />

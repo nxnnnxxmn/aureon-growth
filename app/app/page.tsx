@@ -8,7 +8,9 @@ import {
 import { AppPageHeader, StatCard, Panel, Button, EmptyState } from "@/components/app/primitives";
 import DataStatus from "@/components/app/DataStatus";
 import { useStore, STORE_KEYS, useDemoMode } from "@/lib/internal/data-source";
-import type { IncomingRequest, Lead, Client, Project, Task, Invoice, Expense, CalendarEvent } from "@/lib/internal/types";
+import { useClients } from "@/lib/internal/clients-store";
+import { useTasks } from "@/lib/internal/tasks-store";
+import type { IncomingRequest, Lead, Project, Invoice, Expense, CalendarEvent } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
@@ -18,9 +20,9 @@ export default function Dashboard() {
   const demo = useDemoMode();
   const [requests] = useStore<IncomingRequest>(STORE_KEYS.requests);
   const [leads] = useStore<Lead>(STORE_KEYS.leads);
-  const [clients] = useStore<Client>(STORE_KEYS.clients);
+  const { clients } = useClients();
   const [projects] = useStore<Project>(STORE_KEYS.projects);
-  const [tasks] = useStore<Task>(STORE_KEYS.tasks);
+  const { tasks } = useTasks();
   const [invoices] = useStore<Invoice>(STORE_KEYS.invoices);
   const [expenses] = useStore<Expense>(STORE_KEYS.expenses);
   const [events] = useStore<CalendarEvent>(STORE_KEYS.events);
