@@ -1,16 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Plus, FileText, Upload, Trash2 } from "lucide-react";
+import { Plus, FileText, Upload, Trash2, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, FilterChips, Panel } from "@/components/app/primitives";
-import { FILES, CLIENTS } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useFiles } from "@/lib/internal/files-store";
+import { useClients } from "@/lib/internal/clients-store";
 import type { FileRecord } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const CATS: (FileRecord["category"] | "Todos")[] = ["Todos", "Brief", "Propuesta", "Contrato", "Factura", "Comprobante", "Entregable", "Logo", "Creatividad", "Reporte", "Recurso interno", "Plantilla"];
-
-const clientName = (id?: string) => (id && CLIENTS.find((c) => c.id === id)?.company) || "—";
 
 function humanSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -31,43 +29,62 @@ function categoryFor(name: string): FileRecord["category"] {
 
 export default function ArchivosPage() {
   const [filter, setFilter] = useState<FileRecord["category"] | "Todos">("Todos");
-  const [files, setFiles] = useStore<FileRecord>(STORE_KEYS.files);
+  const { files, mode, createMany, remove } = useFiles();
+  const { clients } = useClients();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+
+  const clientName = (id?: string) => (id && clients.find((c) => c.id === id)?.company) || "—";
 
   const filtered = filter === "Todos" ? files : files.filter((f) => f.category === filter);
 
   function addFiles(selected: FileList | null) {
     if (!selected) return;
     const today = new Date().toISOString().slice(0, 10);
-    const added: FileRecord[] = Array.from(selected).map((f, i) => ({
-      id: `F-${Date.now()}-${i}`,
+    const drafts: Omit<FileRecord, "id">[] = Array.from(selected).map((f) => ({
       name: f.name,
       category: categoryFor(f.name),
       size: humanSize(f.size),
       uploadedAt: today,
       owner: "Juan L.",
     }));
-    setFiles((arr) => [...added, ...arr]);
+    createMany(drafts);
   }
 
   function removeFile(id: string) {
-    setFiles((arr) => arr.filter((f) => f.id !== id));
+    remove(id);
   }
 
   return (
     <>
       <AppPageHeader
         title="Archivos"
-        subtitle="Documentos, briefings y entregables. Subida visual mock (metadata local; sin storage real)."
+        subtitle="Documentos, briefings y entregables. Solo se guardan los metadatos — no hay storage real conectado, así que el archivo en sí no se sube."
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Archivos" }]}
         actions={
           <>
             <input ref={inputRef} type="file" multiple className="hidden" onChange={(e) => { addFiles(e.target.files); if (inputRef.current) inputRef.current.value = ""; }} />
-            <Button variant="outline" onClick={() => inputRef.current?.click()}><Plus className="w-3.5 h-3.5" /> Subir archivo</Button>
+            <Button variant="outline" onClick={() => inputRef.current?.click()}><Plus className="w-3.5 h-3.5" /> Registrar archivo</Button>
           </>
         }
       />
+
+      {/* Modo de persistencia de METADATOS: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Metadatos en base de datos — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Metadatos guardados local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       <div
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -86,7 +103,7 @@ export default function ArchivosPage() {
         <Upload className="w-6 h-6 mx-auto mb-2" style={{ color: A.gold }} />
         <div className="font-display font-semibold text-sm" style={{ color: A.text }}>Arrastra archivos aquí o haz click</div>
         <div className="font-mono text-[10px] uppercase tracking-[0.16em] mt-1" style={{ color: A.textDim }}>
-          Solo metadata local · Sin storage real conectado
+          Storage no configurado · solo se registra nombre, categoría y tamaño
         </div>
       </div>
 

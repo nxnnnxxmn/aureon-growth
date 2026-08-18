@@ -235,6 +235,30 @@ model Contract {
   @@index([createdAt])
 }
 
+// Archivos — SOLO METADATOS (nombre, categoría, tamaño reportado por el
+// navegador). No hay bytes reales almacenados: no hay Supabase Storage (u
+// otro bucket) conectado todavía. La UI debe dejarlo explícito — igual que
+// hacía la versión mock — para no violar la regla de honestidad del proyecto.
+model FileRecord {
+  id         String   @id @default(cuid())
+  name       String
+  category   String   @default("Recurso interno")
+  clientId   String?
+  projectId  String?
+  size       String   @default("")
+  uploadedAt String   @default("")
+  owner      String   @default("")
+  country    String   @default("CO")
+  createdBy  String?                    // id de usuario (auth futura)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([category])
+  @@index([clientId])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Deals — pipeline comercial del Command Center.
 // value como Float (portable SQLite<->Postgres, precisión suficiente para
 // COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.

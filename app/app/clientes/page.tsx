@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { FILES } from "@/lib/internal/mock-data";
 import { useClients } from "@/lib/internal/clients-store";
 import { useTasks } from "@/lib/internal/tasks-store";
 import { useProjects } from "@/lib/internal/projects-store";
 import { useInvoices } from "@/lib/internal/invoices-store";
+import { useFiles } from "@/lib/internal/files-store";
 import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -26,6 +26,7 @@ export default function ClientesPage() {
   const { tasks } = useTasks();
   const { projects } = useProjects();
   const { invoices } = useInvoices();
+  const { files } = useFiles();
   const [selected, setSelected] = useState<Client | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Client, "id">>(empty);
@@ -151,7 +152,7 @@ export default function ClientesPage() {
 
             <Panel title="Archivos" className="mt-4">
               <ul className="space-y-2">
-                {FILES.filter((f) => f.clientId === selected.id).map((f) => (
+                {files.filter((f) => f.clientId === selected.id).map((f) => (
                   <li key={f.id} className="flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: A.bg2, border: `1px solid ${A.border}` }}>
                     <span className="text-xs flex items-center gap-2" style={{ color: A.text }}><ExternalLink className="w-3 h-3" style={{ color: A.gold }} />{f.name}</span>
                     <span className="font-mono text-[10px]" style={{ color: A.textDim }}>{f.size}</span>
