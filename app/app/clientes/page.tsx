@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save } from "lucide-react";
+import { Plus, X, Mail, Phone, Calendar, ExternalLink, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, StatusBadge, DataTable, Panel } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { CLIENTS, PROJECTS, INVOICES, TASKS, FILES } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { PROJECTS, INVOICES, TASKS, FILES } from "@/lib/internal/mock-data";
+import { useClients } from "@/lib/internal/clients-store";
 import type { Client, ClientStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -19,16 +19,16 @@ const empty: Omit<Client, "id"> = {
 };
 
 export default function ClientesPage() {
-  const [clients, setClients] = useStore<Client>(STORE_KEYS.clients);
+  const { clients, mode, create: createClient } = useClients();
   const [selected, setSelected] = useState<Client | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Client, "id">>(empty);
   const [servicesText, setServicesText] = useState("");
 
-  function create() {
-    const id = `C-${200 + clients.length + 1}`;
+  async function create() {
     const services = servicesText.split(",").map((s) => s.trim()).filter(Boolean);
-    setClients((arr) => [{ id, ...draft, services }, ...arr]);
+    const ok = await createClient({ ...draft, services });
+    if (!ok) return;
     setModalOpen(false);
     setDraft(empty);
     setServicesText("");
@@ -38,10 +38,27 @@ export default function ClientesPage() {
     <>
       <AppPageHeader
         title="Clientes"
-        subtitle="Cuentas activas, pausadas y potenciales. Persistencia local."
+        subtitle="Cuentas activas, pausadas y potenciales."
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Clientes" }]}
         actions={<Button variant="outline" onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nuevo cliente</Button>}
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
 
       <DataTable
         rows={clients}

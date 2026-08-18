@@ -52,6 +52,33 @@ model Contact {
   @@index([createdAt])
 }
 
+// Clientes — cuentas activas/pausadas/potenciales del Command Center.
+// services/projects como JSON serializado (mismo criterio que tags/fields).
+// projects guarda ids de referencia rápida; la fuente de verdad de la
+// relación real vive en Project.clientId.
+model Client {
+  id              String   @id @default(cuid())
+  company         String
+  contact         String   @default("")
+  email           String?
+  phone           String?
+  services        String   @default("[]")   // JSON: string[]
+  status          String   @default("Potencial")
+  startDate       String   @default("")
+  monthlyValue    Float    @default(0)
+  projects        String   @default("[]")   // JSON: string[] (ids)
+  pendingInvoices Int      @default(0)
+  notes           String?
+  country         String   @default("CO")
+  createdBy       String?                    // id de usuario (auth futura)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Deals — pipeline comercial del Command Center.
 // value como Float (portable SQLite<->Postgres, precisión suficiente para
 // COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.
