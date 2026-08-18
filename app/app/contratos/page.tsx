@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Save } from "lucide-react";
+import { Plus, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, DataTable, StatusBadge } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { CONTRACTS, CLIENTS } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useContracts } from "@/lib/internal/contracts-store";
+import { useClients } from "@/lib/internal/clients-store";
 import type { Contract, ContractStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
@@ -13,22 +13,24 @@ const STATUSES: ContractStatus[] = ["Borrador", "Enviado", "Firmado", "Activo", 
 const TYPES: Contract["type"][] = ["Retainer", "Proyecto", "Consultoría", "Sprint", "NDA"];
 const RENEWALS: Contract["renewal"][] = ["Automática", "Manual", "No aplica"];
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
-const clientName = (id: string) => CLIENTS.find((c) => c.id === id)?.company || id;
 
 const empty: Omit<Contract, "id"> = {
-  clientId: CLIENTS[0]?.id || "", type: "Retainer",
+  clientId: "", type: "Retainer",
   startDate: new Date().toISOString().slice(0, 10), endDate: "",
   value: 0, status: "Borrador", renewal: "Manual",
 };
 
 export default function ContratosPage() {
-  const [items, setItems] = useStore<Contract>(STORE_KEYS.contracts);
+  const { contracts: items, mode, create: createContract } = useContracts();
+  const { clients } = useClients();
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Contract, "id">>(empty);
 
-  function create() {
-    const id = `CT-${600 + items.length + 1}`;
-    setItems((arr) => [{ id, ...draft }, ...arr]);
+  const clientName = (id: string) => clients.find((c) => c.id === id)?.company || id;
+
+  async function create() {
+    const ok = await createContract(draft);
+    if (!ok) return;
     setModalOpen(false);
     setDraft(empty);
   }
@@ -41,6 +43,24 @@ export default function ContratosPage() {
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Contratos" }]}
         actions={<Button variant="outline" onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nuevo contrato</Button>}
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
+
       <DataTable
         rows={items}
         columns={[
@@ -58,7 +78,7 @@ export default function ContratosPage() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Nuevo contrato" size="md"
         footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={create}><Save className="w-3.5 h-3.5" /> Crear</Button></>}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}>{CLIENTS.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
+          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}><option value="">—</option>{clients.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
           <FormField label="Tipo"><select className={inputClass} style={inputStyle} value={draft.type} onChange={(e) => setDraft({ ...draft, type: e.target.value as Contract["type"] })}>{TYPES.map((t) => <option key={t}>{t}</option>)}</select></FormField>
           <FormField label="Inicio"><input type="date" className={inputClass} style={inputStyle} value={draft.startDate} onChange={(e) => setDraft({ ...draft, startDate: e.target.value })} /></FormField>
           <FormField label="Fin"><input type="date" className={inputClass} style={inputStyle} value={draft.endDate || ""} onChange={(e) => setDraft({ ...draft, endDate: e.target.value })} /></FormField>

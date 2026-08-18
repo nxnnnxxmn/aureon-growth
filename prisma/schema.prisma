@@ -188,6 +188,53 @@ model Expense {
   @@index([createdAt])
 }
 
+// Propuestas comerciales por etapa. clientId es referencia suelta.
+model Proposal {
+  id          String   @id @default(cuid())
+  clientId    String   @default("")
+  service     String   @default("")
+  value       Float    @default(0)
+  status      String   @default("Borrador")
+  sentDate    String?
+  dueDate     String?
+  owner       String   @default("")
+  probability Int      @default(0)
+  notes       String?
+  country     String   @default("CO")
+  createdBy   String?                    // id de usuario (auth futura)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([clientId])
+  @@index([country])
+  @@index([createdAt])
+}
+
+// Contratos — acuerdos comerciales, estados y vencimientos. La firma legal
+// real se integra con un proveedor externo (fuera de este modelo).
+model Contract {
+  id        String   @id @default(cuid())
+  clientId  String   @default("")
+  type      String   @default("Retainer")
+  startDate String   @default("")
+  endDate   String?
+  value     Float    @default(0)
+  status    String   @default("Borrador")
+  renewal   String?
+  fileRef   String?
+  notes     String?
+  country   String   @default("CO")
+  createdBy String?                    // id de usuario (auth futura)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([clientId])
+  @@index([country])
+  @@index([createdAt])
+}
+
 // Deals — pipeline comercial del Command Center.
 // value como Float (portable SQLite<->Postgres, precisión suficiente para
 // COP/USD/EUR). El campo currency permite pipelines por país sin mezclar.

@@ -1,35 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Save } from "lucide-react";
+import { Plus, Save, Database, HardDrive } from "lucide-react";
 import { AppPageHeader, Button, DataTable, StatusBadge, FilterChips } from "@/components/app/primitives";
 import Modal, { FormField, inputClass, inputStyle } from "@/components/app/Modal";
-import { PROPOSALS, CLIENTS } from "@/lib/internal/mock-data";
-import { useStore, STORE_KEYS } from "@/lib/internal/data-source";
+import { useProposals } from "@/lib/internal/proposals-store";
+import { useClients } from "@/lib/internal/clients-store";
 import type { Proposal, ProposalStatus } from "@/lib/internal/types";
 import { A } from "@/lib/ui";
 
 const STATUSES: (ProposalStatus | "Todas")[] = ["Todas", "Borrador", "Enviada", "En revisión", "Aprobada", "Rechazada", "Vencida"];
 const SERVICES = ["Brand Authority System", "Acquisition Engine", "Revenue Automation", "Growth Intelligence", "Sistema integral"];
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
-const clientName = (id: string) => CLIENTS.find((c) => c.id === id)?.company || id;
 
 const empty: Omit<Proposal, "id"> = {
-  clientId: CLIENTS[0]?.id || "", service: SERVICES[0], value: 0,
+  clientId: "", service: SERVICES[0], value: 0,
   status: "Borrador", sentDate: "", dueDate: "", owner: "Juan L.", probability: 30, notes: "",
 };
 
 export default function PropuestasPage() {
   const [filter, setFilter] = useState<ProposalStatus | "Todas">("Todas");
-  const [items, setItems] = useStore<Proposal>(STORE_KEYS.proposals);
+  const { proposals: items, mode, create: createProposal } = useProposals();
+  const { clients } = useClients();
   const [modalOpen, setModalOpen] = useState(false);
   const [draft, setDraft] = useState<Omit<Proposal, "id">>(empty);
 
+  const clientName = (id: string) => clients.find((c) => c.id === id)?.company || id;
+
   const filtered = filter === "Todas" ? items : items.filter((p) => p.status === filter);
 
-  function create() {
-    const id = `PR-${500 + items.length + 1}`;
-    setItems((arr) => [{ id, ...draft }, ...arr]);
+  async function create() {
+    const ok = await createProposal(draft);
+    if (!ok) return;
     setModalOpen(false);
     setDraft(empty);
   }
@@ -42,6 +44,24 @@ export default function PropuestasPage() {
         breadcrumbs={[{ label: "Aureon", href: "/app" }, { label: "Propuestas" }]}
         actions={<Button variant="outline" onClick={() => setModalOpen(true)}><Plus className="w-3.5 h-3.5" /> Nueva propuesta</Button>}
       />
+
+      {/* Modo de persistencia: base de datos real vs. local (fallback) */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {mode === "db" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(126,226,168,0.12)", color: A.positive, border: `1px solid ${A.border}` }}>
+            <Database className="w-3 h-3" /> Base de datos conectada — sincroniza entre dispositivos
+          </span>
+        ) : mode === "local" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(240,195,106,0.10)", color: A.alert, border: `1px solid ${A.border}` }}>
+            <HardDrive className="w-3 h-3" /> Guardado local — conecta Supabase para sincronizar
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-[0.14em]" style={{ backgroundColor: "rgba(255,255,255,0.04)", color: A.textDim, border: `1px solid ${A.border}` }}>
+            Cargando…
+          </span>
+        )}
+      </div>
+
       <div className="mb-4"><FilterChips value={filter} onChange={setFilter} options={STATUSES.map((s) => ({ value: s, label: s }))} /></div>
       <DataTable
         rows={filtered}
@@ -61,7 +81,7 @@ export default function PropuestasPage() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Nueva propuesta" size="md"
         footer={<><Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={create}><Save className="w-3.5 h-3.5" /> Crear</Button></>}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}>{CLIENTS.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
+          <FormField label="Cliente"><select className={inputClass} style={inputStyle} value={draft.clientId} onChange={(e) => setDraft({ ...draft, clientId: e.target.value })}><option value="">—</option>{clients.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}</select></FormField>
           <FormField label="Servicio"><select className={inputClass} style={inputStyle} value={draft.service} onChange={(e) => setDraft({ ...draft, service: e.target.value })}>{SERVICES.map((s) => <option key={s}>{s}</option>)}</select></FormField>
           <FormField label="Valor (USD)" required><input type="number" className={inputClass} style={inputStyle} value={draft.value} onChange={(e) => setDraft({ ...draft, value: Number(e.target.value) || 0 })} required /></FormField>
           <FormField label="Estado"><select className={inputClass} style={inputStyle} value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as ProposalStatus })}>{(["Borrador", "Enviada", "En revisión", "Aprobada", "Rechazada", "Vencida"] as ProposalStatus[]).map((s) => <option key={s}>{s}</option>)}</select></FormField>
